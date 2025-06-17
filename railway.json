@@ -1,5 +1,3 @@
 {
-  "buildCommand": "dotnet build",
-  "startCommand": "dotnet run",
   "rootDirectory": "backend"
 }
