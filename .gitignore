@@ -1,1 +1,9 @@
 node_modules/
+
+# Sensitive config
+appsettings.Development.json
+
+# Build and IDE stuff
+bin/
+obj/
+.vscode/
