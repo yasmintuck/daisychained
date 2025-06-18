@@ -5,7 +5,7 @@ function Modules() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/modules`)
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/modules`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch');
         return res.json();
