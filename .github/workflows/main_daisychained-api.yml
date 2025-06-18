@@ -28,7 +28,7 @@ jobs:
         working-directory: ./backend
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o backend/publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
         working-directory: ./backend
 
       - name: Upload artifact for deployment job
@@ -64,5 +64,5 @@ jobs:
         with:
           app-name: 'daisychained-api'
           slot-name: 'Production'
-          package: backend/publish
+          package: .
           
