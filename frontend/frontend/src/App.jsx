@@ -14,7 +14,7 @@ function App() {
 
   return (
     <>
-      <h1>DaisyChained Weather</h1>
+      <h1>daisychained Weather</h1>
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
       <ul>
         {forecast.map((entry, i) => (
