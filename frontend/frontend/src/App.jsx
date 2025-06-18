@@ -1,29 +1,15 @@
-import { useEffect, useState } from 'react';
-import { getWeather } from './api';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Weather from './pages/Weather';
+import Modules from './pages/Modules'; // <- you’ll create this if you haven’t yet
 
 function App() {
-  const [forecast, setForecast] = useState([]);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    getWeather()
-      .then(data => setForecast(data))
-      .catch(err => setError(err.message));
-  }, []);
-
   return (
-    <>
-      <h1>daisychained Weather</h1>
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-      <ul>
-        {forecast.map((entry, i) => (
-          <li key={i}>
-            {entry.date}: {entry.summary} ({entry.temperatureC}°C)
-          </li>
-        ))}
-      </ul>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Weather />} />
+        <Route path="/modules" element={<Modules />} />
+      </Routes>
+    </Router>
   );
 }
 
