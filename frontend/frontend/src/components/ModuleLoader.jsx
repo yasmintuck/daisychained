@@ -5,11 +5,14 @@ import axios from "axios";
 const ModuleLoader = () => {
   const { user, isAuthenticated } = useAuth0();
   const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true); // ✅ Add loading state
 
   useEffect(() => {
     if (!isAuthenticated || !user) return;
 
     const syncUserAndFetchModules = async () => {
+      setLoading(true); // ✅ Start loading
+
       try {
         const payload = {
           externalId: user.sub,
@@ -26,6 +29,8 @@ const ModuleLoader = () => {
         setModules(res.data);
       } catch (err) {
         console.error("Error fetching modules:", err);
+      } finally {
+        setLoading(false); // ✅ Always end loading
       }
     };
 
@@ -34,25 +39,25 @@ const ModuleLoader = () => {
 
   return (
     <div>
-        <h3 style={{ marginTop: "2rem" }}>Modules you have access to:</h3>
+      <h3 style={{ marginTop: "2rem" }}>Modules you have access to:</h3>
 
-        {loading ? (
-            <p style={{ marginTop: "2rem", color: "white" }}>
-            Loading your modules...
-            </p>
-        ) : modules.length > 0 ? (
-            <div style={{ marginTop: "1rem" }}>
-            {modules.map((m) => (
-                <div key={m.moduleId} style={{ marginBottom: "1rem" }}>
-                <strong>{m.moduleTitle}</strong> — {m.moduleDescription}
-                </div>
-            ))}
+      {loading ? (
+        <p style={{ marginTop: "2rem", color: "white" }}>
+          Loading your modules...
+        </p>
+      ) : modules.length > 0 ? (
+        <div style={{ marginTop: "1rem" }}>
+          {modules.map((m) => (
+            <div key={m.moduleId} style={{ marginBottom: "1rem" }}>
+              <strong>{m.moduleTitle}</strong> — {m.moduleDescription}
             </div>
-        ) : (
-            <p style={{ marginTop: "1rem", color: "white" }}>
-            You don’t currently have access to any modules.
-            </p>
-        )}
+          ))}
+        </div>
+      ) : (
+        <p style={{ marginTop: "1rem", color: "white" }}>
+          You don’t currently have access to any modules.
+        </p>
+      )}
     </div>
   );
 };
