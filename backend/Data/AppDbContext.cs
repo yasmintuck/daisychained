@@ -10,27 +10,41 @@ namespace backend.Data
     public DbSet<User> User { get; set; }
     public DbSet<Module> Modules { get; set; }
     public DbSet<UserProgress> UserProgressRecords { get; set; }
+    public DbSet<Package> Packages { get; set; }
+    public DbSet<ModulePackage> ModulePackages { get; set; }
+    public DbSet<Organisation> Organisations { get; set; }
+    public DbSet<OrganisationPackage> OrganisationPackages { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<UserProgress>()
-            .HasOne(up => up.User)
-            .WithMany(u => u.ProgressRecords)
-            .HasForeignKey(up => up.UserId);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserProgress>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.ProgressRecords)
+                .HasForeignKey(up => up.UserId);
 
-        modelBuilder.Entity<UserProgress>()
-            .HasOne(up => up.Module)
-            .WithMany(m => m.UserProgressRecords)
-            .HasForeignKey(up => up.ModuleId);
+            modelBuilder.Entity<UserProgress>()
+                .HasOne(up => up.Module)
+                .WithMany(m => m.UserProgressRecords)
+                .HasForeignKey(up => up.ModuleId);
 
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.UserExternalId)
-            .IsUnique();
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UserExternalId)
+                .IsUnique();
 
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.UserEmail)
-            .IsUnique();
-    }
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UserEmail)
+                .IsUnique();
+
+            modelBuilder.Entity<ModulePackage>()
+                .HasKey(mp => new { mp.ModuleId, mp.PackageId });
+
+            modelBuilder.Entity<OrganisationPackage>()
+                .HasKey(op => new { op.OrganisationId, op.PackageId });
+                
+            modelBuilder.Entity<Organisation>()
+                .HasIndex(o => o.Domain)
+                .IsUnique();
+        }
 }
 
 }

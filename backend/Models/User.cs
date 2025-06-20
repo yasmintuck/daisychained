@@ -8,6 +8,8 @@ public class User
     public string UserLastName { get; set; }
     public string UserEmail { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public int? OrganisationId { get; set; }
+    public Organisation Organisation { get; set; }
 
     public ICollection<UserProgress> ProgressRecords { get; set; } = new List<UserProgress>();
 }
