@@ -4,7 +4,7 @@ import { useEffect } from "react";
 function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
 
-  console.log("LOGOUT REDIRECT:", import.meta.env.VITE_LOGOUT_URL);
+  console.log("LOGOUT REDIRECT:", import.meta.env.VITE_LOGOUT_URL); 
 
   useEffect(() => {
     document.body.style.margin = "0";
