@@ -49,7 +49,10 @@ function Dashboard() {
 
       <br />
       <button
-        onClick={() => logout({ returnTo: window.location.origin })}
+        onClick={() => logout({ returnTo: import.meta.env.MODE === "development"
+          ? "http://localhost:5173"
+          : "https://daisychained.vercel.app"
+          })}
         style={{
           marginTop: "2rem",
           padding: "0.6rem 1.2rem",
