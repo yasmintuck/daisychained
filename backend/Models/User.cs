@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations.Schema;
 namespace backend.Models;
 
+[Table("User")]
 public class User
 {
     public int UserId { get; set; } // Auto-incrementing PK

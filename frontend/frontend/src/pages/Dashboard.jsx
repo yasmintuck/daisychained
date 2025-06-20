@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
+import ModuleLoader from "../components/ModuleLoader";
 
 function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
@@ -48,7 +49,8 @@ function Dashboard() {
           }}
         />
       )}
-
+      <br />
+      <ModuleLoader />
       <br />
       <button
         onClick={() =>
