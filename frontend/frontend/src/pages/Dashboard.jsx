@@ -48,6 +48,7 @@ function Dashboard() {
       )}
 
       <br />
+      console.log("LOGOUT REDIRECT:", import.meta.env.VITE_LOGOUT_URL);
       <button
         onClick={() => logout({ returnTo: import.meta.env.VITE_LOGOUT_URL})}
         style={{
