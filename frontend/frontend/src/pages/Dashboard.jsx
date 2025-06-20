@@ -51,7 +51,14 @@ function Dashboard() {
 
       <br />
       <button
-        onClick={() => logout({ returnTo: import.meta.env.VITE_LOGOUT_URL})}
+        onClick={() =>
+          logout({
+            logoutParams: {
+              returnTo: import.meta.env.VITE_LOGOUT_URL,
+              client_id: import.meta.env.VITE_AUTH0_CLIENT_ID, // Add this line
+            },
+          })
+        }
         style={{
           marginTop: "2rem",
           padding: "0.6rem 1.2rem",
@@ -60,7 +67,7 @@ function Dashboard() {
           border: "2px solid white",
           color: "white",
           borderRadius: "6px",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Log Out
