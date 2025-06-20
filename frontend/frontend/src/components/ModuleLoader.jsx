@@ -34,14 +34,25 @@ const ModuleLoader = () => {
 
   return (
     <div>
-      <h3>Modules You Have Access To</h3>
-      <ul>
-        {modules.map((m) => (
-          <li key={m.moduleId}>
-            <strong>{m.moduleTitle}</strong> — {m.moduleDescription}
-          </li>
-        ))}
-      </ul>
+        <h3 style={{ marginTop: "2rem" }}>Modules you have access to:</h3>
+
+        {loading ? (
+            <p style={{ marginTop: "2rem", color: "white" }}>
+            Loading your modules...
+            </p>
+        ) : modules.length > 0 ? (
+            <div style={{ marginTop: "1rem" }}>
+            {modules.map((m) => (
+                <div key={m.moduleId} style={{ marginBottom: "1rem" }}>
+                <strong>{m.moduleTitle}</strong> — {m.moduleDescription}
+                </div>
+            ))}
+            </div>
+        ) : (
+            <p style={{ marginTop: "1rem", color: "white" }}>
+            You don’t currently have access to any modules.
+            </p>
+        )}
     </div>
   );
 };

@@ -27,25 +27,20 @@ function Dashboard() {
   return (
     <div style={{ padding: "2rem" }}>
       <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>Dashboard</h1>
-      <p style={{ fontSize: "1.25rem" }}>
-        Hello <strong>{user.name}</strong>, welcome to daisychained.
-      </p>
-      <p style={{ fontSize: "1rem", marginTop: "1rem" }}>
-        <strong>Email:</strong> {email}
-        <br />
-        <strong>Domain:</strong> {domain}
-      </p>
+      <p style={{ fontSize: "1.25rem" }}>Hello <strong>{user.given_name}</strong> 👋. Welcome to daisychained.</p>
+      <p style={{ fontSize: "1rem", marginTop: "1rem" }}>This is a development environment, and soon it's going to look amazing. For now, I want you to know that you're a registered user of daisychained.</p>
+      <p style={{ fontSize: "1rem", marginTop: "1rem" }}>Check out the modules you have access to below. If you logged in with a Google account, you'll see AI modules. If you logged in with a Hotmail account, you'll see personal development modules.</p>
 
       {user.picture && (
         <img
           src={user.picture}
           alt="User profile"
           style={{
-            marginTop: "2rem",
-            width: "100px",
-            height: "100px",
+            width: "80px",
+            height: "80px",
             objectFit: "cover",
-            borderRadius: "8px"
+            borderRadius: "8px",
+            marginTop: "1rem",
           }}
         />
       )}
