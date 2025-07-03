@@ -21,11 +21,16 @@ const ModuleLoader = () => {
           email: user.email
         };
 
+        console.log("🔄 Syncing user with payload:", payload); // debugging
+
+
         const res = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/sync-user`,
           payload
         );
+
         console.log("Modules returned from backend:", res.data);
+        
         setModules(res.data);
       } catch (err) {
         console.error("Error fetching modules:", err);
