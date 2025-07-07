@@ -1,19 +1,32 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import CallbackHandler from "./components/CallbackHandler";
+import PrivateRoute from "./components/PrivateRoute";
+
+// Pages
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Faq from "./pages/Faq";
+import Blog from "./pages/Blog";
 import Dashboard from "./pages/Dashboard";
 import Modules from "./pages/Modules";
 import Weather from "./pages/Weather";
-import CallbackHandler from "./components/CallbackHandler";
-import PrivateRoute from "./components/PrivateRoute"; 
+import Badges from "./pages/Badges";
 
 function App() {
   return (
-    <Router>
+    <>
+      <Navbar />
+
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/faq" element={<Faq />} />
+        <Route path="/blog" element={<Blog />} />
         <Route path="/callback" element={<CallbackHandler />} />
 
-        {/* Protected Routes */}
+        {/* Private Routes */}
         <Route
           path="/dashboard"
           element={
@@ -38,8 +51,16 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/badges"
+          element={
+            <PrivateRoute>
+              <Badges />
+            </PrivateRoute>
+          }
+        />
       </Routes>
-    </Router>
+    </>
   );
 }
 
