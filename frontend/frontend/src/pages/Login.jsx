@@ -6,7 +6,13 @@ export default function Login() {
   return (
     <div>
       {!isAuthenticated ? (
-        <button onClick={() => loginWithRedirect()}>Log In</button>
+        <button onClick={() => loginWithRedirect({
+          authorizationParams: {
+          prompt: 'select_account'
+          }
+          })}>
+          Log In
+          </button>
       ) : (
         <>
           <p>Welcome, {user?.name}</p>
