@@ -21,10 +21,6 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="nav-container">
-        <Link to="/">
-          <img src="/logo.png" alt="DaisyChained Logo" className="logo" />
-        </Link>
-
         {isMobile && (
           <button className="hamburger" onClick={toggleMenu}>
             <span className="bar" />
@@ -33,34 +29,57 @@ export default function Navbar() {
           </button>
         )}
 
-        <nav className={`nav-links ${isMobile ? (isOpen ? 'open' : 'collapsed') : ''}`}>
-          {isAuthenticated ? (
-            <>
-              <Link to="/dashboard">My Modules</Link>
-              <Link to="/badges">My Badges</Link>
-            </>
-          ) : (
+        <Link to="/">
+          <img src="/logo.png" alt="DaisyChained Logo" className="logo" />
+        </Link>
+
+        {!isMobile && (
+          <nav className="nav-links">
+            {!isAuthenticated ? (
+              <>
+                <Link to="/">Home</Link>
+                <Link to="/about">About</Link>
+                <Link to="/faq">FAQ</Link>
+                <Link to="/blog">Blog</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/dashboard">My Modules</Link>
+                <Link to="/badges">My Badges</Link>
+              </>
+            )}
+          </nav>
+        )}
+
+        <div className="auth-buttons">
+          <button className="outline-btn">Sign up</button>
+          <button
+            className="outline-btn"
+            onClick={() => loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })}
+          >
+            Log in
+          </button>
+        </div>
+      </div>
+
+      {isMobile && (
+        <nav className={`nav-links ${isOpen ? 'open' : 'collapsed'}`}>
+          {!isAuthenticated ? (
             <>
               <Link to="/">Home</Link>
               <Link to="/about">About</Link>
               <Link to="/faq">FAQ</Link>
               <Link to="/blog">Blog</Link>
             </>
+          ) : (
+            <>
+              <Link to="/dashboard">My Modules</Link>
+              <Link to="/badges">My Badges</Link>
+            </>
           )}
         </nav>
-
-        <div className={`auth-buttons ${isMobile ? 'mobile' : ''}`}>
-          <button className="outline-btn">Sign up</button>
-          <button
-            className="outline-btn"
-            onClick={() =>
-              loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })
-            }
-          >
-            Log in
-          </button>
-        </div>
-      </div>
+      )}
     </header>
+
   );
 }
