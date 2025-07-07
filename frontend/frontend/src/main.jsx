@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { Auth0Provider } from '@auth0/auth0-react';
 
-const domain = "dev-o0c1d1uad7stpveq.eu.auth0.com";
-const clientId = "6BTDt4Dpmx9EYgwBpwMsoY8UaZXuXxFn";
+const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+const redirectUri = import.meta.env.VITE_CALLBACK_URL;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -12,7 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       domain={domain}
       clientId={clientId}
       authorizationParams={{
-        redirect_uri: window.location.origin + "/callback"
+        redirect_uri: redirectUri
       }}
     >
       <App />
