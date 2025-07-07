@@ -31,7 +31,7 @@
 }
 
 .logo {
-  height: 2em;
+  height: 3em !important;
   pointer-events: none;
 }
 
@@ -60,7 +60,22 @@
 }
 
 @media screen and (min-width: 901px) {
+  .nav-container {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+
+  .logo {
+    margin-right: 2rem;
+  }
+
+  .nav-links {
+    justify-self: start;
+  }
+
   .auth-buttons {
+    justify-self: end;
     flex-direction: row;
     align-items: center;
   }
