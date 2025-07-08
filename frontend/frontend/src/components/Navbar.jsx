@@ -7,12 +7,14 @@ import './Navbar.css';
 export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
   const { loginWithRedirect, isAuthenticated } = useAuth0();
 
   useEffect(() => {
+    setHasMounted(true);
+    setIsMobile(window.innerWidth <= 900);
     const handleResize = () => setIsMobile(window.innerWidth <= 900);
     window.addEventListener('resize', handleResize);
-    handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
