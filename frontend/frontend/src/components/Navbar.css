@@ -41,7 +41,7 @@
 .nav-links {
   display: flex;
   gap: 2rem;
-  margin-left: 1.5rem;
+  /*margin-left: 1.5rem;*/
   justify-content: flex-start;
 }
 
@@ -137,7 +137,7 @@
 
   .nav-links {
     display: none;
-    /*margin-left: 0;*/
+    margin-left: 0;
   }
 
   .nav-links.open {
