@@ -36,7 +36,7 @@ export default function Navbar() {
         </Link>
 
         {!isMobile && (
-          <nav className="nav-links">
+          <nav className={`nav-links ${isMobile ? 'mobile-hidden' : ''}`}>
             {!isAuthenticated ? (
               <>
                 <Link to="/">Home</Link>

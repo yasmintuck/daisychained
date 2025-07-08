@@ -28,12 +28,14 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
+  min-height: 70px;
 }
 
 /* Logo */
 .logo {
   height: 2.5em;
   width: auto;
+  aspect-ratio: 1/1;
   display: block;
   pointer-events: none;
   margin-right: 1rem;
@@ -83,6 +85,10 @@
 .outline-btn:hover {
   background-color: var(--light-text);
   color: var(--dark-bg);
+}
+
+.mobile-hidden {
+  display: none;
 }
 
 /* Desktop Layout */
