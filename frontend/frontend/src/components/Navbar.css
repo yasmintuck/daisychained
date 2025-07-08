@@ -166,7 +166,7 @@
     max-height: 500px;
     opacity: 1;
     overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
+    /*transition: max-height 0.3s ease, opacity 0.3s ease;*/
     z-index: 999;
   }
 
