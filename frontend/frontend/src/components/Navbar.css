@@ -33,6 +33,8 @@
 /* Logo */
 .logo {
   height: 2.5em;
+  width: auto;
+  display: block;
   pointer-events: none;
   margin-right: 1rem;
 }
@@ -41,7 +43,7 @@
 .nav-links {
   display: flex;
   gap: 2rem;
-  /*margin-left: 1.5rem;*/
+  margin-left: 1.5rem;
   justify-content: flex-start;
 }
 
