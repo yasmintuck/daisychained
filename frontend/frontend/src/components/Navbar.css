@@ -23,9 +23,9 @@
   width: 100%;
   margin: 0 auto;
   padding: 0 2rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
 }
 
 .logo {
@@ -63,8 +63,9 @@
 /* Desktop layout */
 @media screen and (min-width: 901px) {
   .nav-container {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
   }
 
@@ -74,6 +75,7 @@
 
   .nav-links {
     justify-self: start;
+    transition: all 0.3s ease;
   }
 
   .auth-buttons {
