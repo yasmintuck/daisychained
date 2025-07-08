@@ -1,3 +1,5 @@
+/* src/components/Navbar.css */
+
 :root {
   --dark-bg: #231F20;
   --light-text: #ffffff;
@@ -25,43 +27,24 @@
   padding: 0 2rem;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  grid-template-areas: "hamburger logo auth";
   align-items: center;
-}
-
-/* Grid Area Mapping */
-.hamburger {
-  grid-area: hamburger;
-}
-
-.logo-container {
-  grid-area: logo;
-}
-
-.auth-buttons {
-  grid-area: auth;
 }
 
 /* Logo */
-.logo-container {
-  height: 2.5em;
-  display: flex;
-  align-items: center;
-}
-
 .logo {
-  height: 100%;
+  height: 2.5em;
   width: auto;
-  pointer-events: none;
   display: block;
+  pointer-events: none;
+  margin-right: 1rem;
 }
 
 /* Nav Links */
 .nav-links {
-  display: none;
-  margin-left: 0;
-  opacity: 0;
-  pointer-events: none;
+  display: flex;
+  gap: 2rem;
+  margin-left: 1.5rem;
+  justify-content: flex-start;
 }
 
 .nav-links a {
@@ -84,7 +67,6 @@
   gap: 0.5rem;
 }
 
-/* Outline Buttons */
 .outline-btn {
   font-family: 'Nunito', sans-serif;
   font-weight: 700;
@@ -105,29 +87,14 @@
 
 /* Desktop Layout */
 @media screen and (min-width: 901px) {
-  .nav-container {
-    grid-template-areas: "logo nav auth";
-    grid-template-columns: auto 1fr auto;
-  }
-
   .nav-links {
-    grid-area: nav;
-    display: flex;
-    gap: 2rem;
-    margin-left: 1.5rem;
-    justify-content: flex-start;
-    opacity: 1;
-    pointer-events: auto;
+    justify-self: start;
   }
 
   .auth-buttons {
+    justify-self: end;
     flex-direction: row;
     align-items: center;
-    justify-self: end;
-  }
-
-  .hamburger {
-    display: none;
   }
 }
 
@@ -135,17 +102,18 @@
 @media screen and (max-width: 900px) {
   .nav-container {
     grid-template-columns: auto auto 1fr;
-    grid-template-areas: "hamburger logo auth";
   }
 
   .hamburger {
     display: flex;
+    order: 0;
     flex-direction: column;
     justify-content: center;
     gap: 5px;
     background: none;
     border: none;
     cursor: pointer;
+    margin-left: 0rem;
     z-index: 1001;
   }
 
@@ -156,10 +124,22 @@
     border-radius: 2px;
   }
 
+  .logo {
+    order: 1;
+    margin-left: 0.5rem;
+  }
+
   .auth-buttons {
+    order: 2;
     flex-direction: row;
     gap: 0.5rem;
-    justify-self: end;
+    margin-left: auto;
+    margin-right: 0rem;
+  }
+
+  .nav-links {
+    display: none;
+    margin-left: 0;
   }
 
   .nav-links.open {
@@ -177,7 +157,6 @@
     overflow: hidden;
     transition: max-height 0.3s ease, opacity 0.3s ease;
     z-index: 999;
-    pointer-events: auto;
   }
 
   .nav-links.collapsed {
@@ -185,7 +164,6 @@
     opacity: 0;
     overflow: hidden;
     transition: max-height 0.3s ease, opacity 0.3s ease;
-    pointer-events: none;
   }
 }
 

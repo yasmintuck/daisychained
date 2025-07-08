@@ -21,8 +21,6 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="nav-container">
-
-        {/* Hamburger for mobile */}
         {isMobile && (
           <button className="hamburger" onClick={toggleMenu}>
             <span className="bar" />
@@ -31,45 +29,40 @@ export default function Navbar() {
           </button>
         )}
 
-        {/* Logo wrapped in container */}
-        <div className="logo-container">
-          <Link to="/">
-            <img src="/logo.png" alt="DaisyChained Logo" className="logo" />
-          </Link>
-        </div>
+        <Link to="/">
+          <img src="/logo.png" alt="DaisyChained Logo" className="logo" />
+        </Link>
 
-        {/* Auth Buttons */}
+        {!isMobile && (
+          <nav className="nav-links">
+            {!isAuthenticated ? (
+              <>
+                <Link to="/">Home</Link>
+                <Link to="/about">About</Link>
+                <Link to="/faq">FAQ</Link>
+                <Link to="/blog">Blog</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/dashboard">My Modules</Link>
+                <Link to="/badges">My Badges</Link>
+              </>
+            )}
+          </nav>
+        )}
+
         <div className="auth-buttons">
           <button className="outline-btn">Sign up</button>
           <button
             className="outline-btn"
-            onClick={() =>
-              loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })
-            }
+            onClick={() => loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })}
           >
             Log in
           </button>
         </div>
       </div>
 
-      {/* Navigation links - mobile OR desktop */}
-      {!isMobile ? (
-        <nav className="nav-links">
-          {!isAuthenticated ? (
-            <>
-              <Link to="/">Home</Link>
-              <Link to="/about">About</Link>
-              <Link to="/faq">FAQ</Link>
-              <Link to="/blog">Blog</Link>
-            </>
-          ) : (
-            <>
-              <Link to="/dashboard">My Modules</Link>
-              <Link to="/badges">My Badges</Link>
-            </>
-          )}
-        </nav>
-      ) : (
+      {isMobile && (
         <nav className={`nav-links ${isOpen ? 'open' : 'collapsed'}`}>
           {!isAuthenticated ? (
             <>
@@ -87,5 +80,6 @@ export default function Navbar() {
         </nav>
       )}
     </header>
+
   );
 }
