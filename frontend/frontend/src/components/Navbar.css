@@ -90,6 +90,21 @@
   color: var(--dark-bg);
 }
 
+.login-profile-pic {
+  height: 38px; /* same as login button height */
+  width: 38px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.login-profile-pic:hover {
+  transform: scale(1.05);
+}
+
+
 /* Hide element in DOM but visually remove for mobile logic */
 .mobile-hidden {
   display: none;

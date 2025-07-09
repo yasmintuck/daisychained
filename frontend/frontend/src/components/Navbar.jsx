@@ -8,7 +8,7 @@ export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, user } = useAuth0();
 
   useEffect(() => {
     setHasMounted(true);
@@ -53,14 +53,26 @@ export default function Navbar() {
           </nav>
         )}
 
-        <div className="auth-buttons">
+      <div className="auth-buttons">
+        {!isAuthenticated ? (
           <button
             className="outline-btn"
-            onClick={() => loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })}
+            onClick={() =>
+              loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })
+            }
           >
             Log in
           </button>
-        </div>
+        ) : (
+          user?.picture && (
+            <img
+              src={user.picture}
+              alt="User profile"
+              className="login-profile-pic"
+            />
+          )
+        )}
+      </div>
       </div>
 
       {isMobile && (
