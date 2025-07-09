@@ -17,7 +17,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <h1 className="page-title">Dashboard</h1><br />
+      <h1 className="page-title">Dashboard</h1>
       <ModuleLoader />
       <br />
       <button

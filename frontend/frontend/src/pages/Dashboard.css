@@ -15,11 +15,18 @@
 }
 
 .dashboard-container {
-  max-width: 1280px;        /* match nav-container max width */
+  max-width: var(--max-container-width);
   margin: 0 auto;
   padding: 4rem 2rem;
-  width: 100%;
   box-sizing: border-box;
+  width: 100%;
+}
+
+@media screen and (min-width: 1281px) {
+  .dashboard-container {
+    padding-left: calc((100vw - var(--max-container-width)) / 2);
+    padding-right: calc((100vw - var(--max-container-width)) / 2);
+  }
 }
 
 @media (max-width: 900px) {
