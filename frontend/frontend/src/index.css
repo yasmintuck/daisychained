@@ -1,12 +1,33 @@
+/* index.css */
+
+/* Font import and base setup */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
 
 :root {
   font-family: 'Nunito', sans-serif;
   font-weight: 400;
+  --text-light: #ffffff;
+  --bg-dark: #2c2829;
+  --heading-size: 2.5rem;
+  --subheading-size: 1.25rem;
+  --paragraph-size: 1rem;
 }
 
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: var(--font-family);
+}
+
+/* Link resets and smoothness */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+* {
+  box-sizing: border-box;
 }

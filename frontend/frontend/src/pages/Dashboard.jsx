@@ -2,23 +2,12 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 import ModuleLoader from "../components/ModuleLoader";
 import { useState } from "react";
-import "../index.css";
+import './dashboard.css';
 
 function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
 
   console.log("LOGOUT REDIRECT:", import.meta.env.VITE_LOGOUT_URL); 
-
-  useEffect(() => {
-    document.body.style.margin = "0";
-    //document.body.style.fontFamily = "'Open Sans', sans-serif";
-    document.body.style.backgroundColor = "#2C2829";
-    document.body.style.color = "#ffffff";
-
-    return () => {
-      document.body.style = null;
-    };
-  }, []);
 
   if (isLoading) return <p style={{ padding: "2rem" }}>Loading...</p>;
   if (!isAuthenticated) return <p style={{ padding: "2rem" }}>Not authenticated</p>;
@@ -27,11 +16,11 @@ function Dashboard() {
   const domain = email.substring(email.lastIndexOf("@") + 1); // Get domain after @
 
   return (
-    <div style={{ padding: "4rem 2rem" }}>
-      <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>Dashboard</h1>
-      <p style={{ fontSize: "1.25rem" }}>Hello <strong>{user.given_name}</strong> 👋. Welcome to daisychained.</p>
-      <p style={{ fontSize: "1rem", marginTop: "1rem" }}>This is a development environment, and soon it's going to look amazing. For now, I want you to know that you're a registered user of daisychained.</p>
-      <p style={{ fontSize: "1rem", marginTop: "1rem" }}>Check out the modules you have access to below. If you logged in with a Google account, you'll see AI modules. If you logged in with a Hotmail account, you'll see personal development modules.</p>
+    <div className="page-container">
+      <h1 className="page-title">Dashboard</h1>
+      <p className="page-subtitle">Hello <strong>{user.given_name}</strong> 👋. Welcome to daisychained.</p>
+      <p className="page-text">This is a development environment, and soon it's going to look amazing. For now, I want you to know that you're a registered user of daisychained.</p>
+      <p className="page-text">Check out the modules you have access to below. If you logged in with a Google account, you'll see AI modules. If you logged in with a Hotmail account, you'll see personal development modules.</p>
 
       {user.picture && (
         <img
