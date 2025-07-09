@@ -3,15 +3,10 @@
 :root {
   font-family: 'Nunito', sans-serif;
   font-weight: 400;
-  background-color: #2C2829;
-  color: #ffffff;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #2C2829;
-  color: #ffffff;
   min-height: 100vh;
-  overflow-x: hidden; /* ✅ only block sideways scroll */
 }
