@@ -55,23 +55,26 @@ export default function Navbar() {
 
       <div className="auth-buttons">
         {!isAuthenticated ? (
-          <button
-            className="outline-btn"
-            onClick={() =>
-              loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })
-            }
-          >
-            Log in
-          </button>
-        ) : (
-          user?.picture && (
-            <img
-              src={user.picture}
-              alt="User profile"
-              className="login-profile-pic"
-            />
-          )
-        )}
+  <button
+    className="outline-btn"
+    onClick={() =>
+      loginWithRedirect({
+        authorizationParams: { prompt: 'select_account' },
+      })
+    }
+  >
+    Log in
+  </button>
+) : (
+  <div className="profile-area">
+    <span className="nav-links-style">{user?.given_name}</span>
+    <img
+      src={user?.picture}
+      alt="User profile"
+      className="login-profile-pic"
+    />
+  </div>
+)}
       </div>
       </div>
 
