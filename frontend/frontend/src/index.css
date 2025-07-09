@@ -13,6 +13,5 @@ body {
   background-color: #2C2829;
   color: #ffffff;
   min-height: 100vh;
+  overflow-x: hidden; /* ✅ only block sideways scroll */
 }
-
-

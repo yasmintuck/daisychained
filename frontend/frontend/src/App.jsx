@@ -15,6 +15,7 @@ import Badges from "./pages/Badges";
 
 function App() {
   return (
+    <div className="app-wrapper">
     <>
       <Navbar />
 
@@ -61,6 +62,7 @@ function App() {
         />
       </Routes>
     </>
+    </div>
   );
 }
 

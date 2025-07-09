@@ -54,7 +54,6 @@ export default function Navbar() {
         )}
 
         <div className="auth-buttons">
-          <button className="outline-btn">Sign up</button>
           <button
             className="outline-btn"
             onClick={() => loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })}

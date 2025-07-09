@@ -8,17 +8,6 @@ function Dashboard() {
 
   console.log("LOGOUT REDIRECT:", import.meta.env.VITE_LOGOUT_URL); 
 
-  useEffect(() => {
-    document.body.style.margin = "0";
-    document.body.style.fontFamily = "'Open Sans', sans-serif";
-    document.body.style.backgroundColor = "#303030";
-    document.body.style.color = "#ffffff";
-
-    return () => {
-      document.body.style = null;
-    };
-  }, []);
-
   if (isLoading) return <p style={{ padding: "2rem" }}>Loading...</p>;
   if (!isAuthenticated) return <p style={{ padding: "2rem" }}>Not authenticated</p>;
 
