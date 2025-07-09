@@ -16,26 +16,8 @@ function Dashboard() {
   const domain = email.substring(email.lastIndexOf("@") + 1); // Get domain after @
 
   return (
-    <div className="page-container">
-      <h1 className="page-title">Dashboard</h1>
-      <p className="page-subtitle">Hello <strong>{user.given_name}</strong> 👋. Welcome to daisychained.</p>
-      <p className="page-text">This is a development environment, and soon it's going to look amazing. For now, I want you to know that you're a registered user of daisychained.</p>
-      <p className="page-text">Check out the modules you have access to below. If you logged in with a Google account, you'll see AI modules. If you logged in with a Hotmail account, you'll see personal development modules.</p>
-
-      {user.picture && (
-        <img
-          src={user.picture}
-          alt="User profile"
-          style={{
-            width: "80px",
-            height: "80px",
-            objectFit: "cover",
-            borderRadius: "8px",
-            marginTop: "1rem",
-          }}
-        />
-      )}
-      <br />
+    <div className="dashboard-container">
+      <h1 className="page-title">Dashboard</h1><br />
       <ModuleLoader />
       <br />
       <button
