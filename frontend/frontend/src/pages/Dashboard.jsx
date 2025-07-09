@@ -10,8 +10,8 @@ function Dashboard() {
 
   useEffect(() => {
     document.body.style.margin = "0";
-    document.body.style.fontFamily = "'Open Sans', sans-serif";
-    document.body.style.backgroundColor = "#303030";
+    //document.body.style.fontFamily = "'Open Sans', sans-serif";
+    document.body.style.backgroundColor = "#2C2829";
     document.body.style.color = "#ffffff";
 
     return () => {
