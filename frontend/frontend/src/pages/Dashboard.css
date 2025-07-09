@@ -31,7 +31,7 @@
 
 @media (max-width: 900px) {
   .dashboard-container {
-    padding: 2rem 1.25rem;
+    padding: 4rem 2rem;
   }
 
   .desktop-only {
