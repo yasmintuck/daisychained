@@ -93,7 +93,7 @@
 .login-profile-pic {
   height: 38px; /* same as login button height */
   width: 38px;
-  border: 2px solid #fff;
+  border: 2px solid #ffffff30;
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
@@ -107,13 +107,13 @@
 .profile-area {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .profile-area .nav-links-style {
   color: white;
-  font-weight: 400;
-  font-size: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
   text-decoration: none;
 }
 
