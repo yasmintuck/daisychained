@@ -21,7 +21,7 @@ function Dashboard() {
         <div className="sidebar">
         </div>
         <div className="content-wrapper">
-          <h1 className="page-title">Dashboard</h1>
+          <div className="page-title">Dashboard</div>
           <ModuleLoader />
         </div>
       </div>

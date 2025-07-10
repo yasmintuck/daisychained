@@ -45,7 +45,7 @@
 /* Nav Links */
 .nav-links {
   display: flex;
-  gap: 4rem;
+  gap: 3rem;
   margin-left: 1.5rem;
   justify-content: flex-start;
 }
@@ -128,7 +128,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.5rem;
   cursor: pointer;
 }
 
@@ -177,6 +177,13 @@
   background-color: #f2f2f2;
 }
 
+.nav-links a.active-link {
+  font-weight: 900 !important;
+  /*color: #eee6d5 !important;*/
+    color: var(--grey-hover);
+  text-shadow: 0.3px 0 0 currentColor;
+}
+
 
 /* Desktop Layout */
 @media screen and (min-width: 901px) {
@@ -189,10 +196,6 @@
     flex-direction: row;
     align-items: center;
   }
-}
-
-.active-link {
-  font-weight: 800;
 }
 
 /* Mobile Layout */
@@ -252,7 +255,7 @@
     background-color: var(--dark-bg);
     flex-direction: column;
     gap: 1.5rem;
-    padding: 1.5rem 2.5rem;
+    padding: 1.5rem 1.3rem;
     max-height: 0;
     opacity: 0;
     overflow: hidden;

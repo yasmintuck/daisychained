@@ -53,23 +53,23 @@ export default function Navbar() {
           </button>
         )}
 
-        <Link to="/">
+
           <img src="/logo.png" alt="DaisyChained Logo" className="logo" />
-        </Link>
+
 
         {!isMobile && (
           <nav className={`nav-links ${isMobile ? 'mobile-hidden' : ''}`}>
             {!isAuthenticated ? (
               <>
-                <Link to="/">Home</Link>
-                <Link to="/about">About</Link>
-                <Link to="/faq">FAQs</Link>
-                <Link to="/blog">Blog</Link>
+                <Link to="/" className={location.pathname === "/" ? "active-link" : ""}>Home</Link>
+                <Link to="/about" className={location.pathname === "/about" ? "active-link" : ""}>About</Link>
+                <Link to="/faq" className={location.pathname === "/faq" ? "active-link" : ""}>FAQs</Link>
+                <Link to="/blog" className={location.pathname === "/blog" ? "active-link" : ""}>Blog</Link>
               </>
             ) : (
               <>
-                <Link to="/dashboard">Dashboard</Link>
-                <Link to="/badges">Badges</Link>
+                <Link to="/dashboard" className={location.pathname === "/dashboard" ? "active-link" : ""}>Dashboard</Link>
+                <Link to="/badges" className={location.pathname === "/badges" ? "active-link" : ""}>Badges</Link>
               </>
             )}
           </nav>
