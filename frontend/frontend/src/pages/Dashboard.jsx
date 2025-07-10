@@ -18,21 +18,7 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <div className="main-content">
-        <div className="sidebar">
-          <button
-            onClick={() =>
-              logout({
-                logoutParams: {
-                  returnTo: import.meta.env.VITE_LOGOUT_URL,
-                  client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
-                },
-              })
-            }
-            className="logout-button"
-          >
-            Log Out
-          </button>
-        </div>
+        <div className="sidebar"></div>
         <div className="content-wrapper">
           <h1 className="page-title">Dashboard</h1>
           <ModuleLoader />

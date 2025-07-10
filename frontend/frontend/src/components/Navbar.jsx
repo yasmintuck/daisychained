@@ -1,7 +1,8 @@
 // src/components/Navbar.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -20,9 +21,24 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowDropdown(false);
+    }
+  };
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
+
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const toggleDropdown = () => setShowDropdown(prev => !prev);
+
+  const dropdownRef = useRef(null);
 
   return (
     <header className="navbar">
@@ -70,7 +86,7 @@ export default function Navbar() {
               Log in
             </button>
           ) : (
-            <div className="profile-wrapper" onClick={toggleDropdown}>
+            <div className="profile-wrapper" ref={dropdownRef} onClick={toggleDropdown}>
               <span className="nav-links-style">{user?.given_name}</span>
               <img
                 src={user?.picture}
