@@ -41,13 +41,13 @@ export default function Navbar() {
               <>
                 <Link to="/">Home</Link>
                 <Link to="/about">About</Link>
-                <Link to="/faq">FAQ</Link>
+                <Link to="/faq">FAQs</Link>
                 <Link to="/blog">Blog</Link>
               </>
             ) : (
               <>
-                <Link to="/dashboard">My Modules</Link>
-                <Link to="/badges">My Badges</Link>
+                <Link to="/dashboard">Dashboard</Link>
+                <Link to="/badges">Badges</Link>
               </>
             )}
           </nav>
