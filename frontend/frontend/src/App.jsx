@@ -25,6 +25,7 @@ function App() {
   //     </div>
   //   );
   // }  
+  const { isLoading } = useAuth0();
 
   return (
     <div className="app-wrapper">
