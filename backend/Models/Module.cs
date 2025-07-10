@@ -5,7 +5,10 @@ public class Module
     public int ModuleId { get; set; }
     public string ModuleTitle { get; set; }
     public string ModuleDescription { get; set; }
+    public string CoverImageUrl { get; set; }
+    public string Duration { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime LastUpdated { get; set; }
 
     public ICollection<UserProgress> UserProgressRecords { get; set; } = new List<UserProgress>();
 }
