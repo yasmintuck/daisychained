@@ -134,7 +134,9 @@
 
 .nav-username {
   color: white;
+  font-family: 'Nunito', sans-serif;
   font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .user-profile-img {

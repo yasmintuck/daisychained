@@ -5,7 +5,7 @@
 
 :root {
   font-family: 'Nunito', sans-serif;
-  font-weight: 400;
+  font-weight: 600;
   --text-light: #ffffff;
   --bg-dark: #2c2829;
   --heading-size: 1.5rem;
@@ -30,4 +30,23 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: white;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }

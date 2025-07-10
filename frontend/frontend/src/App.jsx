@@ -15,6 +15,16 @@ import Weather from "./pages/Weather";
 import Badges from "./pages/Badges";
 
 function App() {
+  const { isLoading } = useAuth0();
+
+  if (isLoading) {
+    return (
+      <div className="spinner-wrapper">
+        <img src="/logo.png" alt="Loading..." className="spinner" />
+      </div>
+    );
+  }  
+
   return (
     <div className="app-wrapper">
     <>
