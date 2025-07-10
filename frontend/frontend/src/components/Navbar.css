@@ -209,10 +209,9 @@
   }
 }
 
-/* Widescreen Padding Constraint */
 @media screen and (min-width: 1281px) {
   .nav-container {
-    padding-left: calc((100vw - var(--max-container-width)) / 2);
-    padding-right: calc((100vw - var(--max-container-width)) / 2);
+    padding-left: min(2rem, calc((100vw - var(--max-container-width)) / 2));
+    padding-right: min(2rem, calc((100vw - var(--max-container-width)) / 2));
   }
 }
