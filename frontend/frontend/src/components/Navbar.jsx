@@ -84,7 +84,7 @@ export default function Navbar() {
             <>
               <Link to="/">Home</Link>
               <Link to="/about">About</Link>
-              <Link to="/faq">FAQ</Link>
+              <Link to="/faq">FAQs</Link>
               <Link to="/blog">Blog</Link>
             </>
           ) : (
