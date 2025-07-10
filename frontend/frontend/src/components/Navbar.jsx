@@ -40,6 +40,8 @@ export default function Navbar() {
 
   const dropdownRef = useRef(null);
 
+  const location = useLocation();
+
   return (
     <header className="navbar">
       <div className="nav-container">
@@ -127,8 +129,12 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/dashboard">Dashboard</Link>
-              <Link to="/badges">Badges</Link>
+                <Link
+                  to="/dashboard"
+                  className={location.pathname === "/dashboard" ? "active-link" : ""}
+              >   Dashboard
+                </Link>
+                <Link to="/badges">Badges</Link>
             </>
           )}
         </nav>
