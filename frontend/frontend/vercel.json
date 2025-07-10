@@ -8,12 +8,11 @@
       "has": [
         {
           "type": "host",
-          "value": "daisychained.co.uk"
+          "value": "www.daisychained.co.uk"
         }
       ],
-      "destination": "https://www.daisychained.co.uk/:1",
+      "destination": "https://daisychained.co.uk/:1",
       "statusCode": 308
     }
   ]
 }
-
