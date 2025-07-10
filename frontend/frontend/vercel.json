@@ -1,18 +1,5 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
-  ],
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.daisychained.co.uk"
-        }
-      ],
-      "destination": "https://daisychained.co.uk/:1",
-      "statusCode": 308
-    }
   ]
 }
