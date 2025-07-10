@@ -89,8 +89,8 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/dashboard">My Modules</Link>
-              <Link to="/badges">My Badges</Link>
+              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/badges">Badges</Link>
             </>
           )}
         </nav>

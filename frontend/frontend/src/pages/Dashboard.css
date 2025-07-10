@@ -15,16 +15,15 @@
 }
 
 .dashboard-container {
-  background-color: #ffffff;
-  color: #231F20; /* Optional: dark text on white */
-  max-width: var(--max-container-width);
-  margin: 0 auto;
-  padding: 4rem 2rem;
-  box-sizing: border-box;
-  width: 100%;
+  max-width: 1350px;            /* Match --max-container-width */
+  margin: 70px auto;
+  padding: 2rem 2rem;
+  background-color: #ffffff;    /* White background */
+  color: #231F20;               /* Dark text to match */
+  min-height: 100vh;
 }
 
-@media screen and (min-width: 1281px) {
+@media screen and (min-width: 1351px) {
   .dashboard-container {
     padding-left: calc((100vw - var(--max-container-width)) / 2);
     padding-right: calc((100vw - var(--max-container-width)) / 2);
