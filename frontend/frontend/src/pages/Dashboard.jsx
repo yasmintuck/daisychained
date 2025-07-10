@@ -2,14 +2,15 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 import ModuleLoader from "../components/ModuleLoader";
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
 import './Dashboard.css';
 
 function Dashboard() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated, isLoading, logout } = useAuth0();
+
+  console.log("LOGOUT REDIRECT:", import.meta.env.VITE_LOGOUT_URL); 
 
   if (isLoading) return <p style={{ padding: "2rem" }}>Loading...</p>;
-  if (!isAuthenticated) return <Navigate to="/" />;
+  if (!isAuthenticated) return <p style={{ padding: "2rem" }}>Not authenticated</p>;
 
   const email = user?.email || "";
   const domain = email.substring(email.lastIndexOf("@") + 1); // Get domain after @
@@ -17,7 +18,8 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <div className="main-content">
-        <div className="sidebar"></div>
+        <div className="sidebar">
+        </div>
         <div className="content-wrapper">
           <h1 className="page-title">Dashboard</h1>
           <ModuleLoader />

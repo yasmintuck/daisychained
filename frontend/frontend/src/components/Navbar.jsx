@@ -11,10 +11,7 @@ export default function Navbar() {
   const [hasMounted, setHasMounted] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const { loginWithRedirect, isAuthenticated, user, logout, isLoading } = useAuth0();
-
-  if (isLoading) return null; // stops it from showing weird blank state
-
+  const { loginWithRedirect, isAuthenticated, user, logout } = useAuth0();
 
   useEffect(() => {
     setHasMounted(true);
