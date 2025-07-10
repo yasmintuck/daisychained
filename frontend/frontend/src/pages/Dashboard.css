@@ -1,5 +1,4 @@
 /* dashboard.css */
-
 .page-title {
   font-size: var(--heading-size);
   margin-bottom: 1rem;
@@ -23,6 +22,107 @@
   min-height: 100vh;
 }
 
+.main-content {
+  display: flex;
+  gap: 20px;
+}
+
+.sidebar {
+  width: 20%;
+  min-width: 200px;
+  background-color: white;
+  padding: 20px;
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.logout-button {
+  padding: 8px 24px;
+  border: 2px solid #231F20;
+  border-radius: 21px;
+  font-size: 14px;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  color: #231F20;
+  margin-top: 1rem;
+}
+
+.logout-button:hover {
+  background: #231F20;
+  color: #ffffff;
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-area {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
+  padding: 30px 0;
+}
+
+.course-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.course-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+}
+
+.card-image {
+  height: 40%;
+  background-size: cover;
+  background-position: center;
+}
+
+.course-content {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.course-title {
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #303030;
+  line-height: 1.4;
+}
+
+.course-duration {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #303030;
+  margin-top: 6px;
+}
+
+.course-duration::before {
+  content: "🕒 ";
+}
+
+.course-updated {
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: #9a9a9a;
+}
+
+
 @media screen and (min-width: 1351px) {
   .dashboard-container {
     padding-left: calc((100vw - var(--max-container-width)) / 2);
@@ -42,6 +142,11 @@
   .mobile-only {
     display: block;
   }
+
+  .main-content {
+    display: none;
+  }
+
 }
 
 @media (min-width: 901px) {

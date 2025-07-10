@@ -43,27 +43,39 @@ const ModuleLoader = () => {
   }, [isAuthenticated, user]);
 
   return (
-    <div>
-      <h3 style={{ marginTop: "2rem" }}>Modules you have access to:</h3>
-
+    <>
       {loading ? (
-        <p style={{ marginTop: "2rem", color: "white" }}>
+        <p style={{ marginTop: "2rem", color: "#231F20" }}>
           Loading your modules...
         </p>
       ) : modules.length > 0 ? (
-        <div style={{ marginTop: "1rem" }}>
-          {modules.map((m) => (
-            <div key={m.moduleId} style={{ marginBottom: "1rem" }}>
-              <strong>{m.moduleTitle}</strong> — {m.moduleDescription}
+        <div className="course-area">
+          {modules.slice(0, 12).map((mod) => (
+            <div className="course-card" key={mod.moduleId}>
+              <div
+                className="card-image"
+                style={{
+                  backgroundImage: `url(${mod.coverImageUrl})`,
+                }}
+              />
+              <div className="course-content">
+                <div className="course-title">{mod.moduleTitle}</div>
+                <div>
+                  <div className="course-duration">{mod.duration}</div>
+                  <div className="course-updated">
+                    Updated: {new Date(mod.lastUpdated).toLocaleDateString()}
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
       ) : (
-        <p style={{ marginTop: "1rem", color: "white" }}>
+        <p style={{ marginTop: "1rem", color: "#231F20" }}>
           You don’t currently have access to any modules.
         </p>
       )}
-    </div>
+    </>
   );
 };
 

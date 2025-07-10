@@ -17,31 +17,27 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <h1 className="page-title">Dashboard</h1>
-      <ModuleLoader />
-      <br />
-      <button
-        onClick={() =>
-          logout({
-            logoutParams: {
-              returnTo: import.meta.env.VITE_LOGOUT_URL,
-              client_id: import.meta.env.VITE_AUTH0_CLIENT_ID, // Add this line
-            },
-          })
-        }
-        style={{
-          marginTop: "2rem",
-          padding: "0.6rem 1.2rem",
-          fontSize: "1rem",
-          background: "transparent",
-          border: "2px solid white",
-          color: "white",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-      >
-        Log Out
-      </button>
+      <div className="main-content">
+        <div className="sidebar">
+          <button
+            onClick={() =>
+              logout({
+                logoutParams: {
+                  returnTo: import.meta.env.VITE_LOGOUT_URL,
+                  client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
+                },
+              })
+            }
+            className="logout-button"
+          >
+            Log Out
+          </button>
+        </div>
+        <div className="content-wrapper">
+          <h1 className="page-title">Dashboard</h1>
+          <ModuleLoader />
+        </div>
+      </div>
     </div>
   );
 }
