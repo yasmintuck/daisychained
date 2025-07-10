@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-//import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import Navbar from "./components/Navbar";
 import CallbackHandler from "./components/CallbackHandler";
 import PrivateRoute from "./components/PrivateRoute";
