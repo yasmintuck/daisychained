@@ -8,7 +8,9 @@ export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
-  const { loginWithRedirect, isAuthenticated, user } = useAuth0();
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const { loginWithRedirect, isAuthenticated, user, logout } = useAuth0();
 
   useEffect(() => {
     setHasMounted(true);
@@ -19,6 +21,8 @@ export default function Navbar() {
   }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  const toggleDropdown = () => setShowDropdown(prev => !prev);
 
   return (
     <header className="navbar">
@@ -53,29 +57,47 @@ export default function Navbar() {
           </nav>
         )}
 
-      <div className="auth-buttons">
-        {!isAuthenticated ? (
-  <button
-    className="outline-btn"
-    onClick={() =>
-      loginWithRedirect({
-        authorizationParams: { prompt: 'select_account' },
-      })
-    }
-  >
-    Log in
-  </button>
-) : (
-  <div className="profile-area">
-    <span className="nav-links-style">{user?.given_name}</span>
-    <img
-      src={user?.picture}
-      alt="User profile"
-      className="login-profile-pic"
-    />
-  </div>
-)}
-      </div>
+        <div className="auth-buttons">
+          {!isAuthenticated ? (
+            <button
+              className="outline-btn"
+              onClick={() =>
+                loginWithRedirect({
+                  authorizationParams: { prompt: 'select_account' },
+                })
+              }
+            >
+              Log in
+            </button>
+          ) : (
+            <div className="profile-wrapper" onClick={toggleDropdown}>
+              <span className="nav-links-style">{user?.given_name}</span>
+              <img
+                src={user?.picture}
+                alt="User profile"
+                className="login-profile-pic"
+              />
+              {showDropdown && (
+                <div className="dropdown-menu">
+                  {/* Add more links here if needed */}
+                  <button
+                    className="dropdown-item"
+                    onClick={() =>
+                      logout({
+                        logoutParams: {
+                          returnTo: import.meta.env.VITE_LOGOUT_URL,
+                          client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
+                        },
+                      })
+                    }
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {isMobile && (
@@ -96,6 +118,5 @@ export default function Navbar() {
         </nav>
       )}
     </header>
-
   );
 }
