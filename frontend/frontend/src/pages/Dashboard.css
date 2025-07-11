@@ -147,59 +147,31 @@
   color: #ffffff;
 }
 
-.spinner-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: white;
-}
-
-.spinner {
-  width: 45px;
-  height: 45px;
-  animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-
-@media screen and (min-width: 1351px) {
-  .dashboard-container {
-    padding-left: calc((100vw - var(--max-container-width)) / 2);
-    padding-right: calc((100vw - var(--max-container-width)) / 2);
-  }
-}
-
+/* Small screen view - show only 2 columns */
 @media (max-width: 900px) {
-  .dashboard-container {
-    padding: 4rem 2rem;
-  }
-
-  .desktop-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-
-  .main-content {
-    display: none;
-  }
-
-}
-
-@media (min-width: 901px) {
-  .mobile-only {
-    display: none;
-  }
-
-  .desktop-only {
-    display: block;
+  .course-area {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
+/* Tablet view - sidebar hidden for now */ 
+@media (max-width: 767px) {
+  .sidebar {
+    display: none;
+  }
+
+    .main-content {
+    flex-direction: column;
+  }
+
+  .content-wrapper {
+    width: 100%;
+  }
+}
+
+/* Mobile view - 1 column only */
+@media (max-width: 600px) {
+  .course-area {
+    grid-template-columns: 1fr;
+  }
+}

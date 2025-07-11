@@ -271,9 +271,9 @@
   }
 }
 
-@media screen and (min-width: 1351px) {
+/*@media screen and (min-width: 1351px) {
   .nav-container {
     padding-left: calc((100vw - var(--max-container-width)) / 2);
     padding-right: calc((100vw - var(--max-container-width)) / 2);
   }
-}
+}*/
