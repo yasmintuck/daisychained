@@ -1,15 +1,20 @@
-namespace backend.Models;
-
-public class UserProgress
+namespace backend.Models
 {
-    public int UserProgressId { get; set; }
+    public class UserProgress
+    {
+        public int UserProgressId { get; set; }
 
-    public int UserId { get; set; }
-    public User User { get; set; }
+        // Foreign Key → User
+        public int UserId { get; set; }
+        public User User { get; set; }
 
-    public int ModuleId { get; set; }
-    public Module Module { get; set; }
+        // Foreign Key → Module
+        public int ModuleId { get; set; }
+        public Module Module { get; set; }
 
-    public int Progress { get; set; }
-    public DateTime LastAccessed { get; set; } = DateTime.UtcNow;
+        // 0 = Not Started, 1 = In Progress, 2 = Completed
+        public int Progress { get; set; } = 0;
+
+        public DateTime LastAccessed { get; set; } = DateTime.UtcNow;
+    }
 }
