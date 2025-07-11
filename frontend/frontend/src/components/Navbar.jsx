@@ -11,7 +11,7 @@ export default function Navbar() {
   const [hasMounted, setHasMounted] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const { loginWithRedirect, isAuthenticated, user, logout } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, user, logout, isLoading } = useAuth0();
 
   useEffect(() => {
     setHasMounted(true);
@@ -41,6 +41,8 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
 
   const location = useLocation();
+
+  if (isLoading) return null;
 
   return (
     <header className="navbar">

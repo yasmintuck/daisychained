@@ -3,14 +3,18 @@ import { useEffect } from "react";
 import ModuleLoader from "../components/ModuleLoader";
 import { useState } from "react";
 import './Dashboard.css';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
 
-  console.log("LOGOUT REDIRECT:", import.meta.env.VITE_LOGOUT_URL); 
+  console.log("Auth0 state:", {
+  isLoading,
+  isAuthenticated,
+  user,
+});
 
-  if (isLoading) return <p style={{ padding: "2rem" }}>Loading...</p>;
-  if (!isAuthenticated) return <p style={{ padding: "2rem" }}>Not authenticated</p>;
+if (!isAuthenticated) return null;
 
   const email = user?.email || "";
   const domain = email.substring(email.lastIndexOf("@") + 1); // Get domain after @
