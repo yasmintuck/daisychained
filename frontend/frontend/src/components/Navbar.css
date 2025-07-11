@@ -43,7 +43,7 @@
 .nav-links {
   display: flex;
   gap: 3rem;
-  margin-left: 1.5rem;
+  /*margin-left: 1.5rem;*/
   justify-content: flex-start;
 }
 
