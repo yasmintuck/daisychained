@@ -20,16 +20,14 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateProgress([FromBody] UserProgressUpdateDto dto)
         {
-            // Check if the user and module exist using their IDs
-            var userExists = await _context.Users.AnyAsync(u => u.UserId == dto.UserId);
-            var moduleExists = await _context.Modules.AnyAsync(m => m.ModuleId == dto.ModuleId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == dto.UserEmail);
+            var module = await _context.Modules.FirstOrDefaultAsync(m => m.Slug == dto.Slug);
 
-            if (!userExists || !moduleExists)
+            if (user == null || module == null)
                 return NotFound("User or module not found");
 
-            // Check if a progress record already exists
             var existingProgress = await _context.UserProgressRecords
-                .FirstOrDefaultAsync(p => p.UserId == dto.UserId && p.ModuleId == dto.ModuleId);
+                .FirstOrDefaultAsync(p => p.UserId == user.UserId && p.ModuleId == module.ModuleId);
 
             if (existingProgress != null)
             {
@@ -40,8 +38,8 @@ namespace backend.Controllers
             {
                 _context.UserProgressRecords.Add(new UserProgress
                 {
-                    UserId = dto.UserId,
-                    ModuleId = dto.ModuleId,
+                    UserId = user.UserId,
+                    ModuleId = module.ModuleId,
                     Progress = dto.Progress,
                     LastAccessed = DateTime.UtcNow
                 });
@@ -50,5 +48,6 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
     }
 }
