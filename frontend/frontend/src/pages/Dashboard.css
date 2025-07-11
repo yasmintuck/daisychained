@@ -14,7 +14,7 @@
 
 .dashboard-container {
   max-width: 1350px;            /* Match --max-container-width */
-  margin: 70px auto;
+  margin: 0 auto;
   padding: 2rem 2rem;
   background-color: #ffffff;    /* White background */
   color: #231F20;               /* Dark text to match */
