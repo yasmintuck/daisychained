@@ -659,22 +659,22 @@
       <script>__loadEntry()</script>
       <script>
           const params = new URLSearchParams(window.location.search);
-          const userId = parseInt(params.get("userId"));
+          const userExternalId = params.get("userId"); // leave as string
           const moduleId = parseInt(params.get("moduleId"));
 
           function sendProgressUpdate(progressLevel) {
-              if (!userId || !moduleId) {
+              if (!userExternalId || !moduleId) {
                   console.warn("Missing userId or moduleId from URL");
                   return;
               }
 
-              console.log("Sending progress:", ...)
+              console.log("userId:", userExternalId, "moduleId:", moduleId, "progress:", progressLevel);
 
-              fetch("https://daisychained-api-dcargv9h9s6defkgh.uksouth-01.azurewebsites.net/api/userprogress", {
+              fetch("https://daisychained-api-dcargv9h6d0fkgh.uksouth-01.azurewebsites.net/api/userprogress", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                      userId,
+                      userExternalId,
                       moduleId,
                       progress: progressLevel
                   })
