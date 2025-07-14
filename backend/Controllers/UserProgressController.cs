@@ -40,7 +40,11 @@ namespace backend.Controllers
 
             if (existingProgress != null)
             {
-                existingProgress.Progress = dto.Progress;
+                if (dto.Progress > existingProgress.Progress)
+                {
+                    existingProgress.Progress = dto.Progress;
+                }
+
                 existingProgress.LastAccessed = DateTime.UtcNow;
             }
             else

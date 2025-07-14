@@ -8,11 +8,11 @@ import LoadingSpinner from "../components/LoadingSpinner";
 function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
 
-  console.log("Auth0 state:", {
-  isLoading,
-  isAuthenticated,
-  user,
-});
+//   console.log("Auth0 state:", {
+//   isLoading,
+//   isAuthenticated,
+//   user,
+// });
 
 if (!isAuthenticated) return null;
 

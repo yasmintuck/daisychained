@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
 
-    <title>Defeat Doomscrolling: How Apps Keep You Hooked</title>
+    <title>Tech-Life Balance: Design Your Digital World</title>
 
     <link type="text/css" rel="stylesheet" href="lib/icomoon.css">
     <script type="text/javascript" src="lib/player-0.0.11.min.js"></script>
@@ -16,12 +16,9 @@
       window.resizeTo(screen.width, screen.height);
     </script>
     
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
 
     <script id="__ENTRY__" type="application/json">
-      {".js":["rise/f43678f4.js"],".css":["sandbox/4adfab46.css"]}
+      {".js":["rise/0d37f92d.js"],".css":["sandbox/4adfab46.css"]}
     </script>
 
     <script id="__REMOTE_ENTRIES__" type="application/json">
@@ -129,7 +126,7 @@
       <div id="app"></div>
       <script>
           (function (root) {
-              window.i18n = { "available": ["und"], "default": "und" };
+              window.i18n = { "available": ["en"], "default": "en" };
               window.partnerContent = [];
 
               var quizId = null;
@@ -244,6 +241,55 @@
 
               var cache = getLMSData();
 
+              function updateParentTitle() {
+                  if (window.parent && window.parent.document) {
+                      if (window.parent.getCourseTitle) {
+                          document.title = window.parent.getCourseTitle();
+                      }
+
+                      const parentFrame = window.parent;
+
+                      function updateParent() {
+                          try {
+                              const newLang = document.documentElement.lang;
+                              const newTitle = document.title
+
+                              if (parentFrame?.document?.documentElement) {
+                                  if (parentFrame.document.documentElement.lang !== newLang) {
+                                      parentFrame.document.documentElement.lang = newLang
+                                  }
+
+                                  if (parentFrame.document.title !== newTitle) {
+                                      parentFrame.document.title = newTitle
+                                      const iframe = parentFrame.document.getElementById('content-frame')
+                                      if (iframe) iframe.title = newTitle
+                                  }
+                              }
+                          } catch {
+                              // shouldn't happen
+                          }
+                      }
+
+                      const langObserver = new MutationObserver(updateParent);
+                      langObserver.observe(document.documentElement, {
+                          attributes: true,
+                          attributeFilter: ['lang'],
+                      });
+
+                      const titleElement = document.querySelector('title');
+                      if (titleElement) {
+                          const titleObserver = new MutationObserver(updateParent);
+                          titleObserver.observe(titleElement, {
+                              characterData: true,
+                              childList: true,
+                              subtree: true,
+                          });
+                      }
+
+                      updateParent()
+                  }
+              }
+
               function debounce(fn, delay) {
                   var timer = null;
 
@@ -261,7 +307,7 @@
                       return JSON.stringify({
                           v: 2,
                           d: lzwCompress.pack(JSON.stringify(data)),
-                          cpv: "SnOuAtdo"
+                          cpv: "wAtqBhB2"
                       });
                   } catch (e) {
                       return '';
@@ -652,6 +698,8 @@
                   setLocale: setLocale
               };
 
+
+              updateParentTitle()
           }(window));
       </script>
 
@@ -664,11 +712,11 @@
 
           function sendProgressUpdate(progressLevel) {
               if (!userExternalId || !moduleId) {
-                  console.warn("❌ Missing userId or moduleId from URL");
+                  console.warn("Missing userId or moduleId from URL");
                   return;
               }
 
-              console.log("📤 Sending progress update →", {
+              console.log("Sending progress update →", {
                   userExternalId,
                   moduleId,
                   progress: progressLevel
@@ -682,7 +730,7 @@
                       moduleId,
                       progress: progressLevel
                   })
-              }).catch(err => console.warn("⚠️ Tracking failed:", err));
+              }).catch(err => console.warn("Tracking failed:", err));
           }
 
           // Trigger progress level 1 on module load
@@ -691,7 +739,7 @@
           // Watch for "Module Complete" appearing anywhere on screen
           const observer = new MutationObserver(() => {
               const bodyText = document.body.innerText || "";
-              if (bodyText.includes("Module Complete") && bodyText.includes("Defeat Doomscrolling")) {
+              if (bodyText.includes("Module Complete") && bodyText.includes("Tech-Life Balance")) {
                   console.log("'Module Complete' detected");
                   sendProgressUpdate(2);
                   observer.disconnect(); // Only send once
@@ -700,7 +748,6 @@
 
           observer.observe(document.body, { childList: true, subtree: true });
       </script>
-
 
   </body>
 </html>
