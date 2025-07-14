@@ -13,7 +13,7 @@ const ScormPlayer = () => {
   }
 
   const userId = user.sub.split("|")[1]; // Adjust this if needed for your Auth0 setup
-  const scormUrl = `/Modules/${slug}/index.html?userId=${userId}&moduleId=${moduleId}`;
+  const scormUrl = `/modules/${slug}/index.html?userId=${userId}&moduleId=${moduleId}`;
 
   return (
     <iframe
