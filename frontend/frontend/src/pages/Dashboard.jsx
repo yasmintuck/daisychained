@@ -1,23 +1,20 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 import ModuleLoader from "../components/ModuleLoader";
-import { useState } from "react";
 import './Dashboard.css';
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
 
-//   console.log("Auth0 state:", {
-//   isLoading,
-//   isAuthenticated,
-//   user,
-// });
+  useEffect(() => {
+    document.title = "Dashboard | daisychained";
+  }, []);
 
-if (!isAuthenticated) return null;
+  if (!isAuthenticated) return null;
 
   const email = user?.email || "";
-  const domain = email.substring(email.lastIndexOf("@") + 1); // Get domain after @
+  const domain = email.substring(email.lastIndexOf("@") + 1);
 
   return (
     <div className="dashboard-container">
