@@ -668,7 +668,9 @@
                   return;
               }
 
-              fetch("https://daisychained-api.azurewebsites.net/api/userprogress", {
+              console.log("Sending progress:", ...)
+
+              fetch("https://daisychained-api-dcargv9h9s6defkgh.uksouth-01.azurewebsites.net/api/userprogress", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -679,35 +681,12 @@
               }).catch(err => console.warn("Tracking failed:", err));
           }
 
+          // Trigger progress = 1 when SCORM module is opened
           window.addEventListener("load", function () {
-              try {
-                  if (typeof pipwerks !== "undefined") {
-                      pipwerks.SCORM.init();
-
-                      // Mark as incomplete if nothing else is set
-                      const currentStatus = pipwerks.SCORM.get("cmi.core.lesson_status");
-                      if (currentStatus !== "completed" && currentStatus !== "incomplete") {
-                          pipwerks.SCORM.set("cmi.core.lesson_status", "incomplete");
-                          pipwerks.SCORM.save();
-                      }
-
-                      // ✅ Log module as "in progress" immediately
-                      sendProgressUpdate(1);
-
-                      // 🔁 Poll every 2 seconds for completion
-                      const checkInterval = setInterval(() => {
-                          const status = pipwerks.SCORM.get("cmi.core.lesson_status");
-                          if (status === "completed") {
-                              sendProgressUpdate(2);
-                              clearInterval(checkInterval);
-                          }
-                      }, 2000);
-                  }
-              } catch (e) {
-                  console.warn("SCORM tracking error:", e);
-              }
+              sendProgressUpdate(1);
           });
       </script>
+
 
 
 

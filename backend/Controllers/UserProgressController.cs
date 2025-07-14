@@ -20,8 +20,8 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateProgress([FromBody] UserProgressUpdateDto dto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == dto.UserEmail);
-            var module = await _context.Modules.FirstOrDefaultAsync(m => m.Slug == dto.Slug);
+            var user = await _context.Users.FindAsync(dto.UserId);
+            var module = await _context.Modules.FindAsync(dto.ModuleId);
 
             if (user == null || module == null)
                 return NotFound("User or module not found");

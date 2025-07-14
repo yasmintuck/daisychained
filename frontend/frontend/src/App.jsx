@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Modules from "./pages/Modules";
 import Weather from "./pages/Weather";
 import Badges from "./pages/Badges";
+import ScormPlayer from './components/ScormPlayer';
 
 function App() {
   return (
@@ -58,6 +59,14 @@ function App() {
           element={
             <PrivateRoute>
               <Badges />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/module/:slug"
+          element={
+            <PrivateRoute>
+              <ScormPlayer />
             </PrivateRoute>
           }
         />

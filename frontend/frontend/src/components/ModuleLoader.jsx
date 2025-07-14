@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ModuleLoader = () => {
   const { user, isAuthenticated } = useAuth0();
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(12); // Show 12 initially
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated || !user) return;
@@ -51,7 +53,12 @@ const ModuleLoader = () => {
         <>
           <div className="course-area">
             {modules.slice(0, visibleCount).map((mod) => (
-              <div className="course-card" key={mod.moduleId}>
+              <div
+                className="course-card"
+                key={mod.moduleId}
+                onClick={() => navigate(`/module/${mod.slug}`, { state: { moduleId: mod.moduleId } })}
+                style={{ cursor: "pointer" }}
+              >
                 <div
                   className="card-image"
                   style={{
