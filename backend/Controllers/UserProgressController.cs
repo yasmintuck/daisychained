@@ -61,5 +61,26 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpGet("user/{email}")]
+        public async Task<IActionResult> GetUserProgress(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == email);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var progressRecords = await _context.UserProgressRecords
+                .Where(p => p.UserId == user.UserId)
+                .Select(p => new {
+                    p.ModuleId,
+                    p.Progress
+                })
+                .ToListAsync();
+
+            return Ok(progressRecords);
+        }
+
     }
 }
