@@ -20,12 +20,21 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateProgress([FromBody] UserProgressUpdateDto dto)
         {
-            var user = await _context.Users.FindAsync(dto.UserId);
+            // Find the user based on their external Auth0 ID
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserExternalId == dto.UserExternalId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Find the module by ID
             var module = await _context.Modules.FindAsync(dto.ModuleId);
+            if (module == null)
+            {
+                return NotFound("Module not found.");
+            }
 
-            if (user == null || module == null)
-                return NotFound("User or module not found");
-
+            // Check if a progress record already exists
             var existingProgress = await _context.UserProgressRecords
                 .FirstOrDefaultAsync(p => p.UserId == user.UserId && p.ModuleId == module.ModuleId);
 
@@ -48,6 +57,5 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
-
     }
 }
