@@ -69,6 +69,7 @@
 }
 
 .course-card {
+  position: relative;
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
@@ -146,6 +147,33 @@
   background-color: #231F20;
   color: #ffffff;
 }
+
+.ribbon {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  padding: 0.25rem 0.75rem;
+  color: white;
+  font-weight: bold;
+  font-size: 0.75rem;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  z-index: 10;
+  text-transform: uppercase;
+}
+
+.ribbon.not-started {
+  background-color: #5f3dc4; /* purple */
+}
+
+.ribbon.in-progress {
+  background-color: #f59f00; /* orange */
+}
+
+.ribbon.completed {
+  background-color: #2b8a3e; /* green */
+}
+
 
 /* Small screen view - show only 2 columns */
 @media (max-width: 900px) {
