@@ -638,8 +638,8 @@ input:checked + .slider:before {
 
 .dropdown-menu {
   position: absolute;
-  top: 110%;
-  left: 0;
+  top: 35px;
+  color: #2c2829;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -647,6 +647,11 @@ input:checked + .slider:before {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   z-index: 1002;
   width: max-content;
+}
+
+.filter-dropdown,
+.sort-dropdown {
+  position: relative;
 }
 
 
@@ -730,6 +735,10 @@ input:checked + .slider:before {
     width: 100%;
     padding: 20px 20px 20px 20px;
     margin-left: 70px;
+  }
+
+  .dropdown-controls {
+    display: none;
   }
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
+import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // just added
 import ModuleLoader from "../components/ModuleLoader";
 import './Dashboard.css';
@@ -13,6 +14,8 @@ function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth <= 900);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const filterRef = useRef(null);
+const sortRef = useRef(null);
 
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);
@@ -38,6 +41,26 @@ function Dashboard() {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      filterRef.current &&
+      !filterRef.current.contains(event.target) &&
+      sortRef.current &&
+      !sortRef.current.contains(event.target)
+    ) {
+      setShowFilterDropdown(false);
+      setShowSortDropdown(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
 
 
 
@@ -123,7 +146,7 @@ function Dashboard() {
   <div className="dropdown-controls">
     
     {/* Filter dropdown */}
-    <div className="filter-dropdown">
+    <div className="filter-dropdown" ref={filterRef}>
       <button
         className="dropdown-button"
         onClick={() => {
@@ -143,7 +166,7 @@ function Dashboard() {
     </div>
 
     {/* Sort dropdown */}
-    <div className="sort-dropdown">
+    <div className="sort-dropdown" ref={sortRef}>
       <button
         className="dropdown-button"
         onClick={() => {
