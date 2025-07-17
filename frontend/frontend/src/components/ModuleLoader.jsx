@@ -10,7 +10,7 @@ const ModuleLoader = () => {
   const [visibleCount, setVisibleCount] = useState(12); // Show 12 initially
   const navigate = useNavigate();
 
-  // useEffect(() => {
+  //   useEffect(() => {
   //   if (!isAuthenticated || !user) return;
 
   //   const syncUserAndFetchModules = async () => {
@@ -24,17 +24,32 @@ const ModuleLoader = () => {
   //         email: user.email
   //       };
 
-  //       // console.log("🔄 Syncing user with payload:", payload);
-
+  //       // Sync user and get modules
   //       const res = await axios.post(
   //         `${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/sync-user`,
   //         payload
   //       );
+  //       const fetchedModules = res.data;
 
-  //       // console.log("Modules returned from backend:", res.data);
-  //       setModules(res.data);
+  //       // Get user progress records
+  //       const progressRes = await axios.get(
+  //         `${import.meta.env.VITE_BACKEND_URL}/api/UserProgress/user/${user.email}`
+  //       );
+  //       const userProgress = progressRes.data || [];
+
+  //       // Merge module data with progress status
+  //       const enrichedModules = fetchedModules.map((mod) => {
+  //         const match = userProgress.find((p) => p.moduleId === mod.moduleId);
+  //         let progressStatus = "not started";
+  //         if (match?.progress === 1) progressStatus = "in progress";
+  //         else if (match?.progress === 2) progressStatus = "completed";
+
+  //         return { ...mod, progressStatus };
+  //       });
+
+  //       setModules(enrichedModules);
   //     } catch (err) {
-  //       console.error("Error fetching modules:", err);
+  //       console.error("Error fetching modules or progress:", err);
   //     } finally {
   //       setLoading(false);
   //     }
@@ -43,53 +58,66 @@ const ModuleLoader = () => {
   //   syncUserAndFetchModules();
   // }, [isAuthenticated, user]);
 
-    useEffect(() => {
-    if (!isAuthenticated || !user) return;
+useEffect(() => {
+  if (!isAuthenticated || !user) return;
 
-    const syncUserAndFetchModules = async () => {
-      setLoading(true);
+  const fetchAllData = async () => {
+    console.time("⏱️ Module Load Time"); // ✅ Start before try
+    setLoading(true);
 
-      try {
-        const payload = {
-          externalId: user.sub,
-          firstName: user.given_name || "",
-          lastName: user.family_name || "",
-          email: user.email
-        };
+    try {
+      const payload = {
+        externalId: user.sub,
+        firstName: user.given_name || "",
+        lastName: user.family_name || "",
+        email: user.email
+      };
 
-        // Sync user and get modules
-        const res = await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/sync-user`,
-          payload
-        );
-        const fetchedModules = res.data;
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/sync-user`,
+        payload
+      );
 
-        // Get user progress records
-        const progressRes = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/UserProgress/user/${user.email}`
-        );
-        const userProgress = progressRes.data || [];
+      const [modulesRes, progressRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/Modules`),
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/UserProgress/user/${user.email}`)
+      ]);
 
-        // Merge module data with progress status
-        const enrichedModules = fetchedModules.map((mod) => {
-          const match = userProgress.find((p) => p.moduleId === mod.moduleId);
-          let progressStatus = "not started";
-          if (match?.progress === 1) progressStatus = "in progress";
-          else if (match?.progress === 2) progressStatus = "completed";
+      const fetchedModules = modulesRes.data;
+      const userProgress = progressRes.data || [];
 
-          return { ...mod, progressStatus };
-        });
+      // const enrichedModules = fetchedModules.map((mod) => {
+      //   const record = userProgress.find((p) => p.moduleId === mod.moduleId);
+      //   let status = "not started";
+      //   if (record?.progress === 1) status = "in progress";
+      //   else if (record?.progress === 2) status = "completed";
+      //   return { ...mod, progressStatus: status };
+      // });
 
-        setModules(enrichedModules);
-      } catch (err) {
-        console.error("Error fetching modules or progress:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const enrichedModules = fetchedModules
+      .map((mod) => {
+        const record = userProgress.find((p) => p.moduleId === mod.moduleId);
+        let status = "not started";
+        if (record?.progress === 1) status = "in progress";
+        else if (record?.progress === 2) status = "completed";
+        return { ...mod, progressStatus: status };
+      })
+      .sort((a, b) => a.moduleId - b.moduleId); // ✅ Sort here
 
-    syncUserAndFetchModules();
-  }, [isAuthenticated, user]);
+
+      setModules(enrichedModules);
+    } catch (err) {
+      console.error("❌ Error loading modules:", err);
+    } finally {
+      console.timeEnd("⏱️ Module Load Time"); // ✅ Always ends, even if error
+      setLoading(false);
+    }
+  };
+
+  fetchAllData();
+}, [isAuthenticated, user]);
+
+
 
 
   return (

@@ -1,15 +1,43 @@
+import React, { useState } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
+import { ChevronLeft, ChevronRight } from 'lucide-react'; // just added
 import ModuleLoader from "../components/ModuleLoader";
 import './Dashboard.css';
 import LoadingSpinner from "../components/LoadingSpinner";
 
+
 function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth <= 900);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((prev) => !prev);
+  };
 
   useEffect(() => {
     document.title = "Dashboard | daisychained";
   }, []);
+
+  useEffect(() => {
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }, [searchTerm, sidebarCollapsed]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSidebarCollapsed(window.innerWidth <= 900);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Run on mount to set initial state
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+
 
   if (!isAuthenticated) return null;
 
@@ -17,16 +45,83 @@ function Dashboard() {
   const domain = email.substring(email.lastIndexOf("@") + 1);
 
   return (
+    <div className="dashboard-wrapper">
     <div className="dashboard-container">
-      <div className="main-content">
-        <div className="sidebar">
+      {/* <div className="sidebar"> */}
+      <div className={`sidebar ${sidebarCollapsed ? "collapsed" : "expanded"}`}>
+        <div className="toggle-container">
+          {/* <button className="collapse-toggle" onClick={toggleSidebar} aria-label="Toggle Sidebar">
+            <i data-lucide={sidebarCollapsed ? "chevron-right" : "chevron-left"}></i>
+          </button> */}
+          <button className="collapse-toggle" onClick={toggleSidebar} aria-label="Toggle Sidebar">
+            {sidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          </button>
         </div>
-        <div className="content-wrapper">
-          <div className="page-title">Dashboard</div>
-          <ModuleLoader />
+        {sidebarCollapsed ? (
+          <div className="search-icon-only">
+            <i data-lucide="search"></i>
+          </div>
+        ) : (
+          <div className="search-container">
+            <i data-lucide="search" className="search-icon"></i>
+            <input
+              type="text"
+              className="module-search"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <button className="clear-search" onClick={() => setSearchTerm("")}>
+                <i data-lucide="x" className="clear-icon"></i>
+              </button>
+            )}
+          </div>
+        )}
+
+        <ul className="menu-items">
+          <li className="active"><i data-lucide="layout-grid"></i><span>All modules</span></li>
+          <li><i data-lucide="sparkles"></i><span>Personal development</span></li>
+          <li><i data-lucide="signpost"></i><span>Next steps</span></li>
+          <li><i data-lucide="shield-alert"></i><span>Safeguarding</span></li>
+          <li><i data-lucide="landmark"></i><span>Cultural capital</span></li>
+          <li><i data-lucide="scale"></i><span>British values</span></li>
+          <li><i data-lucide="cpu"></i><span>AI & digital literacy</span></li>
+        </ul>
+
+        <div className="bottom-actions">
+          <li><i data-lucide="log-out"></i><span>Logout</span></li>
+          {sidebarCollapsed ? (
+            // ✅ Collapsed view: just show the toggle switch
+            <div className="dark-mode-toggle collapsed-toggle-only">
+              <label className="switch">
+                <input type="checkbox" />
+                <span className="slider round"></span>
+              </label>
+            </div>
+          ) : (
+            // ✅ Expanded view: full layout
+            <div className="dark-mode-toggle">
+              <div className="dark-mode-left">
+                <i data-lucide="moon"></i>
+                <span>Dark mode</span>
+              </div>
+              <label className="switch">
+                <input type="checkbox" />
+                <span className="slider round"></span>
+              </label>
+            </div>
+          )}
         </div>
       </div>
+
+      <div className="content-wrapper">
+        <div className="page-title">All modules</div>
+        <ModuleLoader searchTerm={searchTerm} />
+      </div>
     </div>
+    </div>
+
   );
 }
 

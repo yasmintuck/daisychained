@@ -7,7 +7,7 @@
   --max-container-width: 1350px;
 }
 
-.navbar {
+/*.navbar {
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -15,7 +15,22 @@
   color: var(--light-text);
   width: 100%;
   z-index: 1000;
+}*/
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: var(--dark-bg);
+  color: var(--light-text);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
+
 
 .nav-container {
   max-width: var(--max-container-width);
@@ -253,7 +268,7 @@
   padding: 0 1.3rem;
   max-height: 0;
   opacity: 0;
-  overflow: hidden;
+  /*overflow: hidden;*/
   pointer-events: none;
   transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
 }

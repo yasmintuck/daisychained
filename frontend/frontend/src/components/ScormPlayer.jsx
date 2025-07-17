@@ -42,7 +42,7 @@ const ScormPlayer = () => {
   const scormUrl = `/modules/${slug}/index.html?userId=${user.sub}&moduleId=${moduleId}`;
 
   return (
-    <div style={{ overflow: "hidden" }}>
+    <div style={{ overflow: "hidden", marginTop: "70px" }}>
         <iframe
             ref={iframeRef}
             src={scormUrl}
