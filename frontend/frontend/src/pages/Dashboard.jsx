@@ -11,6 +11,8 @@ function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
   const [searchTerm, setSearchTerm] = useState("");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth <= 900);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);
@@ -116,7 +118,56 @@ function Dashboard() {
       </div>
 
       <div className="content-wrapper">
-        <div className="page-title">All modules</div>
+<div className="page-header">
+  <div className="page-title">All modules</div>
+  <div className="dropdown-controls">
+    
+    {/* Filter dropdown */}
+    <div className="filter-dropdown">
+      <button
+        className="dropdown-button"
+        onClick={() => {
+          setShowFilterDropdown(!showFilterDropdown);
+          setShowSortDropdown(false);
+        }}
+      >
+        <span className="filter-dot"></span> Filter
+      </button>
+      {showFilterDropdown && (
+        <ul className="dropdown-menu">
+          <li><span className="dot purple"></span> Not started</li>
+          <li><span className="dot orange"></span> In progress</li>
+          <li><span className="dot green"></span> Completed</li>
+        </ul>
+      )}
+    </div>
+
+    {/* Sort dropdown */}
+    <div className="sort-dropdown">
+      <button
+        className="dropdown-button"
+        onClick={() => {
+          setShowSortDropdown(!showSortDropdown);
+          setShowFilterDropdown(false);
+        }}
+      >
+        Sort by
+      </button>
+      {showSortDropdown && (
+        <ul className="dropdown-menu">
+          <li>Newest to oldest</li>
+          <li>Oldest to newest</li>
+          <li>Duration (shortest first)</li>
+          <li>Duration (longest first)</li>
+        </ul>
+      )}
+    </div>
+
+  </div>
+</div>
+
+
+
         <ModuleLoader searchTerm={searchTerm} />
       </div>
     </div>

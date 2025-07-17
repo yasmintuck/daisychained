@@ -494,7 +494,7 @@ input:checked + .slider:before {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 36px;
-  padding: 30px 0;
+  padding: 0px 0;
 }
 
 .course-card {
@@ -601,6 +601,90 @@ input:checked + .slider:before {
 
 .ribbon.completed {
   background-color: #2b8a3e; /* green */
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dropdown-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.dropdown-button {
+  background-color: #f8f5ff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  position: relative;
+}
+
+.dropdown-button:hover {
+  background-color: #e6e2f0;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.5rem 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1002;
+  width: max-content;
+}
+
+
+.dropdown-menu li {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.95rem;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+.dot,
+.filter-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.filter-dot {
+  border: 2px solid #303030;
+}
+
+.purple {
+  background-color: #5f3dc4;
+}
+
+.orange {
+  background-color: #f59f00;
+}
+
+.green {
+  background-color: #2b8a3e;
 }
 
 
