@@ -3,6 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // just added
+import { SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 import ModuleLoader from "../components/ModuleLoader";
 import './Dashboard.css';
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -143,8 +144,9 @@ const sortRef = useRef(null);
       <div className="content-wrapper">
 <div className="page-header">
   <div className="page-title">All modules</div>
+
+  {/* Desktop filter/sort buttons */}
   <div className="dropdown-controls">
-    
     {/* Filter dropdown */}
     <div className="filter-dropdown" ref={filterRef}>
       <button
@@ -154,15 +156,11 @@ const sortRef = useRef(null);
           setShowSortDropdown(false);
         }}
       >
-        <span className="filter-dot"></span> Filter
+        <span className="button-content">
+          <SlidersHorizontal size={18} />
+          <span>Filter</span>
+        </span>
       </button>
-      {showFilterDropdown && (
-        <ul className="dropdown-menu">
-          <li><span className="dot purple"></span> Not started</li>
-          <li><span className="dot orange"></span> In progress</li>
-          <li><span className="dot green"></span> Completed</li>
-        </ul>
-      )}
     </div>
 
     {/* Sort dropdown */}
@@ -174,20 +172,70 @@ const sortRef = useRef(null);
           setShowFilterDropdown(false);
         }}
       >
-        Sort by
+        <span className="button-content">
+          <ArrowUpDown size={18} />
+          <span>Sort by</span>
+        </span>
       </button>
-      {showSortDropdown && (
-        <ul className="dropdown-menu">
-          <li>Newest to oldest</li>
-          <li>Oldest to newest</li>
-          <li>Duration (shortest first)</li>
-          <li>Duration (longest first)</li>
-        </ul>
-      )}
     </div>
-
   </div>
+
+  {/* Mobile filter/sort icon buttons */}
+  <div className="mobile-dropdown-buttons">
+    <button
+      className="icon-button"
+      onClick={() => {
+        setShowFilterDropdown(!showFilterDropdown);
+        setShowSortDropdown(false);
+      }}
+      ref={filterRef}
+    >
+      <SlidersHorizontal size={18} />
+    </button>
+
+    <button
+      className="icon-button"
+      onClick={() => {
+        setShowSortDropdown(!showSortDropdown);
+        setShowFilterDropdown(false);
+      }}
+      ref={sortRef}
+    >
+      <ArrowUpDown size={18} />
+    </button>
+  </div>
+
+  {/* Overlay when any dropdown is open */}
+  {(showFilterDropdown || showSortDropdown) && (
+    <div
+      className="mobile-overlay"
+      onClick={() => {
+        setShowFilterDropdown(false);
+        setShowSortDropdown(false);
+      }}
+    ></div>
+  )}
+
+  {/* Shared dropdown menu rendering */}
+  {showFilterDropdown && (
+    <ul className="dropdown-menu mobile-dropdown" ref={filterRef}>
+      <li><span className="dot purple"></span> Not started</li>
+      <li><span className="dot orange"></span> In progress</li>
+      <li><span className="dot green"></span> Completed</li>
+    </ul>
+  )}
+
+  {showSortDropdown && (
+    <ul className="dropdown-menu mobile-dropdown" ref={sortRef}>
+      <li>Newest to oldest</li>
+      <li>Oldest to newest</li>
+      <li>Duration (shortest first)</li>
+      <li>Duration (longest first)</li>
+    </ul>
+  )}
 </div>
+
+
 
 
 
