@@ -18,6 +18,7 @@ function Dashboard() {
   const filterRef = useRef(null);
   const sortRef = useRef(null);
   const [statusFilter, setStatusFilter] = useState(""); // "", "not started", "in progress", "completed"
+  const [sortOption, setSortOption] = useState("newest"); // "", "newest", "oldest", "shortest", "longest"
 
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);
@@ -176,30 +177,43 @@ function Dashboard() {
 
                 {showFilterDropdown && window.innerWidth > 900 && (
                   <ul className="dropdown-menu">
-                  <li onClick={() => {
-                    setStatusFilter("");
-                    setShowFilterDropdown(false);
-                  }}>
-                    <span className="dot"></span> All modules
-                  </li>
-                    <li onClick={() => {
-                      setStatusFilter("not started");
-                      setShowFilterDropdown(false);
-                    }}>
+                    <li
+                      className={statusFilter === "" ? "active-option" : ""}
+                      onClick={() => {
+                        setStatusFilter("");
+                        setShowFilterDropdown(false);
+                      }}
+                    >
+                      <span className="dot"></span> All modules
+                    </li>
+                    <li
+                      className={statusFilter === "not started" ? "active-option" : ""}
+                      onClick={() => {
+                        setStatusFilter("not started");
+                        setShowFilterDropdown(false);
+                      }}
+                    >
                       <span className="dot purple"></span> Not started
                     </li>
-                    <li onClick={() => {
-                      setStatusFilter("in progress");
-                      setShowFilterDropdown(false);
-                    }}>
+                    <li
+                      className={statusFilter === "in progress" ? "active-option" : ""}
+                      onClick={() => {
+                        setStatusFilter("in progress");
+                        setShowFilterDropdown(false);
+                      }}
+                    >
                       <span className="dot orange"></span> In progress
                     </li>
-                    <li onClick={() => {
-                      setStatusFilter("completed");
-                      setShowFilterDropdown(false);
-                    }}>
+                    <li
+                      className={statusFilter === "completed" ? "active-option" : ""}
+                      onClick={() => {
+                        setStatusFilter("completed");
+                        setShowFilterDropdown(false);
+                      }}
+                    >
                       <span className="dot green"></span> Completed
                     </li>
+
                   </ul>
                 )}
               </div>
@@ -221,10 +235,43 @@ function Dashboard() {
                 {/* Desktop-only dropdown */}
                 {showSortDropdown && window.innerWidth > 900 && (
                   <ul className="dropdown-menu">
-                    <li>Newest to oldest</li>
-                    <li>Oldest to newest</li>
-                    <li>Duration (shortest first)</li>
-                    <li>Duration (longest first)</li>
+                    <li
+                      className={sortOption === "newest" ? "active-option" : ""}
+                      onClick={() => {
+                        setSortOption("newest");
+                        setShowSortDropdown(false);
+                      }}
+                    >
+                      Newest to oldest
+                    </li>
+                    <li
+                      className={sortOption === "oldest" ? "active-option" : ""}
+                      onClick={() => {
+                        setSortOption("oldest");
+                        setShowSortDropdown(false);
+                      }}
+                    >
+                      Oldest to newest
+                    </li>
+                    <li
+                      className={sortOption === "shortest" ? "active-option" : ""}
+                      onClick={() => {
+                        setSortOption("shortest");
+                        setShowSortDropdown(false);
+                      }}
+                    >
+                      Duration (shortest first)
+                    </li>
+                    <li
+                      className={sortOption === "longest" ? "active-option" : ""}
+                      onClick={() => {
+                        setSortOption("longest");
+                        setShowSortDropdown(false);
+                      }}
+                    >
+                      Duration (longest first)
+                    </li>
+
                   </ul>
                 )}
               </div>
@@ -265,47 +312,93 @@ function Dashboard() {
             )}
 
             {/* Mobile dropdowns */}
-              {showFilterDropdown && window.innerWidth <= 900 && (
-                <ul className="dropdown-menu mobile-dropdown" ref={filterRef}>
-                  <li onClick={() => {
+            {showFilterDropdown && window.innerWidth <= 900 && (
+              <ul className="dropdown-menu mobile-dropdown" ref={filterRef}>
+                <li
+                  className={statusFilter === "" ? "active-option" : ""}
+                  onClick={() => {
                     setStatusFilter("");
                     setShowFilterDropdown(false);
-                  }}>
-                    <span className="dot"></span> All modules
-                  </li>
-                  <li onClick={() => {
+                  }}
+                >
+                  <span className="dot"></span> All modules
+                </li>
+                <li
+                  className={statusFilter === "not started" ? "active-option" : ""}
+                  onClick={() => {
                     setStatusFilter("not started");
                     setShowFilterDropdown(false);
-                  }}>
-                    <span className="dot purple"></span> Not started
-                  </li>
-                  <li onClick={() => {
+                  }}
+                >
+                  <span className="dot purple"></span> Not started
+                </li>
+                <li
+                  className={statusFilter === "in progress" ? "active-option" : ""}
+                  onClick={() => {
                     setStatusFilter("in progress");
                     setShowFilterDropdown(false);
-                  }}>
-                    <span className="dot orange"></span> In progress
-                  </li>
-                  <li onClick={() => {
+                  }}
+                >
+                  <span className="dot orange"></span> In progress
+                </li>
+                <li
+                  className={statusFilter === "completed" ? "active-option" : ""}
+                  onClick={() => {
                     setStatusFilter("completed");
                     setShowFilterDropdown(false);
-                  }}>
-                    <span className="dot green"></span> Completed
-                  </li>
-                </ul>
-              )}
+                  }}
+                >
+                  <span className="dot green"></span> Completed
+                </li>
+
+              </ul>
+            )}
 
 
             {showSortDropdown && window.innerWidth <= 900 && (
               <ul className="dropdown-menu mobile-dropdown" ref={sortRef}>
-                <li>Newest to oldest</li>
-                <li>Oldest to newest</li>
-                <li>Duration (shortest first)</li>
-                <li>Duration (longest first)</li>
+                <li
+                  className={sortOption === "newest" ? "active-option" : ""}
+                  onClick={() => {
+                    setSortOption("newest");
+                    setShowSortDropdown(false);
+                  }}
+                >
+                  Newest to oldest
+                </li>
+                <li
+                  className={sortOption === "oldest" ? "active-option" : ""}
+                  onClick={() => {
+                    setSortOption("oldest");
+                    setShowSortDropdown(false);
+                  }}
+                >
+                  Oldest to newest
+                </li>
+                <li
+                  className={sortOption === "shortest" ? "active-option" : ""}
+                  onClick={() => {
+                    setSortOption("shortest");
+                    setShowSortDropdown(false);
+                  }}
+                >
+                  Duration (shortest first)
+                </li>
+                <li
+                  className={sortOption === "longest" ? "active-option" : ""}
+                  onClick={() => {
+                    setSortOption("longest");
+                    setShowSortDropdown(false);
+                  }}
+                >
+                  Duration (longest first)
+                </li>
+
               </ul>
             )}
           </div>
 
-          <ModuleLoader searchTerm={searchTerm} statusFilter={statusFilter} />
+          <ModuleLoader searchTerm={searchTerm} statusFilter={statusFilter} sortOption={sortOption} />
           {!sidebarCollapsed && window.innerWidth <= 900 && (
             <div
               className="sidebar-overlay"

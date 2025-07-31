@@ -3,11 +3,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const ModuleLoader = ({ searchTerm, statusFilter }) => {
+const ModuleLoader = ({ searchTerm, statusFilter, sortOption }) => {
   const { user, isAuthenticated } = useAuth0();
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(12); // Show 12 initially
+  const [visibleCount, setVisibleCount] = useState(12);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,13 +60,24 @@ const ModuleLoader = ({ searchTerm, statusFilter }) => {
     fetchAllData();
   }, [isAuthenticated, user]);
 
-  // ✅ Filter modules by title match
   const filteredModules = modules.filter((mod) => {
     const matchesSearch = mod.moduleTitle.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter ? mod.progressStatus === statusFilter : true;
     return matchesSearch && matchesStatus;
   });
 
+  const sortedModules = [...filteredModules].sort((a, b) => {
+    if (sortOption === "newest") {
+      return new Date(b.lastUpdated) - new Date(a.lastUpdated);
+    } else if (sortOption === "oldest") {
+      return new Date(a.lastUpdated) - new Date(b.lastUpdated);
+    } else if (sortOption === "shortest") {
+      return parseInt(a.duration) - parseInt(b.duration);
+    } else if (sortOption === "longest") {
+      return parseInt(b.duration) - parseInt(a.duration);
+    }
+    return 0;
+  });
 
   return (
     <>
@@ -74,10 +85,10 @@ const ModuleLoader = ({ searchTerm, statusFilter }) => {
         <p style={{ marginTop: "2rem", color: "#231F20" }}>
           Loading your modules...
         </p>
-      ) : filteredModules.length > 0 ? (
+      ) : sortedModules.length > 0 ? (
         <>
           <div className="course-area">
-            {filteredModules.slice(0, visibleCount).map((mod) => (
+            {sortedModules.slice(0, visibleCount).map((mod) => (
               <div
                 className="course-card"
                 key={mod.moduleId}
@@ -92,8 +103,8 @@ const ModuleLoader = ({ searchTerm, statusFilter }) => {
                   {mod.progressStatus === "completed"
                     ? "Completed"
                     : mod.progressStatus === "in progress"
-                    ? "In progress"
-                    : "Not started"}
+                      ? "In progress"
+                      : "Not started"}
                 </div>
                 <div
                   className="card-image"
@@ -106,7 +117,7 @@ const ModuleLoader = ({ searchTerm, statusFilter }) => {
                   <div>
                     <div className="course-duration">{mod.duration}</div>
                     <div className="course-updated">
-                      Updated: {new Date(mod.lastUpdated).toLocaleDateString()}
+                      Updated: {new Date(mod.lastUpdated).toLocaleDateString("en-GB")}
                     </div>
                   </div>
                 </div>
@@ -114,7 +125,7 @@ const ModuleLoader = ({ searchTerm, statusFilter }) => {
             ))}
           </div>
 
-          {visibleCount < filteredModules.length && (
+          {visibleCount < sortedModules.length && (
             <div className="load-more-container">
               <button
                 className="load-more-btn"
