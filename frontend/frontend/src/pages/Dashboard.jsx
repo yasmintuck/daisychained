@@ -82,7 +82,10 @@ function Dashboard() {
             </button>
           </div>
           {sidebarCollapsed ? (
-            <div className="search-icon-only">
+            <div
+              className="search-icon-only"
+              onClick={() => setSidebarCollapsed(false)}
+            >
               <i data-lucide="search"></i>
             </div>
           ) : (
@@ -171,9 +174,14 @@ function Dashboard() {
                   </span>
                 </button>
 
-                {/* Desktop-only dropdown */}
                 {showFilterDropdown && window.innerWidth > 900 && (
                   <ul className="dropdown-menu">
+                  <li onClick={() => {
+                    setStatusFilter("");
+                    setShowFilterDropdown(false);
+                  }}>
+                    <span className="dot"></span> All modules
+                  </li>
                     <li onClick={() => {
                       setStatusFilter("not started");
                       setShowFilterDropdown(false);
@@ -257,13 +265,35 @@ function Dashboard() {
             )}
 
             {/* Mobile dropdowns */}
-            {showFilterDropdown && window.innerWidth <= 900 && (
-              <ul className="dropdown-menu mobile-dropdown" ref={filterRef}>
-                <li><span className="dot purple"></span> Not started</li>
-                <li><span className="dot orange"></span> In progress</li>
-                <li><span className="dot green"></span> Completed</li>
-              </ul>
-            )}
+              {showFilterDropdown && window.innerWidth <= 900 && (
+                <ul className="dropdown-menu mobile-dropdown" ref={filterRef}>
+                  <li onClick={() => {
+                    setStatusFilter("");
+                    setShowFilterDropdown(false);
+                  }}>
+                    <span className="dot"></span> All modules
+                  </li>
+                  <li onClick={() => {
+                    setStatusFilter("not started");
+                    setShowFilterDropdown(false);
+                  }}>
+                    <span className="dot purple"></span> Not started
+                  </li>
+                  <li onClick={() => {
+                    setStatusFilter("in progress");
+                    setShowFilterDropdown(false);
+                  }}>
+                    <span className="dot orange"></span> In progress
+                  </li>
+                  <li onClick={() => {
+                    setStatusFilter("completed");
+                    setShowFilterDropdown(false);
+                  }}>
+                    <span className="dot green"></span> Completed
+                  </li>
+                </ul>
+              )}
+
 
             {showSortDropdown && window.innerWidth <= 900 && (
               <ul className="dropdown-menu mobile-dropdown" ref={sortRef}>
@@ -276,6 +306,13 @@ function Dashboard() {
           </div>
 
           <ModuleLoader searchTerm={searchTerm} statusFilter={statusFilter} />
+          {!sidebarCollapsed && window.innerWidth <= 900 && (
+            <div
+              className="sidebar-overlay"
+              onClick={() => setSidebarCollapsed(true)}
+            ></div>
+          )}
+
         </div>
       </div>
     </div>
