@@ -487,6 +487,7 @@ input:checked + .slider:before {
   margin-right: -20px;
   background-color: #fff;
   overflow-y: auto;
+  min-height: calc(100vh - 70px);
 }
 
 
@@ -645,10 +646,11 @@ input:checked + .slider:before {
 
 .dropdown-menu {
   position: absolute;
-  top: 35px;
+  top: 40px;
+  right: 0;
   color: #2c2829;
   background-color: white;
-  border: 1px solid #ddd;
+  min-width: 160px;
   border-radius: 10px;
   padding: 0.5rem 0;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -779,10 +781,16 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   .icon-button:hover {
     background-color: #e6e2f0;
+  }
+
+  .icon-button svg {
+  color: #231F20 !important; /* Or any color that matches your design */
   }
 
   /* Overlay for dropdown */
@@ -797,10 +805,10 @@ input:checked + .slider:before {
   }
 
   .dropdown-menu.mobile-dropdown {
-    position: absolute;
-    top: 120px; /* Adjust if needed */
+    top: 120px;
     right: 20px;
-    z-index: 1001;
+    left: auto;
+    width: max-content;
   }
 
 }

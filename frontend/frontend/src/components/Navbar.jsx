@@ -22,17 +22,17 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowDropdown(false);
-    }
-  };
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
 
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, []);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -56,7 +56,7 @@ export default function Navbar() {
         )}
 
 
-          <img src="/logo.png" alt="DaisyChained Logo" className="logo" />
+        <img src="/logo.png" alt="DaisyChained Logo" className="logo" />
 
 
         {!isMobile && (
@@ -98,21 +98,18 @@ export default function Navbar() {
                 className="login-profile-pic"
               />
               {showDropdown && (
-                <div className="dropdown-menu">
+                <div className="dropdown-menu-nav">
                   {/* Add more links here if needed */}
                   <button
                     className="dropdown-item"
-                    onClick={() =>
-                      logout({
-                        logoutParams: {
-                          returnTo: import.meta.env.VITE_LOGOUT_URL,
-                          client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
-                        },
-                      })
-                    }
+                    onClick={() => {
+                      // Placeholder for future "My account" logic
+                      setShowDropdown(false);
+                    }}
                   >
-                    Logout
+                    My account
                   </button>
+
                 </div>
               )}
             </div>
@@ -131,12 +128,12 @@ export default function Navbar() {
             </>
           ) : (
             <>
-                <Link
-                  to="/dashboard"
-                  className={location.pathname === "/dashboard" ? "active-link" : ""}
+              <Link
+                to="/dashboard"
+                className={location.pathname === "/dashboard" ? "active-link" : ""}
               >   Dashboard
-                </Link>
-                <Link to="/badges">Badges</Link>
+              </Link>
+              <Link to="/badges">Badges</Link>
             </>
           )}
         </nav>

@@ -16,7 +16,8 @@ function Dashboard() {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const filterRef = useRef(null);
-const sortRef = useRef(null);
+  const sortRef = useRef(null);
+  const [statusFilter, setStatusFilter] = useState(""); // "", "not started", "in progress", "completed"
 
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);
@@ -44,23 +45,23 @@ const sortRef = useRef(null);
   }, []);
 
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      filterRef.current &&
-      !filterRef.current.contains(event.target) &&
-      sortRef.current &&
-      !sortRef.current.contains(event.target)
-    ) {
-      setShowFilterDropdown(false);
-      setShowSortDropdown(false);
-    }
-  };
+    const handleClickOutside = (event) => {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target) &&
+        sortRef.current &&
+        !sortRef.current.contains(event.target)
+      ) {
+        setShowFilterDropdown(false);
+        setShowSortDropdown(false);
+      }
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
 
 
@@ -72,176 +73,211 @@ const sortRef = useRef(null);
 
   return (
     <div className="dashboard-wrapper">
-    <div className="dashboard-container">
-      {/* <div className="sidebar"> */}
-      <div className={`sidebar ${sidebarCollapsed ? "collapsed" : "expanded"}`}>
-        <div className="toggle-container">
-          {/* <button className="collapse-toggle" onClick={toggleSidebar} aria-label="Toggle Sidebar">
-            <i data-lucide={sidebarCollapsed ? "chevron-right" : "chevron-left"}></i>
-          </button> */}
-          <button className="collapse-toggle" onClick={toggleSidebar} aria-label="Toggle Sidebar">
-            {sidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          </button>
-        </div>
-        {sidebarCollapsed ? (
-          <div className="search-icon-only">
-            <i data-lucide="search"></i>
+      <div className="dashboard-container">
+        {/* <div className="sidebar"> */}
+        <div className={`sidebar ${sidebarCollapsed ? "collapsed" : "expanded"}`}>
+          <div className="toggle-container">
+            <button className="collapse-toggle" onClick={toggleSidebar} aria-label="Toggle Sidebar">
+              {sidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+            </button>
           </div>
-        ) : (
-          <div className="search-container">
-            <i data-lucide="search" className="search-icon"></i>
-            <input
-              type="text"
-              className="module-search"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button className="clear-search" onClick={() => setSearchTerm("")}>
-                <i data-lucide="x" className="clear-icon"></i>
-              </button>
-            )}
-          </div>
-        )}
-
-        <ul className="menu-items">
-          <li className="active"><i data-lucide="layout-grid"></i><span>All modules</span></li>
-          <li><i data-lucide="sparkles"></i><span>Personal development</span></li>
-          <li><i data-lucide="signpost"></i><span>Next steps</span></li>
-          <li><i data-lucide="shield-alert"></i><span>Safeguarding</span></li>
-          <li><i data-lucide="landmark"></i><span>Cultural capital</span></li>
-          <li><i data-lucide="scale"></i><span>British values</span></li>
-          <li><i data-lucide="cpu"></i><span>AI & digital literacy</span></li>
-        </ul>
-
-        <div className="bottom-actions">
-          <li><i data-lucide="log-out"></i><span>Logout</span></li>
           {sidebarCollapsed ? (
-            // ✅ Collapsed view: just show the toggle switch
-            <div className="dark-mode-toggle collapsed-toggle-only">
-              <label className="switch">
-                <input type="checkbox" />
-                <span className="slider round"></span>
-              </label>
+            <div className="search-icon-only">
+              <i data-lucide="search"></i>
             </div>
           ) : (
-            // ✅ Expanded view: full layout
-            <div className="dark-mode-toggle">
-              <div className="dark-mode-left">
-                <i data-lucide="moon"></i>
-                <span>Dark mode</span>
-              </div>
-              <label className="switch">
-                <input type="checkbox" />
-                <span className="slider round"></span>
-              </label>
+            <div className="search-container">
+              <i data-lucide="search" className="search-icon"></i>
+              <input
+                type="text"
+                className="module-search"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button className="clear-search" onClick={() => setSearchTerm("")}>
+                  <i data-lucide="x" className="clear-icon"></i>
+                </button>
+              )}
             </div>
           )}
+
+          <ul className="menu-items">
+            <li className="active"><i data-lucide="layout-grid"></i><span>All modules</span></li>
+            <li><i data-lucide="sparkles"></i><span>Personal development</span></li>
+            <li><i data-lucide="signpost"></i><span>Next steps</span></li>
+            <li><i data-lucide="shield-alert"></i><span>Safeguarding</span></li>
+            <li><i data-lucide="landmark"></i><span>Cultural capital</span></li>
+            <li><i data-lucide="scale"></i><span>British values</span></li>
+            <li><i data-lucide="cpu"></i><span>AI & digital literacy</span></li>
+          </ul>
+
+          <div className="bottom-actions">
+            <li
+              onClick={() =>
+                logout({
+                  logoutParams: {
+                    returnTo: import.meta.env.VITE_LOGOUT_URL,
+                    client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
+                  },
+                })
+              }
+            >
+              <i data-lucide="log-out"></i>
+              <span>Logout</span>
+            </li>
+            {sidebarCollapsed ? (
+              // ✅ Collapsed view: just show the toggle switch
+              <div className="dark-mode-toggle collapsed-toggle-only">
+                <label className="switch">
+                  <input type="checkbox" />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            ) : (
+              // ✅ Expanded view: full layout
+              <div className="dark-mode-toggle">
+                <div className="dark-mode-left">
+                  <i data-lucide="moon"></i>
+                  <span>Dark mode</span>
+                </div>
+                <label className="switch">
+                  <input type="checkbox" />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="content-wrapper">
+          <div className="page-header">
+            <div className="page-title">All modules</div>
+
+            {/* Desktop filter/sort buttons */}
+            <div className="dropdown-controls">
+              <div className="filter-dropdown" ref={filterRef}>
+                <button
+                  className="dropdown-button"
+                  onClick={() => {
+                    setShowFilterDropdown(!showFilterDropdown);
+                    setShowSortDropdown(false);
+                  }}
+                >
+                  <span className="button-content">
+                    <SlidersHorizontal size={18} />
+                    <span>Filter</span>
+                  </span>
+                </button>
+
+                {/* Desktop-only dropdown */}
+                {showFilterDropdown && window.innerWidth > 900 && (
+                  <ul className="dropdown-menu">
+                    <li onClick={() => {
+                      setStatusFilter("not started");
+                      setShowFilterDropdown(false);
+                    }}>
+                      <span className="dot purple"></span> Not started
+                    </li>
+                    <li onClick={() => {
+                      setStatusFilter("in progress");
+                      setShowFilterDropdown(false);
+                    }}>
+                      <span className="dot orange"></span> In progress
+                    </li>
+                    <li onClick={() => {
+                      setStatusFilter("completed");
+                      setShowFilterDropdown(false);
+                    }}>
+                      <span className="dot green"></span> Completed
+                    </li>
+                  </ul>
+                )}
+              </div>
+
+              <div className="sort-dropdown" ref={sortRef}>
+                <button
+                  className="dropdown-button"
+                  onClick={() => {
+                    setShowSortDropdown(!showSortDropdown);
+                    setShowFilterDropdown(false);
+                  }}
+                >
+                  <span className="button-content">
+                    <ArrowUpDown size={18} />
+                    <span>Sort by</span>
+                  </span>
+                </button>
+
+                {/* Desktop-only dropdown */}
+                {showSortDropdown && window.innerWidth > 900 && (
+                  <ul className="dropdown-menu">
+                    <li>Newest to oldest</li>
+                    <li>Oldest to newest</li>
+                    <li>Duration (shortest first)</li>
+                    <li>Duration (longest first)</li>
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            {/* Mobile icon-only filter/sort buttons */}
+            <div className="mobile-dropdown-buttons">
+              <button
+                className="icon-button"
+                onClick={() => {
+                  setShowFilterDropdown(!showFilterDropdown);
+                  setShowSortDropdown(false);
+                }}
+              >
+                <SlidersHorizontal size={18} />
+              </button>
+
+              <button
+                className="icon-button"
+                onClick={() => {
+                  setShowSortDropdown(!showSortDropdown);
+                  setShowFilterDropdown(false);
+                }}
+              >
+                <ArrowUpDown size={18} />
+              </button>
+            </div>
+
+            {/* Overlay for mobile dropdowns */}
+            {(showFilterDropdown || showSortDropdown) && window.innerWidth <= 900 && (
+              <div
+                className="mobile-overlay"
+                onClick={() => {
+                  setShowFilterDropdown(false);
+                  setShowSortDropdown(false);
+                }}
+              ></div>
+            )}
+
+            {/* Mobile dropdowns */}
+            {showFilterDropdown && window.innerWidth <= 900 && (
+              <ul className="dropdown-menu mobile-dropdown" ref={filterRef}>
+                <li><span className="dot purple"></span> Not started</li>
+                <li><span className="dot orange"></span> In progress</li>
+                <li><span className="dot green"></span> Completed</li>
+              </ul>
+            )}
+
+            {showSortDropdown && window.innerWidth <= 900 && (
+              <ul className="dropdown-menu mobile-dropdown" ref={sortRef}>
+                <li>Newest to oldest</li>
+                <li>Oldest to newest</li>
+                <li>Duration (shortest first)</li>
+                <li>Duration (longest first)</li>
+              </ul>
+            )}
+          </div>
+
+          <ModuleLoader searchTerm={searchTerm} statusFilter={statusFilter} />
         </div>
       </div>
-
-      <div className="content-wrapper">
-<div className="page-header">
-  <div className="page-title">All modules</div>
-
-  {/* Desktop filter/sort buttons */}
-  <div className="dropdown-controls">
-    {/* Filter dropdown */}
-    <div className="filter-dropdown" ref={filterRef}>
-      <button
-        className="dropdown-button"
-        onClick={() => {
-          setShowFilterDropdown(!showFilterDropdown);
-          setShowSortDropdown(false);
-        }}
-      >
-        <span className="button-content">
-          <SlidersHorizontal size={18} />
-          <span>Filter</span>
-        </span>
-      </button>
-    </div>
-
-    {/* Sort dropdown */}
-    <div className="sort-dropdown" ref={sortRef}>
-      <button
-        className="dropdown-button"
-        onClick={() => {
-          setShowSortDropdown(!showSortDropdown);
-          setShowFilterDropdown(false);
-        }}
-      >
-        <span className="button-content">
-          <ArrowUpDown size={18} />
-          <span>Sort by</span>
-        </span>
-      </button>
-    </div>
-  </div>
-
-  {/* Mobile filter/sort icon buttons */}
-  <div className="mobile-dropdown-buttons">
-    <button
-      className="icon-button"
-      onClick={() => {
-        setShowFilterDropdown(!showFilterDropdown);
-        setShowSortDropdown(false);
-      }}
-      ref={filterRef}
-    >
-      <SlidersHorizontal size={18} />
-    </button>
-
-    <button
-      className="icon-button"
-      onClick={() => {
-        setShowSortDropdown(!showSortDropdown);
-        setShowFilterDropdown(false);
-      }}
-      ref={sortRef}
-    >
-      <ArrowUpDown size={18} />
-    </button>
-  </div>
-
-  {/* Overlay when any dropdown is open */}
-  {(showFilterDropdown || showSortDropdown) && (
-    <div
-      className="mobile-overlay"
-      onClick={() => {
-        setShowFilterDropdown(false);
-        setShowSortDropdown(false);
-      }}
-    ></div>
-  )}
-
-  {/* Shared dropdown menu rendering */}
-  {showFilterDropdown && (
-    <ul className="dropdown-menu mobile-dropdown" ref={filterRef}>
-      <li><span className="dot purple"></span> Not started</li>
-      <li><span className="dot orange"></span> In progress</li>
-      <li><span className="dot green"></span> Completed</li>
-    </ul>
-  )}
-
-  {showSortDropdown && (
-    <ul className="dropdown-menu mobile-dropdown" ref={sortRef}>
-      <li>Newest to oldest</li>
-      <li>Oldest to newest</li>
-      <li>Duration (shortest first)</li>
-      <li>Duration (longest first)</li>
-    </ul>
-  )}
-</div>
-
-
-
-
-
-        <ModuleLoader searchTerm={searchTerm} />
-      </div>
-    </div>
     </div>
 
   );
