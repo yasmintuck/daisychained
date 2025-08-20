@@ -12,7 +12,6 @@ function Modules() {
       })
       .then(data => setModules(data))
       .catch(err => setError(err.message));
-      console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
   }, []);
 
   return (

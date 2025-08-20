@@ -11,7 +11,6 @@ import Faq from "./pages/Faq";
 import Blog from "./pages/Blog";
 import Dashboard from "./pages/Dashboard";
 import Modules from "./pages/Modules";
-import Weather from "./pages/Weather";
 import Badges from "./pages/Badges";
 import ScormPlayer from './components/ScormPlayer';
 
@@ -43,14 +42,6 @@ function App() {
           element={
             <PrivateRoute>
               <Modules />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/weather"
-          element={
-            <PrivateRoute>
-              <Weather />
             </PrivateRoute>
           }
         />

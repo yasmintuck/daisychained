@@ -7,11 +7,34 @@ import { SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 import ModuleLoader from "../components/ModuleLoader";
 import './Dashboard.css';
 import LoadingSpinner from "../components/LoadingSpinner";
+import axios from "axios";
+
+// Map your known package names to the icons you used before
+const ICON_MAP_BY_SLUG = {
+  "personal-development": "sparkles",
+  "safeguarding": "shield-alert",
+  "next-steps": "signpost",
+  "cultural-capital": "landmark",
+  "british-values": "scale",
+  "ai-digital-literacy": "cpu",
+};
+
+// Simple slugify so slight name changes still match
+const slugify = (s = "") =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+const iconForPackage = (name) =>
+  ICON_MAP_BY_SLUG[slugify(name)] ?? "folder"; // fallback icon
+
+const ICON_ALL = "layout-grid"; // the icon you used for "All modules"
 
 
 function Dashboard() {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
   const [searchTerm, setSearchTerm] = useState("");
+  const [packages, setPackages] = useState([]);        // [{packageId, packageName, packageDescription}]
+  const [activePackageId, setActivePackageId] = useState(null); // null = All
+  const [hideAll, setHideAll] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth <= 900);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
@@ -25,8 +48,39 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    if (window.lucide) window.lucide.createIcons();
+  }, [searchTerm, sidebarCollapsed, packages, activePackageId]);
+
+  useEffect(() => {
     document.title = "Dashboard | daisychained";
   }, []);
+
+   useEffect(() => {
+     const loadPackages = async () => {
+     if (!isAuthenticated || !user) return;
+     try {
+       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/packages`, {
+         email: user.email,
+         firstName: user.given_name,
+         lastName: user.family_name,
+         externalId: user.sub,
+       });
+       const list = res.data ?? [];
+       setPackages(list);
+       if (list.length === 1) {
+         setActivePackageId(list[0].packageId);
+         setHideAll(true); // don’t show “All modules” if only one category exists
+       } else {
+         setActivePackageId(null); // “All modules”
+         setHideAll(false);
+       }
+     } catch (e) {
+       console.error("Failed to load packages", e);
+       setPackages([]);
+     }
+   };
+   loadPackages();
+ }, [isAuthenticated, user]);
 
   useEffect(() => {
     if (window.lucide) {
@@ -107,7 +161,7 @@ function Dashboard() {
             </div>
           )}
 
-          <ul className="menu-items">
+          {/* <ul className="menu-items">
             <li className="active"><i data-lucide="layout-grid"></i><span>All modules</span></li>
             <li><i data-lucide="sparkles"></i><span>Personal development</span></li>
             <li><i data-lucide="signpost"></i><span>Next steps</span></li>
@@ -115,7 +169,30 @@ function Dashboard() {
             <li><i data-lucide="landmark"></i><span>Cultural capital</span></li>
             <li><i data-lucide="scale"></i><span>British values</span></li>
             <li><i data-lucide="cpu"></i><span>AI & digital literacy</span></li>
-          </ul>
+          </ul> */}
+
+          <ul className="menu-items">
+            {!hideAll && (
+              <li
+                className={activePackageId === null ? "active" : ""}
+                onClick={() => setActivePackageId(null)}
+              >
+                <i data-lucide={ICON_ALL}></i>
+                <span>All modules</span>
+              </li>
+            )}
+
+            {packages.map((p) => (
+              <li
+                key={p.packageId}
+                className={activePackageId === p.packageId ? "active" : ""}
+                onClick={() => setActivePackageId(p.packageId)}
+              >
+                <i data-lucide={iconForPackage(p.packageName)}></i>
+                <span>{p.packageName}</span>
+              </li>
+            ))}
+          </ul>        
 
           <div className="bottom-actions">
             <li
@@ -157,7 +234,12 @@ function Dashboard() {
 
         <div className="content-wrapper">
           <div className="page-header">
-            <div className="page-title">All modules</div>
+            {/* <div className="page-title">All modules</div> */}
+          <div className="page-title">
+            {hideAll
+              ? (packages[0]?.packageName || "Modules")
+              : (activePackageId === null ? "All modules" : (packages.find(p => p.packageId === activePackageId)?.packageName || "Modules"))}
+          </div>
 
             {/* Desktop filter/sort buttons */}
             <div className="dropdown-controls">
@@ -398,7 +480,13 @@ function Dashboard() {
             )}
           </div>
 
-          <ModuleLoader searchTerm={searchTerm} statusFilter={statusFilter} sortOption={sortOption} />
+          {/* <ModuleLoader searchTerm={searchTerm} statusFilter={statusFilter} sortOption={sortOption} /> */}
+          <ModuleLoader
+            searchTerm={searchTerm}
+            statusFilter={statusFilter}
+            sortOption={sortOption}
+            activePackageId={activePackageId}
+          />          
           {!sidebarCollapsed && window.innerWidth <= 900 && (
             <div
               className="sidebar-overlay"

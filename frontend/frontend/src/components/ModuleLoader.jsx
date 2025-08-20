@@ -3,12 +3,17 @@ import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const ModuleLoader = ({ searchTerm, statusFilter, sortOption }) => {
+//const ModuleLoader = ({ searchTerm, statusFilter, sortOption }) => {
+const ModuleLoader = ({ searchTerm, statusFilter, sortOption, activePackageId }) => {
   const { user, isAuthenticated } = useAuth0();
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(12);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [activePackageId, searchTerm, statusFilter, sortOption]);
 
   useEffect(() => {
     if (!isAuthenticated || !user) return;
@@ -25,17 +30,22 @@ const ModuleLoader = ({ searchTerm, statusFilter, sortOption }) => {
           email: user.email
         };
 
-        await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/sync-user`,
-          payload
-        );
-
-        const [modulesRes, progressRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/Modules`),
+        // const [modulesRes, progressRes] = await Promise.all([
+        //   axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/Modules`),
+        //   axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/UserProgress/user/${user.email}`)
+        // ]);
+        const [modsRes, progressRes] = await Promise.all([
+          axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/modules`, {
+            email: user.email,
+            firstName: user.given_name,
+            lastName: user.family_name,
+            externalId: user.sub,
+          }),
           axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/UserProgress/user/${user.email}`)
         ]);
 
-        const fetchedModules = modulesRes.data;
+//        const fetchedModules = modulesRes.data;
+        const fetchedModules = modsRes.data ?? []; // each item has packageIds: number[]
         const userProgress = progressRes.data || [];
 
         const enrichedModules = fetchedModules
@@ -60,24 +70,62 @@ const ModuleLoader = ({ searchTerm, statusFilter, sortOption }) => {
     fetchAllData();
   }, [isAuthenticated, user]);
 
-  const filteredModules = modules.filter((mod) => {
-    const matchesSearch = mod.moduleTitle.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter ? mod.progressStatus === statusFilter : true;
-    return matchesSearch && matchesStatus;
+  //   const filteredModules = modules.filter((mod) => {
+  //     const matchesSearch = mod.moduleTitle.toLowerCase().includes(searchTerm.toLowerCase());
+  //     const matchesStatus = statusFilter ? mod.progressStatus === statusFilter : true;
+  //     return matchesSearch && matchesStatus;
+  // });
+  const packageFiltered =
+  activePackageId != null
+    ? modules.filter(
+        (m) => Array.isArray(m.packageIds) && m.packageIds.includes(Number(activePackageId))
+      )
+    : modules;
+
+
+const filteredModules = packageFiltered.filter((mod) => {
+  const matchesSearch = (mod.moduleTitle || "")
+    .toLowerCase()
+    .includes((searchTerm || "").toLowerCase());
+  const matchesStatus = statusFilter ? mod.progressStatus === statusFilter : true;
+  return matchesSearch && matchesStatus;
+});
+
+  // const sortedModules = [...filteredModules].sort((a, b) => {
+  //   if (sortOption === "newest") {
+  //     return new Date(b.lastUpdated) - new Date(a.lastUpdated);
+  //   } else if (sortOption === "oldest") {
+  //     return new Date(a.lastUpdated) - new Date(b.lastUpdated);
+  //   } else if (sortOption === "shortest") {
+  //     return parseInt(a.duration) - parseInt(b.duration);
+  //   } else if (sortOption === "longest") {
+  //     return parseInt(b.duration) - parseInt(a.duration);
+  //   }
+  //   return 0;
+  // });
+
+    const sortedModules = [...filteredModules].sort((a, b) => {
+    // Safe dates (fallback to epoch if missing/invalid)
+    const dateA = a?.lastUpdated ? new Date(a.lastUpdated) : new Date(0);
+    const dateB = b?.lastUpdated ? new Date(b.lastUpdated) : new Date(0);
+
+    // Safe durations (fallback to 0 if missing/invalid)
+    const durAraw = parseInt(a?.duration, 10);
+    const durBraw = parseInt(b?.duration, 10);
+    const durA = Number.isFinite(durAraw) ? durAraw : 0;
+    const durB = Number.isFinite(durBraw) ? durBraw : 0;
+
+    // Stable tie-breaker so sort order doesn't jump around
+    const tieBreak = (a?.moduleId ?? 0) - (b?.moduleId ?? 0);
+
+    if (sortOption === "newest") return (dateB - dateA) || tieBreak;
+    if (sortOption === "oldest") return (dateA - dateB) || tieBreak;
+    if (sortOption === "shortest") return (durA - durB) || tieBreak;
+    if (sortOption === "longest") return (durB - durA) || tieBreak;
+
+    return tieBreak;
   });
 
-  const sortedModules = [...filteredModules].sort((a, b) => {
-    if (sortOption === "newest") {
-      return new Date(b.lastUpdated) - new Date(a.lastUpdated);
-    } else if (sortOption === "oldest") {
-      return new Date(a.lastUpdated) - new Date(b.lastUpdated);
-    } else if (sortOption === "shortest") {
-      return parseInt(a.duration) - parseInt(b.duration);
-    } else if (sortOption === "longest") {
-      return parseInt(b.duration) - parseInt(a.duration);
-    }
-    return 0;
-  });
 
   return (
     <>
