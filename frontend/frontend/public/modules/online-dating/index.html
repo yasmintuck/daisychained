@@ -698,7 +698,7 @@
           // Watch for "Module Complete" appearing anywhere on screen
           const observer = new MutationObserver(() => {
               const bodyText = document.body.innerText || "";
-              if (bodyText.includes("Module complete") && bodyText.includes("Online Dating")) {
+              if (bodyText.includes("Module Complete") && bodyText.includes("Online Dating")) {
                   console.log("'Module Complete' detected");
                   sendProgressUpdate(2);
                   observer.disconnect(); // Only send once
