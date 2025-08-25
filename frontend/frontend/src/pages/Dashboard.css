@@ -2,6 +2,7 @@
 .page-title {
   font-size: var(--heading-size);
   color: #2c2829;
+  font-weight: 600;
 }
 
 .user-profile-img {
@@ -294,7 +295,7 @@
   border-radius: 8px;
   border: none;
   background: #f8f5ff;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Baloo Paaji 2', sans-serif;
   font-size: 1.1rem;
   height: 50px;
   margin-left: 1px;
@@ -339,6 +340,7 @@
   margin: 0;
   flex-grow: 1;
   color: #2c2829;
+  font-weight: 600;
 }
 
 .menu-items li {
@@ -371,6 +373,7 @@
   margin-top: auto;
   list-style: none;
   padding: 0;
+  font-weight: 600;
 }
 
 .bottom-actions li {
@@ -393,7 +396,7 @@
   padding: 0.75rem 0.75rem;
   border-radius: 12px;
   background-color: #f8f5ff;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Baloo Paaji 2', sans-serif;
   font-weight: 600;
   font-size: 1rem;
   color: #303030;
@@ -461,7 +464,7 @@ input:checked + .slider:before {
   border-radius: 21px;
   font-size: 14px;
   background: transparent;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Baloo Paaji 2', sans-serif;
   cursor: pointer;
   color: #231F20;
   margin-top: 1rem;
@@ -546,14 +549,14 @@ input:checked + .slider:before {
 }
 
 .course-title {
-  font-weight: 800;
+  font-weight: 600;
   font-size: 1.2rem;
   color: #303030;
   line-height: 1.4;
 }
 
 .course-duration {
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.87rem;
   color: #303030;
   margin-top: 6px;
@@ -578,11 +581,11 @@ input:checked + .slider:before {
   background-color: transparent;
   border: 2px solid #231F20;
   color: #231F20;
-  padding: 10px 30px;
+  padding: 6px 30px;
   font-size: 1rem;
   border-radius: 24px;
   cursor: pointer;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Baloo Paaji 2', sans-serif;
   font-weight: 600;
 }
 
@@ -597,7 +600,7 @@ input:checked + .slider:before {
   right: 0;
   padding: 0.25rem 0.75rem;
   color: white;
-  font-weight: bold;
+  font-weight: 500;
   font-size: 0.75rem;
   border-top-left-radius: 0.25rem;
   border-bottom-left-radius: 0.25rem;
@@ -636,7 +639,7 @@ input:checked + .slider:before {
   border: none;
   padding: 0.6rem 1.2rem;
   border-radius: 10px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Baloo Paaji 2', sans-serif;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -680,7 +683,7 @@ input:checked + .slider:before {
 .dropdown-menu li {
   padding: 0.5rem 1.2rem;
   font-size: 0.95rem;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Baloo Paaji 2', sans-serif;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -730,7 +733,7 @@ input:checked + .slider:before {
 }
 
 .dropdown-menu li.active-option {
-  font-weight: bold;
+  font-weight: 500;
   background-color: #f0f0f0;
   color: #231F20;
 }

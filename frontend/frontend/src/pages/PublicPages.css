@@ -1,0 +1,296 @@
+/* ========== Public Pages (Home, FAQ, About, Blog) ========== */
+
+/* Inherit typography into controls (inputs, buttons don’t always inherit by default) */
+.public-page input,
+.public-page button,
+.public-page select,
+.public-page textarea {
+  font: inherit;
+  color: inherit; /* safe now because .public-page sets color: #231F20 */
+}
+
+.public-page .public-search-input {
+  color: #808285;          /* search text */
+  caret-color: #808285;    /* blinking cursor */
+}
+
+.public-page .public-search-input::placeholder { color: #808285; }
+.public-page .public-search-input:focus::placeholder { color: transparent; } /* hide on focus */
+.public-page .public-search-input--underline { border-bottom-color: #808285; }
+
+.public-page {
+  margin-top: 70px; /* sits under fixed navbar (same height as your nav) */
+  background: #ffffff;
+  color: #231F20;
+}
+
+/* thin white line directly under the nav (full-bleed) */
+.public-nav-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,0.35);
+}
+
+/* hero band that matches the navbar colour and spans edge-to-edge */
+.public-hero {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  width: 100%;
+}
+
+/* max-width wrapper that aligns with the nav’s inner edges */
+.public-container {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  padding: 3rem var(--container-pad-x); /* horizontal padding matches your other pages */
+}
+
+/* hero layout: big heading left, search on the right */
+.public-hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2rem;
+  align-items: end;
+}
+
+.public-hero h1 {
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0;
+  font-size: clamp(2rem, 4.2vw, 3.25rem); /* responsive, similar to mock */
+}
+
+.hero-title { margin: 0; line-height: 1.05; }
+.h1-line1 { display: inline-block; }
+.h1-line2 { margin-left: 1.5em; } /* responsive indent */
+
+/* search bar (no functionality yet) */
+/* search container stays the same */
+.public-search {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* wrapper keeps positioning for the right-side icon */
+.public-search-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+}
+
+/* BASE input */
+.public-search-input {
+  width: 100%;
+  background: transparent;
+  outline: none;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  color: #808285;                   /* grey text */
+  padding: 0.4rem 2.25rem 0.4rem 0; /* space on right for icon */
+  border: none;                     /* remove all borders */
+    -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Chrome/Edge/Safari */
+.public-search-input::-webkit-search-cancel-button,
+.public-search-input::-webkit-search-decoration,
+.public-search-input::-webkit-search-results-button,
+.public-search-input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+/* Old Edge (optional, harmless elsewhere) */
+.public-search-input::-ms-clear {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* make the placeholder text vanish on focus */
+.public-search-input:focus::placeholder {
+  color: transparent; /* or opacity: 0; */
+}
+
+/* Underline style (what you want) */
+.public-search-input--underline {
+  border-bottom: 2px solid #808285; /* grey underline */
+  border-radius: 0;                 /* no rounding */
+}
+
+/* placeholder in grey */
+.public-search-input::placeholder {
+  color: #808285;
+  opacity: 1;
+}
+
+/* focus/typing – keep grey; tweak if you want a subtle change */
+.public-search-input:focus {
+  border-bottom-color: #808285;
+}
+
+/* right-side icons */
+.public-search-icon,
+.public-search-action {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  width: 28px;
+}
+
+/* span is decorative; button is interactive */
+.public-search-icon { pointer-events: none; }
+
+.public-search-action {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* keep hero layout responsive */
+@media (max-width: 900px) {
+  .public-search { justify-content: flex-start; }
+}
+
+
+/* main white body */
+.public-body {
+  background: #fff;
+  width: 100%;
+}
+
+/* Section header with left full-bleed rule */
+.section-header {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.section-header .heading {
+  position: relative;          /* keep text above the rule */
+  z-index: 1;
+  color: var(--yellow-accent);
+  font-weight: 700;
+  font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+}
+
+/* The yellow rule that comes in from the far left and stops before the wrapper */
+.section-header::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;                           /* thinner line */
+  background: var(--yellow-accent);
+  z-index: 0;
+  /* Place the rule so its RIGHT edge sits a few px left of the heading start */
+  right: calc(100% + var(--section-rule-gap, 12px));
+  /* Make it long enough to reach the viewport’s left edge */
+  width: 100vw;
+  pointer-events: none;
+}
+
+/* ------- Accordion ------- */
+.accordion {
+  border-top: 1px solid #e9e9e9;
+  margin-bottom: 2.5rem;
+}
+
+.ac-item {
+  border-bottom: 1px solid #e9e9e9;
+  background: #fff;
+}
+
+.ac-trigger {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  text-align: left;
+  background: #fff;
+  color: #231F20;
+  font-size: 1.05rem;
+  padding: 0.95rem 0.25rem;
+  border: none;
+  cursor: pointer;
+}
+
+.ac-trigger:hover {
+  background: #fafafa;
+}
+
+.ac-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  width: 2rem;
+  display: inline-flex;
+  justify-content: center;
+  opacity: 0.8;
+}
+
+.ac-panel {
+  padding: 0 0 0.95rem 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+/* ===== Accordion: compact sizing ===== */
+.accordion {
+  --ac-q-font: 1rem;     /* question text size (was ~1.05rem) */
+  --ac-a-font: 0.96rem;  /* answer text size */
+  --ac-row-y: 0.50rem;   /* vertical padding for each row (was ~0.95rem) */
+  --ac-icon-size: 1.2rem;
+}
+
+.ac-trigger {
+  font-size: var(--ac-q-font);
+  padding: var(--ac-row-y) 0.25rem;   /* tighter top/bottom */
+}
+
+.ac-icon {
+  font-size: var(--ac-icon-size);
+  width: calc(var(--ac-icon-size) + 0.2rem);
+}
+
+.ac-panel {
+  font-size: var(--ac-a-font);
+  padding: 1rem;   /* tighter space under the answer */
+  line-height: 1.45;
+}
+
+/* Make the open question bold, without bolding the +/– icon */
+.ac-trigger[aria-expanded="true"] span:first-child {
+  font-weight: 500;           /* Baloo bold */
+}
+
+/* small screens */
+@media (max-width: 900px) {
+      .accordion {
+    --ac-q-font: 0.98rem;
+    --ac-row-y: 0.60rem;
+  }
+  .public-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .public-search {
+    justify-content: flex-start;
+    margin-top: 2rem;
+  }
+  .section-header::before {
+    left: -1rem; /* match smaller side padding */
+  }
+}
+
+/* Hide the rule on smaller screens (no outside gutter to show it in) */
+@media (max-width: 1400px) {
+  .section-header::before { display: none; }
+}

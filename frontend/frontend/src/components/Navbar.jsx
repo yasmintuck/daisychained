@@ -63,15 +63,15 @@ export default function Navbar() {
           <nav className={`nav-links ${isMobile ? 'mobile-hidden' : ''}`}>
             {!isAuthenticated ? (
               <>
-                <Link to="/" className={location.pathname === "/" ? "active-link" : ""}>Home</Link>
-                <Link to="/about" className={location.pathname === "/about" ? "active-link" : ""}>About</Link>
-                <Link to="/faq" className={location.pathname === "/faq" ? "active-link" : ""}>FAQs</Link>
-                <Link to="/blog" className={location.pathname === "/blog" ? "active-link" : ""}>Blog</Link>
+                <Link to="/" className={location.pathname === "/" ? "active-link" : ""}>home</Link>
+                <Link to="/about" className={location.pathname === "/about" ? "active-link" : ""}>meet the team</Link>
+                <Link to="/faq" className={location.pathname === "/faq" ? "active-link" : ""}>faq</Link>
+                <Link to="/blog" className={location.pathname === "/blog" ? "active-link" : ""}>blog</Link>
               </>
             ) : (
               <>
-                <Link to="/dashboard" className={location.pathname === "/dashboard" ? "active-link" : ""}>Dashboard</Link>
-                <Link to="/badges" className={location.pathname === "/badges" ? "active-link" : ""}>Badges</Link>
+                <Link to="/dashboard" className={location.pathname === "/dashboard" ? "active-link" : ""}>my modules</Link>
+                <Link to="/badges" className={location.pathname === "/badges" ? "active-link" : ""}>badges + certificates</Link>
               </>
             )}
           </nav>
@@ -121,19 +121,19 @@ export default function Navbar() {
         <nav className={`nav-links ${isOpen ? 'open' : 'collapsed'}`}>
           {!isAuthenticated ? (
             <>
-              <Link to="/">Home</Link>
-              <Link to="/about">About</Link>
-              <Link to="/faq">FAQs</Link>
-              <Link to="/blog">Blog</Link>
+              <Link to="/">home</Link>
+              <Link to="/about">meet the team</Link>
+              <Link to="/faq">faq</Link>
+              <Link to="/blog">blog</Link>
             </>
           ) : (
             <>
               <Link
                 to="/dashboard"
                 className={location.pathname === "/dashboard" ? "active-link" : ""}
-              >   Dashboard
+              >   my modules
               </Link>
-              <Link to="/badges">Badges</Link>
+              <Link to="/badges">badges + certificates</Link>
             </>
           )}
         </nav>
