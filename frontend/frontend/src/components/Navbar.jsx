@@ -1,8 +1,7 @@
 // src/components/Navbar.jsx
 import { useState, useEffect, useRef } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -12,6 +11,13 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const { loginWithRedirect, isAuthenticated, user, logout, isLoading } = useAuth0();
+
+  // ✅ declare these FIRST so effects and helpers can use them
+  const location = useLocation();
+  const dropdownRef = useRef(null);
+
+  // helper to add the active class
+  const linkClass = (path) => (location.pathname === path ? 'active-link' : '');
 
   useEffect(() => {
     setHasMounted(true);
@@ -27,20 +33,18 @@ export default function Navbar() {
         setShowDropdown(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownRef]);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  // ✅ close mobile menu & dropdown whenever the route changes
+  useEffect(() => {
+    setIsOpen(false);
+    setShowDropdown(false);
+  }, [location.pathname]);
 
-  const toggleDropdown = () => setShowDropdown(prev => !prev);
-
-  const dropdownRef = useRef(null);
-
-  const location = useLocation();
+  const toggleMenu = () => setIsOpen((o) => !o);
+  const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
   if (isLoading) return null;
 
@@ -55,23 +59,21 @@ export default function Navbar() {
           </button>
         )}
 
-
         <img src="/logo.png" alt="DaisyChained Logo" className="logo" />
-
 
         {!isMobile && (
           <nav className={`nav-links ${isMobile ? 'mobile-hidden' : ''}`}>
             {!isAuthenticated ? (
               <>
-                <Link to="/" className={location.pathname === "/" ? "active-link" : ""}>home</Link>
-                <Link to="/about" className={location.pathname === "/about" ? "active-link" : ""}>meet the team</Link>
-                <Link to="/faq" className={location.pathname === "/faq" ? "active-link" : ""}>faq</Link>
-                <Link to="/blog" className={location.pathname === "/blog" ? "active-link" : ""}>blog</Link>
+                <Link to="/"      className={linkClass('/')}>home</Link>
+                <Link to="/about" className={linkClass('/about')}>meet the team</Link>
+                <Link to="/faq"   className={linkClass('/faq')}>faq</Link>
+                <Link to="/blog"  className={linkClass('/blog')}>blog</Link>
               </>
             ) : (
               <>
-                <Link to="/dashboard" className={location.pathname === "/dashboard" ? "active-link" : ""}>my modules</Link>
-                <Link to="/badges" className={location.pathname === "/badges" ? "active-link" : ""}>badges + certificates</Link>
+                <Link to="/dashboard" className={linkClass('/dashboard')}>my modules</Link>
+                <Link to="/badges"    className={linkClass('/badges')}>badges + certificates</Link>
               </>
             )}
           </nav>
@@ -82,9 +84,7 @@ export default function Navbar() {
             <button
               className="outline-btn"
               onClick={() =>
-                loginWithRedirect({
-                  authorizationParams: { prompt: 'select_account' },
-                })
+                loginWithRedirect({ authorizationParams: { prompt: 'select_account' } })
               }
             >
               Log in
@@ -92,24 +92,15 @@ export default function Navbar() {
           ) : (
             <div className="profile-wrapper" ref={dropdownRef} onClick={toggleDropdown}>
               <span className="nav-links-style">{user?.given_name}</span>
-              <img
-                src={user?.picture}
-                alt="User profile"
-                className="login-profile-pic"
-              />
+              <img src={user?.picture} alt="User profile" className="login-profile-pic" />
               {showDropdown && (
                 <div className="dropdown-menu-nav">
-                  {/* Add more links here if needed */}
                   <button
                     className="dropdown-item"
-                    onClick={() => {
-                      // Placeholder for future "My account" logic
-                      setShowDropdown(false);
-                    }}
+                    onClick={() => setShowDropdown(false)}
                   >
                     My account
                   </button>
-
                 </div>
               )}
             </div>
@@ -121,19 +112,15 @@ export default function Navbar() {
         <nav className={`nav-links ${isOpen ? 'open' : 'collapsed'}`}>
           {!isAuthenticated ? (
             <>
-              <Link to="/">home</Link>
-              <Link to="/about">meet the team</Link>
-              <Link to="/faq">faq</Link>
-              <Link to="/blog">blog</Link>
+              <Link to="/"      className={linkClass('/')}       onClick={() => setIsOpen(false)}>home</Link>
+              <Link to="/about" className={linkClass('/about')}  onClick={() => setIsOpen(false)}>meet the team</Link>
+              <Link to="/faq"   className={linkClass('/faq')}    onClick={() => setIsOpen(false)}>faq</Link>
+              <Link to="/blog"  className={linkClass('/blog')}   onClick={() => setIsOpen(false)}>blog</Link>
             </>
           ) : (
             <>
-              <Link
-                to="/dashboard"
-                className={location.pathname === "/dashboard" ? "active-link" : ""}
-              >   my modules
-              </Link>
-              <Link to="/badges">badges + certificates</Link>
+              <Link to="/dashboard" className={linkClass('/dashboard')} onClick={() => setIsOpen(false)}>my modules</Link>
+              <Link to="/badges"    className={linkClass('/badges')}    onClick={() => setIsOpen(false)}>badges + certificates</Link>
             </>
           )}
         </nav>
