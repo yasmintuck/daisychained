@@ -1,51 +1,66 @@
-/* ========== Public Pages (Home, FAQ, About, Blog) ========== */
+/* =========================================================
+   Public Pages (Home, FAQ, About, Blog)
+   - Base page styles
+   - Standard container + global hero
+   - Search input (shared)
+   - Section header + left rule
+   - Accordion
+   - Meet the Team (About) — hero + grid/cards
+   - Responsive tweaks
+   ========================================================= */
 
-/* Inherit typography into controls (inputs, buttons don’t always inherit by default) */
+/* =============== Base page styles =============== */
+
+.public-page {
+  margin-top: 70px;                  /* sits under the fixed navbar */
+  background: #ffffff;
+  color: #231F20;
+}
+
+/* Inherit typography into form controls on public pages */
 .public-page input,
 .public-page button,
 .public-page select,
 .public-page textarea {
   font: inherit;
-  color: inherit; /* safe now because .public-page sets color: #231F20 */
-}
-
-.public-page .public-search-input {
-  color: #808285;          /* search text */
-  caret-color: #808285;    /* blinking cursor */
-}
-
-.public-page .public-search-input::placeholder { color: #808285; }
-.public-page .public-search-input:focus::placeholder { color: transparent; } /* hide on focus */
-.public-page .public-search-input--underline { border-bottom-color: #808285; }
-
-.public-page {
-  margin-top: 70px; /* sits under fixed navbar (same height as your nav) */
-  background: #ffffff;
-  color: #231F20;
+  color: inherit;
 }
 
 /* thin white line directly under the nav (full-bleed) */
 .public-nav-divider {
   width: 100%;
   height: 1px;
-  background: rgba(255,255,255,0.35);
+  background: rgba(255, 255, 255, 0.35);
 }
 
-/* hero band that matches the navbar colour and spans edge-to-edge */
+/* optional wrapper for white body sections (full-bleed) */
+.public-body {
+  background: #fff;
+  width: 100%;
+}
+
+/* =============== Standard container + global hero =============== */
+
+.public-container {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  padding: 3rem var(--container-pad-x);
+}
+
+.public-team-container {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  padding: 3rem var(--container-pad-x);
+}
+
+/* generic dark hero band (used on some pages) */
 .public-hero {
   background: var(--bg-dark);
   color: var(--text-light);
   width: 100%;
 }
 
-/* max-width wrapper that aligns with the nav’s inner edges */
-.public-container {
-  max-width: var(--max-container-width);
-  margin: 0 auto;
-  padding: 3rem var(--container-pad-x); /* horizontal padding matches your other pages */
-}
-
-/* hero layout: big heading left, search on the right */
+/* generic hero grid (heading left, content/search right) */
 .public-hero-grid {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -53,86 +68,62 @@
   align-items: end;
 }
 
-.public-hero h1 {
-  font-weight: 700;
-  line-height: 1.05;
+.public-hero h1,
+.hero-title {
   margin: 0;
-  font-size: clamp(2rem, 4.2vw, 3.25rem); /* responsive, similar to mock */
+  line-height: 1.05;
+  font-weight: 700;
+  font-size: clamp(2rem, 4.2vw, 3.25rem);
 }
 
-.hero-title { margin: 0; line-height: 1.05; }
 .h1-line1 { display: inline-block; }
-.h1-line2 { margin-left: 1.5em; } /* responsive indent */
+.h1-line2 { margin-left: 1.5em; }
 
-/* search bar (no functionality yet) */
-/* search container stays the same */
+/* =============== Search (shared) =============== */
+
 .public-search {
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
-/* wrapper keeps positioning for the right-side icon */
 .public-search-wrap {
   position: relative;
   width: 100%;
   max-width: 520px;
 }
 
-/* BASE input */
 .public-search-input {
   width: 100%;
   background: transparent;
   outline: none;
   font-size: 1.05rem;
   line-height: 1.2;
-  color: #808285;                   /* grey text */
-  padding: 0.4rem 2.25rem 0.4rem 0; /* space on right for icon */
-  border: none;                     /* remove all borders */
-    -webkit-appearance: none;
+  color: #808285;
+  padding: 0.4rem 2.25rem 0.4rem 0;  /* space on right for icon */
+  border: none;
+  -webkit-appearance: none;
   appearance: none;
 }
 
-/* Chrome/Edge/Safari */
+.public-search-input::placeholder { color: #808285; opacity: 1; }
+.public-search-input:focus::placeholder { color: transparent; }
+
+/* underline variant */
+.public-search-input--underline {
+  border-bottom: 2px solid #808285;
+  border-radius: 0;
+}
+.public-search-input:focus { border-bottom-color: #808285; }
+
+/* hide native clear buttons (browser quirks) */
 .public-search-input::-webkit-search-cancel-button,
 .public-search-input::-webkit-search-decoration,
 .public-search-input::-webkit-search-results-button,
-.public-search-input::-webkit-search-results-decoration {
-  -webkit-appearance: none;
-  appearance: none;
-  display: none;
-}
+.public-search-input::-webkit-search-results-decoration { display: none; -webkit-appearance: none; }
+.public-search-input::-ms-clear { display: none; width: 0; height: 0; }
 
-/* Old Edge (optional, harmless elsewhere) */
-.public-search-input::-ms-clear {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-/* make the placeholder text vanish on focus */
-.public-search-input:focus::placeholder {
-  color: transparent; /* or opacity: 0; */
-}
-
-/* Underline style (what you want) */
-.public-search-input--underline {
-  border-bottom: 2px solid #808285; /* grey underline */
-  border-radius: 0;                 /* no rounding */
-}
-
-/* placeholder in grey */
-.public-search-input::placeholder {
-  color: #808285;
-  opacity: 1;
-}
-
-/* focus/typing – keep grey; tweak if you want a subtle change */
-.public-search-input:focus {
-  border-bottom-color: #808285;
-}
-
-/* right-side icons */
+/* icon / action button aligned to right of input */
 .public-search-icon,
 .public-search-action {
   position: absolute;
@@ -145,10 +136,7 @@
   height: 28px;
   width: 28px;
 }
-
-/* span is decorative; button is interactive */
 .public-search-icon { pointer-events: none; }
-
 .public-search-action {
   background: transparent;
   border: none;
@@ -156,58 +144,49 @@
   padding: 0;
 }
 
-/* keep hero layout responsive */
-@media (max-width: 900px) {
-  .public-search { justify-content: flex-start; }
-}
+/* =============== Section header + left full-bleed rule =============== */
 
-
-/* main white body */
-.public-body {
-  background: #fff;
-  width: 100%;
-}
-
-/* Section header with left full-bleed rule */
 .section-header {
   position: relative;
   margin-bottom: 0.75rem;
 }
 
 .section-header .heading {
-  position: relative;          /* keep text above the rule */
+  position: relative;
   z-index: 1;
   color: var(--yellow-accent);
   font-weight: 700;
   font-size: clamp(1.1rem, 2.2vw, 1.35rem);
 }
 
-/* The yellow rule that comes in from the far left and stops before the wrapper */
+/* yellow rule that runs in from the far left up to the container edge */
 .section-header::before {
   content: "";
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 2px;                           /* thinner line */
+  height: 2px;
   background: var(--yellow-accent);
   z-index: 0;
-  /* Place the rule so its RIGHT edge sits a few px left of the heading start */
   right: calc(100% + var(--section-rule-gap, 12px));
-  /* Make it long enough to reach the viewport’s left edge */
-  width: 100vw;
+  width: 100vw;                    /* long enough to hit the viewport’s left edge */
   pointer-events: none;
 }
 
-/* ------- Accordion ------- */
+/* =============== Accordion =============== */
+
 .accordion {
   border-top: 1px solid #e9e9e9;
   margin-bottom: 2.5rem;
+
+  /* sizing tokens for compact variant */
+  --ac-q-font: 1rem;      /* question text */
+  --ac-a-font: 0.96rem;   /* answer text */
+  --ac-row-y: 0.5rem;     /* vertical padding per row */
+  --ac-icon-size: 1.2rem;
 }
 
-.ac-item {
-  border-bottom: 1px solid #e9e9e9;
-  background: #fff;
-}
+.ac-item { border-bottom: 1px solid #e9e9e9; background: #fff; }
 
 .ac-trigger {
   width: 100%;
@@ -217,80 +196,220 @@
   text-align: left;
   background: #fff;
   color: #231F20;
-  font-size: 1.05rem;
-  padding: 0.95rem 0.25rem;
+  font-size: var(--ac-q-font);
+  padding: var(--ac-row-y) 0.25rem;
   border: none;
   cursor: pointer;
 }
-
-.ac-trigger:hover {
-  background: #fafafa;
-}
+.ac-trigger:hover { background: #fafafa; }
 
 .ac-icon {
-  font-size: 1.4rem;
+  font-size: var(--ac-icon-size);
   line-height: 1;
-  width: 2rem;
+  width: calc(var(--ac-icon-size) + 0.2rem);
   display: inline-flex;
   justify-content: center;
   opacity: 0.8;
 }
 
 .ac-panel {
-  padding: 0 0 0.95rem 0;
-  font-size: 0.98rem;
-  line-height: 1.5;
-}
-
-/* ===== Accordion: compact sizing ===== */
-.accordion {
-  --ac-q-font: 1rem;     /* question text size (was ~1.05rem) */
-  --ac-a-font: 0.96rem;  /* answer text size */
-  --ac-row-y: 0.50rem;   /* vertical padding for each row (was ~0.95rem) */
-  --ac-icon-size: 1.2rem;
-}
-
-.ac-trigger {
-  font-size: var(--ac-q-font);
-  padding: var(--ac-row-y) 0.25rem;   /* tighter top/bottom */
-}
-
-.ac-icon {
-  font-size: var(--ac-icon-size);
-  width: calc(var(--ac-icon-size) + 0.2rem);
-}
-
-.ac-panel {
+  padding: 1rem;
   font-size: var(--ac-a-font);
-  padding: 1rem;   /* tighter space under the answer */
   line-height: 1.45;
 }
 
 /* Make the open question bold, without bolding the +/– icon */
-.ac-trigger[aria-expanded="true"] span:first-child {
-  font-weight: 500;           /* Baloo bold */
+.ac-trigger[aria-expanded="true"] span:first-child { font-weight: 500; }
+
+/* =============== Meet the Team (About) =============== */
+
+/* inner wrapper for the hero (kept INSIDE .public-container) */
+.public-container-team {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  padding: 2rem 0 0;               /* top spacing only — sides align to container */
 }
 
-/* small screens */
+/* hero positioning + small overlap onto cards */
+.team-hero {
+  --hero-overlap: 36px;
+  --hero-nudge-pct: 1%;            /* horizontal nudge to align the left tail */
+  --hero-text-shift: 20px;         /* vertical micro-adjust for baseline match */
+  position: relative;
+  margin-bottom: calc(-1 * var(--hero-overlap));
+  z-index: 2;
+}
+
+.team-hero-inner {
+  display: flex;
+  gap: 2rem;
+  padding-top: 1.5rem;
+}
+
+/* “meet the team” text */
+.team-heading {
+  margin: 0 0 0 -10px;             /* small left nudge per your mock */
+  font-weight: 700;
+  font-size: clamp(1rem, 1.4vw, 1.4rem);
+  line-height: 1.1;
+  white-space: nowrap;             /* keep on one line on desktop */
+  flex: 0 0 auto;
+  transform: translateY(var(--hero-text-shift));
+}
+
+/* art column owns the desired width; image fills it */
+.team-hero-art {
+  /* flex: 0 1 clamp(720px, 72vw, 1280px); */
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.team-hero-art img {
+  width: 104%;                     /* intentional: slight bleed inside column */
+  height: auto;
+  object-fit: contain;
+  transform: translateX(var(--hero-nudge-pct));
+  pointer-events: none;
+}
+
+/* cards grid below the hero */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  align-items: stretch;
+  margin: 1.25rem 2rem 0 2rem;     /* matches your current alignment */
+  position: relative;
+  z-index: 1;
+}
+
+/* yellow cards */
+.team-card {
+  --team-card-pad: 1.25rem;
+  background: #fac612;
+  color: #231F20;
+  padding: var(--team-card-pad);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* typography inside cards */
+.team-name {
+  margin: 0 0 0.25rem 0;
+  font-weight: 600;
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.team-role {
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  color: #414042;
+}
+
+.team-body {
+  margin: 0 0 0.9rem 0;
+  font-weight: 400;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* keep consistent padding at the bottom even if text is short */
+.team-card :last-child { margin-bottom: 0; }
+
+.team-avatar {
+  display: none;
+}
+
+/* =============== Responsive tweaks =============== */
+
 @media (max-width: 900px) {
-      .accordion {
-    --ac-q-font: 0.98rem;
-    --ac-row-y: 0.60rem;
+  /* search moves left on small screens */
+  .public-search { justify-content: flex-start; margin-top: 2rem; }
+
+  /* accordion: slightly smaller spacing */
+  .accordion { --ac-q-font: 0.98rem; --ac-row-y: 0.60rem; }
+
+  /* stack team cards on mobile (you’ll refine hero later) */
+  .team-grid { grid-template-columns: 1fr; margin: 0; }
+
+  .team-hero-art { display: none; }
+
+  .team-hero-inner { gap: 0; }
+
+  .team-heading { transform: none; margin: 0; }
+
+  /* remove the desktop overlap since there's no artwork */
+  .team-hero { --hero-overlap: 0; margin-bottom: 0; }
+
+  .team-heading { font-size: 2rem; }
+
+  .public-team-container { padding: 0rem var(--container-pad-x) 2rem; }
+
+    /* stack hero content */
+  .public-hero-grid { 
+    grid-template-columns: 1fr;   /* one column */
+    gap: 0.75rem;
+    align-items: start;
   }
-  .public-hero-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+
+  /* place items in order: title then search */
+  .public-hero h1,
+  .hero-title {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;                    /* optional tidy */
   }
+
   .public-search {
-    justify-content: flex-start;
-    margin-top: 2rem;
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;  /* left align its contents */
+    width: 100%;
   }
-  .section-header::before {
-    left: -1rem; /* match smaller side padding */
+
+  /* let the input span the full width on mobile */
+  .public-search-wrap { max-width: none; }
+
+  .team-avatar {
+    display: block;
+    width: min(100%, 350px);      /* responsive size with a sensible cap */
+    height: auto;
+    margin: 0 auto 0.75rem;      /* centered, with space before the name */
+    object-fit: contain;
   }
 }
 
-/* Hide the rule on smaller screens (no outside gutter to show it in) */
+/* hide the left full-bleed rule when there’s no outside gutter to show it in */
 @media (max-width: 1400px) {
   .section-header::before { display: none; }
+}
+
+@media (max-width: 1350px) {
+  .team-heading {
+    margin: 0;
+  }
+
+  .team-hero-art img {
+    width: 100%;
+  }
+
+  .team-hero {
+  --hero-nudge-pct: -2%; 
+  }
+}
+
+@media (max-width: 1050px) {
+  .team-grid {
+    margin: 1.25rem 0 0 0;
+  }
+  .team-hero {
+  --hero-nudge-pct: -4%; 
+  --hero-text-shift: 15px; 
+  }
 }
