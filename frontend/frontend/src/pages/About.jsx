@@ -12,7 +12,16 @@ export default function About() {
 
             <div className="team-hero-art">
               {/* image is in public/, so reference by absolute path */}
-              <img src="/images/meet-the-team2.png" alt="daisychained team line illustration" />
+              {/* <img src="/images/meet-the-team2.png" alt="daisychained team line illustration" /> */}
+              <img
+                className="team-hero-img"
+                src="/images/meet-the-team2.png"
+                alt="daisychained team line illustration"
+                width="1665"            // intrinsic size of the source image
+                height="344"
+                fetchpriority="high"    // load ASAP (avoid late pop-in)
+                decoding="async"
+              />
             </div>
           </div>
         </div>

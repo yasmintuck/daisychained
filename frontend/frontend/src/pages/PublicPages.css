@@ -269,6 +269,7 @@
 .team-hero-art img {
   width: 104%;                     /* intentional: slight bleed inside column */
   height: auto;
+  aspect-ratio: 1665 / 344;
   object-fit: contain;
   transform: translateX(var(--hero-nudge-pct));
   pointer-events: none;
@@ -336,7 +337,7 @@
   .accordion { --ac-q-font: 0.98rem; --ac-row-y: 0.60rem; }
 
   /* stack team cards on mobile (you’ll refine hero later) */
-  .team-grid { grid-template-columns: 1fr; margin: 0; }
+  .team-grid { grid-template-columns: 1fr; margin: 0; gap: 2rem;}
 
   .team-hero-art { display: none; }
 
@@ -379,6 +380,7 @@
   .team-avatar {
     display: block;
     width: min(100%, 350px);      /* responsive size with a sensible cap */
+    /*aspect-ratio: 500 / 345; */
     height: auto;
     margin: 0 auto 0.75rem;      /* centered, with space before the name */
     object-fit: contain;
