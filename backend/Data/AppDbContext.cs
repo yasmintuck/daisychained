@@ -14,6 +14,8 @@ namespace backend.Data
     public DbSet<ModulePackage> ModulePackages { get; set; }
     public DbSet<Organisation> Organisations { get; set; }
     public DbSet<OrganisationPackage> OrganisationPackages { get; set; }
+    public DbSet<BlogPost> BlogPosts { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,10 +42,23 @@ namespace backend.Data
 
             modelBuilder.Entity<OrganisationPackage>()
                 .HasKey(op => new { op.OrganisationId, op.PackageId });
-                
+
             modelBuilder.Entity<Organisation>()
                 .HasIndex(o => o.Domain)
                 .IsUnique();
+                
+            modelBuilder.Entity<BlogPost>()
+                .HasIndex(b => b.Slug)
+                .IsUnique();
+
+            modelBuilder.Entity<BlogPost>()
+                .Property(b => b.Title)
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<BlogPost>()
+                .Property(b => b.Slug)
+                .HasMaxLength(200);
+
         }
 }
 
