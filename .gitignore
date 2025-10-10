@@ -8,3 +8,8 @@ bin/
 obj/
 .vscode/
 daisychained.zip
+railway.json
+/backend/obj
+backend/obj/project.nuget.cache
+backend/obj/project.assets.json
+backend/obj/backend.csproj.nuget.g.targets

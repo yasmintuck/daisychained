@@ -75,7 +75,7 @@
   font-weight: 700;
   font-size: clamp(2rem, 4.2vw, 3.25rem);
 }
-
+.h1-line { display: inline-block; }
 .h1-line1 { display: inline-block; }
 .h1-line2 { margin-left: 1.5em; }
 
@@ -327,6 +327,160 @@
   display: none;
 }
 
+/* =============== Blog list =============== */
+.blog-grid {
+  margin-top: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #E6E7E8;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.blog-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+.blog-card-media img {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.blog-card-body {
+  padding: 14px 14px 16px;
+  color: #231F20;
+}
+
+.blog-card-meta {
+  font-size: 0.9rem;
+  color: #6D6E71;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.blog-card-title {
+  font-size: clamp(1rem, 1.2vw, 1.25rem);
+  line-height: 1.15;
+  margin: 0 0 6px;
+}
+
+.blog-card-excerpt {
+  margin: 0;
+  font-size: 0.98rem;
+  color: #38393B;
+}
+
+/* =============== Blog article =============== */
+.blog-article { color: #231F20; }
+.blog-article-meta {
+  color: #6D6E71;
+  display: flex; gap: 8px; align-items: center;
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+.blog-hero-media img {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #E6E7E8;
+  margin: 10px 0 16px;
+}
+.blog-article-content {
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+.blog-article-content h2, .blog-article-content h3 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.blog-article-content p { margin: 0.5rem 0; }
+.blog-article-content ul { padding-left: 1.1rem; }
+.blog-back-link {
+  color: #231F20;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ===== a11y helper (safe, unused elsewhere) ===== */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+.public-hero-divider {
+  height: 1px;
+  background: #ffffff;
+  opacity: 0.8;
+  width: 100%;
+}
+
+.public-search-input--light {
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(255,255,255,0.7);
+  padding: 10px 2px;
+  width: min(560px, 100%);
+  outline: none;
+}
+.public-search-input--light::placeholder { color: rgba(255,255,255,0.85); }
+.public-search-input--light:focus { border-bottom-color: #ffffff; }
+
+.public-hero-inner {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  padding: 64px var(--container-pad-x) 28px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;  /* title left, search right */
+  gap: 2rem;
+  align-items: end;
+}
+
+/* ===== tags toolbar under hero, above posts (blog-only) ===== */
+.blog-tags-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 0 10px;
+}
+
+.tag-chip {
+  background: #ffffff;
+  border: 1px solid #E6E7E8;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 0.95rem;
+  color: #231F20;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+.tag-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+.tag-chip.active {
+  border-color: var(--yellow-accent);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+
 /* =============== Responsive tweaks =============== */
 
 @media (max-width: 900px) {
@@ -385,6 +539,11 @@
     margin: 0 auto 0.75rem;      /* centered, with space before the name */
     object-fit: contain;
   }
+  .public-hero-inner {
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding: 48px var(--container-pad-x) 20px;
+  }
 }
 
 /* hide the left full-bleed rule when there’s no outside gutter to show it in */
@@ -414,4 +573,10 @@
   --hero-nudge-pct: -4%; 
   --hero-text-shift: 15px; 
   }
+  .blog-grid { grid-template-columns: repeat(2, 1fr); }
+
+}
+
+@media (max-width: 700px) {
+  .blog-grid { grid-template-columns: 1fr; margin-top: 6px; }
 }
