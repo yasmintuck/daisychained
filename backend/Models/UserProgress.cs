@@ -16,5 +16,6 @@ namespace backend.Models
         public int Progress { get; set; } = 0;
 
         public DateTime LastAccessed { get; set; } = DateTime.UtcNow;
+        public DateTime? CompletedAt { get; set; }  // set when Progress becomes 2 (Completed)
     }
 }

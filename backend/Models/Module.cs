@@ -10,6 +10,9 @@ public class Module
     public string Duration { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime LastUpdated { get; set; }
+    public string? BadgeImageUrl { get; set; }           
+    public string? CertificateTemplateUrl { get; set; }  
+
 
     public ICollection<UserProgress> UserProgressRecords { get; set; } = new List<UserProgress>();
 }
