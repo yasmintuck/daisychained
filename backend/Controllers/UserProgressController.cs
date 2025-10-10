@@ -40,9 +40,11 @@ namespace backend.Controllers
 
             if (existingProgress != null)
             {
-                if (dto.Progress > existingProgress.Progress)
+                existingProgress.Progress = dto.Progress;
+
+                if (dto.Progress == 2 && existingProgress.CompletedAt == null)
                 {
-                    existingProgress.Progress = dto.Progress;
+                    existingProgress.CompletedAt = DateTime.UtcNow;
                 }
 
                 existingProgress.LastAccessed = DateTime.UtcNow;
@@ -54,7 +56,8 @@ namespace backend.Controllers
                     UserId = user.UserId,
                     ModuleId = module.ModuleId,
                     Progress = dto.Progress,
-                    LastAccessed = DateTime.UtcNow
+                    LastAccessed = DateTime.UtcNow,
+                    CompletedAt = (dto.Progress == 2) ? DateTime.UtcNow : null
                 });
             }
 
