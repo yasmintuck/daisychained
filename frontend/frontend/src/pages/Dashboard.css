@@ -18,26 +18,6 @@
   margin-top: 70px; /* height of fixed navbar */
 }
 
-
-/*.dashboard-container {
-  max-width: 1350px;            
-  margin: 0 auto;
-  padding: 2rem 2rem;
-  background-color: #ffffff;    
-  color: #231F20;               
-  min-height: 100vh;
-  display: flex; 
-}*/
-
-/*.dashboard-container {
-  margin-top: 70px; 
-  display: flex;
-  min-height: calc(100vh - 70px); 
-  background-color: #ffffff;
-  color: #231F20;
-  min-height: calc(100vh - 70px);
-}*/
-
 .dashboard-container {
   max-width: 1350px;
   margin: 0 auto;
@@ -52,40 +32,6 @@
   display: flex;
   gap: 20px;
 }
-
-/*.sidebar {
-  width: 20%;
-  min-width: 200px;
-  background-color: white;
-  padding: 20px;
-  border-right: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  height: 100vh;
-  position: sticky;
-  top: 0;
-}
-
-.sidebar {
-  width: 20%;
-  min-width: 200px;
-  background-color: white;
-  padding: 20px;
-  border-right: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  position: fixed;
-  top: 70px; 
-  bottom: 0;
-  left: calc((100vw - 1350px) / 2); 
-  height: calc(100vh - 70px);
-  overflow-y: auto;
-  z-index: 999;
-}*/
 
 .sidebar {
   transition: width 0.3s ease; /* newly added for mobile sidebar */
@@ -475,37 +421,14 @@ input:checked + .slider:before {
   color: #ffffff;
 }
 
-/*.content-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.content-wrapper {
-  flex-grow: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  background-color: #fff;
-}
-
-.content-wrapper {
-  margin-left: 20%;
-  padding: 2rem;
-  flex-grow: 1;
-  background-color: #fff;
-  overflow-y: auto;
-  min-height: calc(100vh - 70px);
-}*/
-
 .content-wrapper {
   flex-grow: 1;
   padding: 20px 20px 20px 20px;
   margin-right: -20px;
   background-color: #fff;
-  overflow-y: auto;
+  overflow: visible; /* changed this from auto to visible to test the sidebar sticky */
   min-height: calc(100vh - 70px);
 }
-
 
 .course-area {
   display: grid;
@@ -738,6 +661,90 @@ input:checked + .slider:before {
   color: #231F20;
 }
 
+/* ===== Badges grid ===== */
+.badge-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 22px;
+}
+.badge-card{
+  position:relative;
+  background: 
+    linear-gradient(white, white) padding-box,
+    linear-gradient(45deg, #000000, #ffb300) border-box;
+  border-radius: 14px;
+  border: 3px solid transparent;
+  padding:18px 18px 16px;
+  min-height: 340px;  
+  display: grid;                   /* turn card into a grid */
+  grid-auto-rows: min-content;     /* rows size to content */
+  row-gap: 10px;                   /* space between items */
+  align-content: center;           /* <-- centers the whole stack vertically */
+}
+.badge-card-kebab{
+  position:absolute; 
+  right:12px; 
+  top:10px; 
+  font-size:22px; 
+  color:#808080;
+}
+.badge-img-wrap{
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  height:120px;
+}
+.badge-img-wrap img{ height:86px; width:auto; }
+
+.badge-title{
+  margin-top:8px;
+  font-weight:700; 
+  color:#231F20;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient: vertical;
+  overflow:hidden;
+  min-height: 3.1em; /* ~2 lines */
+  line-height: 1.4em;
+  text-align: center;
+}
+.badge-meta{
+  display:flex; 
+  align-items:center; 
+  justify-content: center;
+  gap:8px; 
+  color:#666; 
+  margin-top:6px;
+  font-size:0.8rem;
+}
+.badge-meta .tick{
+  background:#009444;
+  color:#fff;
+  border-radius:50%;
+  width:18px;height:18px;display:inline-flex;justify-content:center;align-items:center;
+  font-size:11px;
+}
+
+.badge-download{
+  margin-top:10px;
+  padding:10px 14px; 
+  border:none;
+  border-radius:18px;
+  font-weight:700;
+  background:#ffb300;
+  cursor:pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;            
+  line-height: 1;
+}
+.badge-download svg{
+  /* optional: inherit current color */
+  stroke: currentColor;
+}
+.badge-download:hover{ filter: brightness(0.95); }
+
 
 /* Small screen view - show only 2 columns */
 @media (max-width: 1050px) {
@@ -749,6 +756,9 @@ input:checked + .slider:before {
 @media (min-width: 900px) {
   .toggle-container {
     visibility: hidden;
+  }
+  .badge-grid{
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* responsive tweak for narrower badge tiles */
   }
 }
 
