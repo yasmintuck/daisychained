@@ -12,7 +12,7 @@ import { Download as DownloadIcon } from "lucide-react";
  *  - totalAvailable: number  (for the summary line)
  */
 export default function BadgeLoader({ searchTerm, sortOption, activePackageId, totalAvailable }) {
-  const { user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +30,7 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
         const raw = res.data ?? [];
 
         // Search + sort
-        let filtered = raw.filter(b =>
+        let filtered = raw.filter((b) =>
           (b.moduleTitle || "").toLowerCase().includes((searchTerm || "").toLowerCase())
         );
 
@@ -51,20 +51,55 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
     }
 
     load();
-    return () => { ignore = true; };
-  }, [isAuthenticated, user, searchTerm, sortOption, activePackageId]);
+    return () => {
+      ignore = true;
+    };
+  }, [isAuthenticated, user, searchTerm, sortOption, activePackageId, apiBase]);
 
   const onDownload = async (b) => {
     try {
-      // Backend expects JWT identity; in dev it allows ?debugEmail=
-        const sep = b.certificateDownloadUrl.includes("?") ? "&" : "?";
-        const url = `${apiBase}${b.certificateDownloadUrl}`
-        + `${sep}origin=${encodeURIComponent(apiBase)}`
-        + `${import.meta.env.DEV ? `&debugEmail=${encodeURIComponent(user.email)}` : ""}`;
+      // 1) Auth0 bearer token
+      const token = await getAccessTokenSilently();
 
-      window.open(url, "_blank");
+      // 2) Stable public origin for asset resolution by the backend
+      const origin =
+        import.meta.env.MODE === "development"
+          ? import.meta.env.VITE_FRONTEND_PUBLIC_ORIGIN_DEV
+          : import.meta.env.VITE_FRONTEND_PUBLIC_ORIGIN_PROD;
+
+      // 3) Build URL from API base + server-provided path, then append origin (+ optional debugEmail in dev)
+      const sep = b.certificateDownloadUrl.includes("?") ? "&" : "?";
+      const url =
+        `${apiBase}${b.certificateDownloadUrl}` +
+        `${sep}origin=${encodeURIComponent(origin)}` +
+        `${import.meta.env.DEV ? `&debugEmail=${encodeURIComponent(user.email)}` : ""}`;
+
+      // 4) Authenticated fetch → blob → programmatic download (no window.open)
+      const res = await fetch(url, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`Download failed (${res.status})`);
+
+      const blob = await res.blob();
+
+      // Try to honor filename from Content-Disposition; fall back to module title
+      const dispo = res.headers.get("Content-Disposition") || "";
+      const match = dispo.match(/filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i);
+      const fallback = `${(b.moduleTitle || "certificate").replace(/[^\w\-]+/g, "_")}.pdf`;
+      const filename = match ? decodeURIComponent(match[1]) : fallback;
+
+      const href = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(href);
     } catch (e) {
       console.error("Certificate download failed", e);
+      alert("Sorry, we couldn’t download your certificate. Please try again.");
     }
   };
 
@@ -91,22 +126,35 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
               <div className="badge-img-wrap">
                 <img src={b.badgePath} alt={`${b.moduleTitle} badge`} />
               </div>
-              <div className="badge-title" title={b.moduleTitle}>{b.moduleTitle}</div>
+              <div className="badge-title" title={b.moduleTitle}>
+                {b.moduleTitle}
+              </div>
               <div className="badge-meta">
                 <span className="tick">✔</span>
                 <span>
                   {" "}
-                  Earned {b.completedAt ? new Date(b.completedAt).toLocaleDateString(undefined, { day:"2-digit", month:"short", year:"numeric" }) : ""}
+                  Earned{" "}
+                  {b.completedAt
+                    ? new Date(b.completedAt).toLocaleDateString(undefined, {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : ""}
                 </span>
               </div>
-                <button
+              <button
                 type="button"
                 className="badge-download"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDownload(b); }}
-                >
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onDownload(b);
+                }}
+              >
                 <DownloadIcon size={18} aria-hidden="true" />
                 <span>Download</span>
-                </button>
+              </button>
             </div>
           ))}
         </div>
