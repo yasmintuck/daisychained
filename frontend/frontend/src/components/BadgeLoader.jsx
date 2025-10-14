@@ -56,54 +56,48 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
     };
   }, [isAuthenticated, user, searchTerm, sortOption, activePackageId, apiBase]);
 
-  const onDownload = async (b) => {
-    try {
-      // 1) Auth0 bearer token
-      const token = await getAccessTokenSilently({
-        authorizationParams: { audience: import.meta.env.VITE_AUTH0_AUDIENCE },
+const onDownload = async (b) => {
+  try {
+    if (!isAuthenticated) return;
+
+    // 1) get a token for your API audience
+    const token = await getAccessTokenSilently({
+      authorizationParams: {
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE, // e.g. "https://daisychained-api"
+      },
     });
 
-      // 2) Stable public origin for asset resolution by the backend
-      const origin =
-        import.meta.env.MODE === "development"
-          ? import.meta.env.VITE_FRONTEND_PUBLIC_ORIGIN_DEV
-          : import.meta.env.VITE_FRONTEND_PUBLIC_ORIGIN_PROD;
+    // 2) build the URL the same way as before, but no debugEmail in prod
+    const base = `${apiBase}${b.certificateDownloadUrl}`;
+    const sep = base.includes("?") ? "&" : "?";
+    const url = `${base}${sep}origin=${encodeURIComponent(window.location.origin)}`;
 
-      // 3) Build URL from API base + server-provided path, then append origin (+ optional debugEmail in dev)
-      const sep = b.certificateDownloadUrl.includes("?") ? "&" : "?";
-      const url =
-        `${apiBase}${b.certificateDownloadUrl}` +
-        `${sep}origin=${encodeURIComponent(origin)}` +
-        `${import.meta.env.DEV ? `&debugEmail=${encodeURIComponent(user.email)}` : ""}`;
+    // 3) call API with Authorization header and ask for a blob
+    const res = await axios.get(url, {
+      responseType: "blob",
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      // 4) Authenticated fetch → blob → programmatic download (no window.open)
-      const res = await fetch(url, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error(`Download failed (${res.status})`);
+    // 4) trigger a download
+    const blob = new Blob([res.data], { type: "application/pdf" });
+    const blobUrl = URL.createObjectURL(blob);
 
-      const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = blobUrl;
 
-      // Try to honor filename from Content-Disposition; fall back to module title
-      const dispo = res.headers.get("Content-Disposition") || "";
-      const match = dispo.match(/filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i);
-      const fallback = `${(b.moduleTitle || "certificate").replace(/[^\w\-]+/g, "_")}.pdf`;
-      const filename = match ? decodeURIComponent(match[1]) : fallback;
+    // optional: a nicer filename if your API doesn’t already set it
+    const niceName = (b.moduleTitle || "certificate").replace(/[^\w\d\-_. ]+/g, "");
+    a.download = `${niceName.replace(/\s+/g, "_")}.pdf`;
 
-      const href = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = href;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(href);
-    } catch (e) {
-      console.error("Certificate download failed", e);
-      alert("Sorry, we couldn’t download your certificate. Please try again.");
-    }
-  };
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(blobUrl);
+  } catch (e) {
+    console.error("Certificate download failed", e);
+    alert("Sorry — we couldn’t download your certificate. Please try again.");
+  }
+};
 
   return (
     <div className="badges-area">
