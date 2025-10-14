@@ -58,41 +58,42 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
 
 const onDownload = async (b) => {
   try {
+    const { getAccessTokenSilently, isAuthenticated, user } = auth0; // or use from hook scope
     if (!isAuthenticated) return;
 
-    // 1) get a token for your API audience
+    const apiBase = import.meta.env.VITE_BACKEND_URL;
+    const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
+
     const token = await getAccessTokenSilently({
-      authorizationParams: {
-        audience: import.meta.env.VITE_AUTH0_AUDIENCE, // e.g. "https://daisychained-api"
+      authorizationParams: { audience },
+      detailedResponse: false,
+    });
+
+    // Compose URL (no debugEmail in prod)
+    const sep = b.certificateDownloadUrl.includes("?") ? "&" : "?";
+    const url = `${apiBase}${b.certificateDownloadUrl}${sep}origin=${encodeURIComponent(window.location.origin)}`;
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/pdf",
       },
+      credentials: "omit",
     });
 
-    // 2) build the URL the same way as before, but no debugEmail in prod
-    const base = `${apiBase}${b.certificateDownloadUrl}`;
-    const sep = base.includes("?") ? "&" : "?";
-    const url = `${base}${sep}origin=${encodeURIComponent(window.location.origin)}`;
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`Download failed (${res.status}) ${text}`);
+    }
 
-    // 3) call API with Authorization header and ask for a blob
-    const res = await axios.get(url, {
-      responseType: "blob",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    // 4) trigger a download
-    const blob = new Blob([res.data], { type: "application/pdf" });
-    const blobUrl = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = blobUrl;
-
-    // optional: a nicer filename if your API doesn’t already set it
-    const niceName = (b.moduleTitle || "certificate").replace(/[^\w\d\-_. ]+/g, "");
-    a.download = `${niceName.replace(/\s+/g, "_")}.pdf`;
-
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(blobUrl);
+    const blob = await res.blob();
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = (b.moduleTitle || "certificate").replace(/[^\w.-]+/g, "_") + ".pdf";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   } catch (e) {
     console.error("Certificate download failed", e);
     alert("Sorry — we couldn’t download your certificate. Please try again.");
