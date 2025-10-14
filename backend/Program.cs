@@ -1,21 +1,19 @@
-using System.Reflection;
 using System.IO;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using backend.Data;
 using QuestPDF.Fluent;          // for Document (we use it to find the assembly)
 using QuestPDF.Infrastructure;  // still fine to keep
+using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+// ...
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Serve from /wwwroot (where backgrounds / badges live)
 builder.WebHost.UseWebRoot("wwwroot");
 
-//
 // ---------- QuestPDF: register custom fonts (works across versions) ----------
-//
 var fontsDir = Path.Combine(builder.Environment.ContentRootPath, "Assets", "fonts");
 
 // Helper: tries RegisterFontFromFile(string) first; falls back to RegisterFont(Stream)
@@ -57,16 +55,15 @@ static void TryRegisterFont(string path)
 }
 
 // Register your two fonts
-TryRegisterFont(Path.Combine(fontsDir, "BRADHI.ttf"));                // “Patrick Hand”
-TryRegisterFont(Path.Combine(fontsDir, "BalooPaaji2-ExtraBold.ttf")); // “Baloo 2”
+TryRegisterFont(Path.Combine(fontsDir, "BRADHI.ttf")); // “Patrick Hand”
+TryRegisterFont(Path.Combine(fontsDir, "BalooPaaji2-ExtraBold.ttf"));    // “Baloo 2”
 
-//
-// ------------------------- Services -------------------------
-//
+
+// -------------------------
+// Services
+// -------------------------
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
-// Swagger (+ Bearer support so you can test with a token)
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -75,25 +72,6 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = "API for DaisyChained platform",
     });
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Paste `Bearer {token}`",
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-            },
-            Array.Empty<string>()
-        }
-    });
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -101,62 +79,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddHttpClient();
 
-// (Optional) CORS – allow your front-ends
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("frontend", p => p
-        .WithOrigins(
-            "https://daisychained.co.uk",
-            "http://localhost:5173")
-        .AllowAnyHeader()
-        .AllowAnyMethod());
-});
-
-//
-// ------------------------- Auth (Auth0 JWT) -------------------------
-//
-var auth0Domain   = builder.Configuration["Auth0:Domain"];   // e.g. auth.daisychained.co.uk
-var auth0Audience = builder.Configuration["Auth0:Audience"]; // e.g. https://daisychained-api
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        // These two are the critical parts
-        options.Authority = $"https://{auth0Domain}/";  // trailing slash required
-        options.Audience  = auth0Audience;              // must match token 'aud'
-
-        // Be explicit to avoid discovery/validation edge cases
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidIssuer = $"https://{auth0Domain}/",
-            ValidAudiences = new[] { auth0Audience },   // token 'aud' may be an array
-            ClockSkew = TimeSpan.FromMinutes(2)         // avoid clock drift 401s
-        };
-
-        // TEMP DIAGNOSTICS – prints reason for 401 to logs
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = ctx =>
-            {
-                Console.WriteLine($"[JWT] Auth failed: {ctx.Exception?.Message}");
-                return Task.CompletedTask;
-            },
-            OnChallenge = ctx =>
-            {
-                Console.WriteLine($"[JWT] Challenge: {ctx.Error} / {ctx.ErrorDescription}");
-                return Task.CompletedTask;
-            }
-        };
+        options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}/";
+        options.Audience  = builder.Configuration["Auth0:Audience"];
+        // (optional) helpful for local clock skew:
+        // options.TokenValidationParameters.ClockSkew = TimeSpan.FromMinutes(2);
     });
 
-builder.Services.AddAuthorization();
-
-//
-// ------------------------- Pipeline -------------------------
-//
+// -------------------------
+// Pipeline
+// -------------------------
 var app = builder.Build();
 
+// Swagger always enabled
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -168,11 +107,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.UseCors("frontend");          // if you enabled the CORS policy above
-
-app.UseAuthentication();          // Authentication must come before Authorization
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
