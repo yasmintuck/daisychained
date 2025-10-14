@@ -5,10 +5,13 @@ using backend.Data;
 using QuestPDF.Fluent;          // for Document (we use it to find the assembly)
 using QuestPDF.Infrastructure;  // still fine to keep
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 // ...
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseWebRoot("wwwroot");
 
 // ---------- QuestPDF: register custom fonts (works across versions) ----------
 var fontsDir = Path.Combine(builder.Environment.ContentRootPath, "Assets", "fonts");
@@ -76,6 +79,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddHttpClient();
 
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}/";
+        options.Audience  = builder.Configuration["Auth0:Audience"];
+        // (optional) helpful for local clock skew:
+        // options.TokenValidationParameters.ClockSkew = TimeSpan.FromMinutes(2);
+    });
+
 // -------------------------
 // Pipeline
 // -------------------------
@@ -90,6 +104,10 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

@@ -59,7 +59,9 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
   const onDownload = async (b) => {
     try {
       // 1) Auth0 bearer token
-      const token = await getAccessTokenSilently();
+      const token = await getAccessTokenSilently({
+        authorizationParams: { audience: import.meta.env.VITE_AUTH0_AUDIENCE },
+    });
 
       // 2) Stable public origin for asset resolution by the backend
       const origin =

@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 using backend.Data;
 using QuestPDF.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using QuestPDF.Drawing;
+using System.Linq; 
+using System.Text.RegularExpressions;
 
 namespace backend.Controllers
 {
@@ -13,26 +17,27 @@ namespace backend.Controllers
     public class CertificatesController : ControllerBase
     {
         private readonly AppDbContext _db;
-        private readonly IHttpClientFactory _httpFactory;
-        private readonly IHostEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
-        public CertificatesController(AppDbContext db, IHttpClientFactory httpFactory, IHostEnvironment env)
+        // We no longer need IHttpClientFactory since we read from disk
+        public CertificatesController(AppDbContext db, IWebHostEnvironment env)
         {
-            _db = db;
-            _httpFactory = httpFactory;
+            _db  = db;
             _env = env;
         }
 
-        // GET /api/Certificates/download?moduleId=123&origin=https://your-frontend
-        // Dev-only helper: &debugEmail=<your@email> (works only when ASPNETCORE_ENVIRONMENT=Development)
+        // GET /api/Certificates/download?moduleId=123
+        // Dev-only helper: &debugEmail=<you@domain> (works only in Development)
+        [Authorize]
         [HttpGet("download")]
         public async Task<IActionResult> Download(
             [FromQuery] int moduleId,
-            [FromQuery] string? origin,
             [FromQuery] string? debugEmail)
         {
-            // 1) Caller identity (JWT), with dev-only override for Swagger testing
-            var email = User.FindFirst("email")?.Value;
+            // 1) Caller identity (JWT), with dev-only override
+            var email = User.FindFirst("email")?.Value
+                        ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+
             if (string.IsNullOrWhiteSpace(email) && _env.IsDevelopment() && !string.IsNullOrWhiteSpace(debugEmail))
                 email = debugEmail.Trim();
 
@@ -51,8 +56,8 @@ namespace backend.Controllers
                                            && up.Progress == 2);
             if (progress == null) return Forbid("You have not completed this module.");
 
-            var module = progress.Module!;
-            var completedAt = progress.CompletedAt ?? DateTime.UtcNow;
+            var module       = progress.Module!;
+            var completedAt  = progress.CompletedAt ?? DateTime.UtcNow;
 
             // 3) Choose a category (via Packages)
             var pkgRows = await (from mp in _db.ModulePackages.AsNoTracking()
@@ -79,61 +84,123 @@ namespace backend.Controllers
             var categoryName  = chosen?.PackageName ?? "General";
             var categoryColor = string.IsNullOrWhiteSpace(chosen?.ColorHex) ? "#2E2B29" : chosen!.ColorHex!;
 
-            // 4) Asset URLs based on frontend origin
-            origin = NormalizeOrigin(origin, Request.Headers.Referer.ToString());
-            if (origin == null) return BadRequest("Missing origin.");
+            // 4) Resolve asset file paths from wwwroot
+            var webRoot = _env.WebRootPath; // should be .../backend/wwwroot
 
-            var badgeUrl    = $"{origin}/assets/badges/{module.Slug}.png";
-            var templateUrl = $"{origin}/assets/certificates/default-certificate-bg.png";
+            // ---- background (single known file name) ----
+            var bgCandidates = new[]
+            {
+                Path.Combine(webRoot, "certificates", "backgrounds", "default-certificate-bg.png"),
+                Path.Combine(webRoot, "certificates", "backgrounds", "default-certificate-bg.PNG"),
+            };
 
-            // 5) Fetch images (only accept image/*)
-            var http = _httpFactory.CreateClient();
-            byte[]? badgeBytes = await TryGetBytes(http, badgeUrl);
-            byte[]? backgroundBytes = await TryGetBytes(http, templateUrl);
+            // ---- badge (robust slug → filename mapping) ----
+            string rawSlug = module.Slug ?? string.Empty;
 
-            // 6) Learner name: DB first/last -> token "name" -> email
+            // trim + collapse internal whitespace
+            string s1 = Regex.Replace(rawSlug.Trim(), @"\s+", " ");
+
+            // strip characters invalid for filenames and some usual punctuation
+            string cleaned = Regex.Replace(s1, @"[^A-Za-z0-9 _\-]", "");
+
+            // variants
+            string lower            = cleaned.ToLowerInvariant();
+            string spaceToDash      = cleaned.Replace(' ', '-');
+            string spaceToDashLower = lower.Replace(' ', '-');
+            string spaceToUnder     = cleaned.Replace(' ', '_');
+            string spaceToUnderLow  = lower.Replace(' ', '_');
+
+            var badgeDir = Path.Combine(webRoot, "assets", "badges");
+            var badgeCandidates = new[]
+            {
+                Path.Combine(badgeDir, $"{cleaned}.png"),
+                Path.Combine(badgeDir, $"{cleaned}.PNG"),
+                Path.Combine(badgeDir, $"{lower}.png"),
+                Path.Combine(badgeDir, $"{lower}.PNG"),
+                Path.Combine(badgeDir, $"{spaceToDash}.png"),
+                Path.Combine(badgeDir, $"{spaceToDash}.PNG"),
+                Path.Combine(badgeDir, $"{spaceToDashLower}.png"),
+                Path.Combine(badgeDir, $"{spaceToDashLower}.PNG"),
+                Path.Combine(badgeDir, $"{spaceToUnder}.png"),
+                Path.Combine(badgeDir, $"{spaceToUnder}.PNG"),
+                Path.Combine(badgeDir, $"{spaceToUnderLow}.png"),
+                Path.Combine(badgeDir, $"{spaceToUnderLow}.PNG"),
+            };
+
+            // pick the first that exists
+            string? bgPath    = bgCandidates.FirstOrDefault(System.IO.File.Exists);
+            string? badgePath = badgeCandidates.FirstOrDefault(System.IO.File.Exists);
+
+            // ---------- TEMP DIAGNOSTICS ----------
+            Console.WriteLine($"webRoot:   {webRoot}");
+            Console.WriteLine($"rawSlug:   '{rawSlug}'  -> cleaned: '{cleaned}'");
+            Console.WriteLine($"bgPath:    {bgPath}    exists: {System.IO.File.Exists(bgPath ?? string.Empty)}");
+            Console.WriteLine($"badgePath: {badgePath}   exists: {System.IO.File.Exists(badgePath ?? string.Empty)}");
+
+            // If not found, dump a quick directory listing so we can see what the API can see
+            if (bgPath is null || !System.IO.File.Exists(bgPath))
+            {
+                var bgDir = Path.Combine(webRoot, "certificates", "backgrounds");
+                Console.WriteLine($"[diag] backgrounds dir: {bgDir}");
+                if (Directory.Exists(bgDir))
+                    foreach (var f in Directory.GetFiles(bgDir, "*.*", SearchOption.TopDirectoryOnly))
+                        Console.WriteLine($"[diag] bg file: {Path.GetFileName(f)}");
+                else
+                    Console.WriteLine("[diag] backgrounds dir DOES NOT EXIST");
+            }
+
+            if (badgePath is null || !System.IO.File.Exists(badgePath))
+            {
+                Console.WriteLine($"[diag] badges dir: {badgeDir}");
+                if (Directory.Exists(badgeDir))
+                    foreach (var f in Directory.GetFiles(badgeDir, "*.png", SearchOption.TopDirectoryOnly))
+                        Console.WriteLine($"[diag] badge file: {Path.GetFileName(f)}");
+                else
+                    Console.WriteLine("[diag] badges dir DOES NOT EXIST");
+            }
+            // ---------- END DIAGNOSTICS ----------
+
+            // read bytes (null if not found)
+            byte[]? backgroundPng = (bgPath != null && System.IO.File.Exists(bgPath))
+                ? await System.IO.File.ReadAllBytesAsync(bgPath)
+                : null;
+
+            byte[]? badgePng = (badgePath != null && System.IO.File.Exists(badgePath))
+                ? await System.IO.File.ReadAllBytesAsync(badgePath)
+                : null;
+
+
+            // 5) Learner name: DB first/last -> token "name" -> email
             var fullDbName = $"{user.UserFirstName} {user.UserLastName}".Trim();
             var learnerName = string.IsNullOrWhiteSpace(fullDbName)
                 ? (User.FindFirst("name")?.Value ?? email)
                 : fullDbName;
 
-            // 7) Render PDF
+            // 6) Register fonts (safe to call repeatedly)
             QuestPDF.Settings.License = LicenseType.Community;
+
+            try
+            {
+                var fontsDir = Path.Combine(webRoot, "fonts");
+
+                // Bradley Hand ITC (file BRADHI.ttf)
+                var bradley = Path.Combine(fontsDir, "BRADHI.ttf");
+                if (System.IO.File.Exists(bradley))
+                    FontManager.RegisterFont(System.IO.File.OpenRead(bradley));
+
+                // Baloo Paaji 2 ExtraBold (file BalooPaaji2-ExtraBold.ttf)
+                var baloo = Path.Combine(fontsDir, "BalooPaaji2-ExtraBold.ttf");
+                if (System.IO.File.Exists(baloo))
+                    FontManager.RegisterFont(System.IO.File.OpenRead(baloo));
+            }
+            catch { /* ignore if already registered / any IO issues */ }
+
+            // 7) Render PDF (same layout you already had, just fed with bytes + font families)
             var pdf = BuildCertificatePdf(
-                learnerName, module.ModuleTitle, categoryName, categoryColor, completedAt, badgeBytes, backgroundBytes);
+                learnerName, module.ModuleTitle, categoryName, categoryColor, completedAt, badgePng, backgroundPng);
 
             var safeFile = Sanitize($"daisychained-{module.ModuleTitle}-{completedAt:dd-MM-yy}.pdf");
             return File(pdf, "application/pdf", safeFile);
-        }
-
-        private static async Task<byte[]?> TryGetBytes(HttpClient http, string url)
-        {
-            try
-            {
-                using var resp = await http.GetAsync(url);
-                if (!resp.IsSuccessStatusCode) return null;
-
-                var mediaType = resp.Content.Headers.ContentType?.MediaType ?? "";
-                if (!mediaType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
-                    return null;
-
-                return await resp.Content.ReadAsByteArrayAsync();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private static string? NormalizeOrigin(string? origin, string referer)
-        {
-            if (!string.IsNullOrWhiteSpace(origin) && Uri.TryCreate(origin, UriKind.Absolute, out var o))
-                return $"{o.Scheme}://{o.Host}{(o.IsDefaultPort ? "" : ":" + o.Port)}";
-
-            if (!string.IsNullOrWhiteSpace(referer) && Uri.TryCreate(referer, UriKind.Absolute, out var r))
-                return $"{r.Scheme}://{r.Host}{(r.IsDefaultPort ? "" : ":" + r.Port)}";
-
-            return null;
         }
 
         private static string Sanitize(string s)
@@ -155,12 +222,11 @@ namespace backend.Controllers
             const float StripWidth     = 170;  // left colour strip width (behind PNG)
             const float TopPad         = 240;
 
-            // Global column offset (optional). Positive -> whole column moves right.
             const float GlobalNudgeX   = 0f;
 
             // Font sizes
             const float NameSize       = 20;   // Bradley Hand ITC
-            const float CatSize        = 16;   // Baloo 2 ExtraBold
+            const float CatSize        = 16;   // Baloo Paaji 2 (ExtraBold)
             const float DateSize       = 12;   // Bradley Hand ITC
             const float BadgeBox       = 120;
 
@@ -169,18 +235,13 @@ namespace backend.Controllers
             const float SpaceAfterBadge = 95;
             const float SpaceAfterCat   = 50;
 
-            // ===== Per-item nudges (in points/pixels) =====
-            // Positive X = move right, negative X = move left
-            // Positive Y = move down,  negative Y = move up
-            const float NameNudgeX     =  70f;   // tweak freely
+            // Per-item nudges
+            const float NameNudgeX     =  70f;
             const float NameNudgeY     =   0f;
-
             const float BadgeNudgeX    =   0f;
             const float BadgeNudgeY    =   0f;
-
             const float CategoryNudgeX =  75f;
             const float CategoryNudgeY =  -2f;
-
             const float DateNudgeX     =  25f;
             const float DateNudgeY     =   0f;
 
@@ -193,10 +254,9 @@ namespace backend.Controllers
                     p.Size(PageSizes.A4);
                     p.Margin(0);
 
-                    // BACKGROUND: strip behind, background template above it
+                    // BACKGROUND: strip + template
                     p.Background().Layers(l =>
                     {
-                        // left colour strip (behind)
                         l.Layer().Element(e =>
                             e.AlignLeft()
                              .Width(StripWidth)
@@ -204,18 +264,17 @@ namespace backend.Controllers
                              .Background(panelColor)
                         );
 
-                        // template image (on top of strip)
                         if (backgroundPng != null)
                             l.PrimaryLayer().Image(backgroundPng).FitArea();
                         else
                             l.PrimaryLayer().Element(_ => { });
                     });
 
-                    // FOREGROUND: dynamic content only
+                    // FOREGROUND: dynamic content
                     p.Content()
                      .PaddingTop(TopPad)
                      .PaddingHorizontal(72)
-                     .Element(e => e.TranslateX(GlobalNudgeX)) // global column nudge
+                     .Element(e => e.TranslateX(GlobalNudgeX))
                      .Column(col =>
                      {
                          // NAME
@@ -223,7 +282,7 @@ namespace backend.Controllers
                             .Element(e => e.TranslateX(NameNudgeX).TranslateY(NameNudgeY))
                             .AlignCenter()
                             .Text(learnerName)
-                                .FontFamily("Bradley Hand ITC")   // ensure registered in Program.cs
+                                .FontFamily("Bradley Hand ITC")   // comes from BRADHI.ttf
                                 .FontSize(NameSize)
                                 .Bold()
                                 .FontColor("#2C2C2C");
@@ -247,7 +306,7 @@ namespace backend.Controllers
                             .Element(e => e.TranslateX(CategoryNudgeX).TranslateY(CategoryNudgeY))
                             .AlignCenter()
                             .Text(categoryName)
-                                .FontFamily("Baloo Paaji 2")      // your Baloo family name
+                                .FontFamily("Baloo Paaji 2")      // comes from BalooPaaji2-ExtraBold.ttf
                                 .FontSize(CatSize)
                                 .Bold()
                                 .FontColor("#2C2C2C");
