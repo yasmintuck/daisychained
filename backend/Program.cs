@@ -90,6 +90,19 @@ builder.Services
         // options.TokenValidationParameters.ClockSkew = TimeSpan.FromMinutes(2);
     });
 
+var allowedOrigins = builder.Environment.IsDevelopment()
+    ? new[] { builder.Configuration["VITE_FRONTEND_PUBLIC_ORIGIN_DEV"] ?? "http://localhost:5173" }
+    : new[] { builder.Configuration["VITE_FRONTEND_PUBLIC_ORIGIN_PROD"] ?? "https://daisychained.co.uk" };
+
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("Frontend", p => p
+        .WithOrigins(allowedOrigins)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .WithExposedHeaders("Content-Disposition"));
+});
+
 // -------------------------
 // Pipeline
 // -------------------------
@@ -104,7 +117,7 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
-
+app.UseCors("Frontend");
 app.UseStaticFiles();
 
 app.UseAuthentication();

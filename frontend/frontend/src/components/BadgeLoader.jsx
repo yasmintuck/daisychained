@@ -58,7 +58,7 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
 
 const onDownload = async (b) => {
   try {
-    const { getAccessTokenSilently, isAuthenticated, user } = auth0; // or use from hook scope
+    //const { getAccessTokenSilently, isAuthenticated, user } = auth0; // or use from hook scope
     if (!isAuthenticated) return;
 
     const apiBase = import.meta.env.VITE_BACKEND_URL;
