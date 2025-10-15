@@ -2,13 +2,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
+using backend.Infrastructure;
 using backend.Data;
 using QuestPDF.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using QuestPDF.Drawing;
-using System.Linq; 
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -35,8 +37,7 @@ namespace backend.Controllers
             [FromQuery] string? debugEmail)
         {
             // 1) Caller identity (JWT), with dev-only override
-            var email = User.FindFirst("email")?.Value
-                        ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            var email = GetEmailFromToken(User);
 
             if (string.IsNullOrWhiteSpace(email) && _env.IsDevelopment() && !string.IsNullOrWhiteSpace(debugEmail))
                 email = debugEmail.Trim();
@@ -170,11 +171,14 @@ namespace backend.Controllers
                 : null;
 
 
-            // 5) Learner name: DB first/last -> token "name" -> email
+            // 5) Learner name: DB first/last -> token namespaced "name" -> plain "name" -> email
             var fullDbName = $"{user.UserFirstName} {user.UserLastName}".Trim();
+            var tokenName  = GetNameFromToken(User);
             var learnerName = string.IsNullOrWhiteSpace(fullDbName)
-                ? (User.FindFirst("name")?.Value ?? email)
+                ? (tokenName ?? email)
                 : fullDbName;
+
+            Console.WriteLine($"[cert] email={email}, learnerName={learnerName}, moduleId={moduleId}");
 
             // 6) Register fonts (safe to call repeatedly)
             QuestPDF.Settings.License = LicenseType.Community;
@@ -208,6 +212,23 @@ namespace backend.Controllers
             var bad = Path.GetInvalidFileNameChars();
             return string.Join("-", s.Split(bad, StringSplitOptions.RemoveEmptyEntries)).Trim();
         }
+        
+        // ===== Claims helpers (Option A) =====
+        private static string? GetEmailFromToken(ClaimsPrincipal user)
+        {
+            const string NsEmail = "https://daisychained.co.uk/claims/email";
+            return user.FindFirst(NsEmail)?.Value
+                ?? user.FindFirst("email")?.Value
+                ?? user.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+        }
+
+        private static string? GetNameFromToken(ClaimsPrincipal user)
+        {
+            const string NsName = "https://daisychained.co.uk/claims/name";
+            return user.FindFirst(NsName)?.Value
+                ?? user.FindFirst("name")?.Value;
+        }
+
 
         private static byte[] BuildCertificatePdf(
             string learnerName,
@@ -219,31 +240,31 @@ namespace backend.Controllers
             byte[]? backgroundPng)
         {
             // ===== Layout tuning (A4 portrait) =====
-            const float StripWidth     = 170;  // left colour strip width (behind PNG)
-            const float TopPad         = 240;
+            const float StripWidth = 170;  // left colour strip width (behind PNG)
+            const float TopPad = 240;
 
-            const float GlobalNudgeX   = 0f;
+            const float GlobalNudgeX = 0f;
 
             // Font sizes
-            const float NameSize       = 20;   // Bradley Hand ITC
-            const float CatSize        = 16;   // Baloo Paaji 2 (ExtraBold)
-            const float DateSize       = 12;   // Bradley Hand ITC
-            const float BadgeBox       = 120;
+            const float NameSize = 20;   // Bradley Hand ITC
+            const float CatSize = 16;   // Baloo Paaji 2 (ExtraBold)
+            const float DateSize = 12;   // Bradley Hand ITC
+            const float BadgeBox = 120;
 
             // Vertical rhythm
-            const float SpaceAfterName  = 100;
+            const float SpaceAfterName = 100;
             const float SpaceAfterBadge = 95;
-            const float SpaceAfterCat   = 50;
+            const float SpaceAfterCat = 50;
 
             // Per-item nudges
-            const float NameNudgeX     =  70f;
-            const float NameNudgeY     =   0f;
-            const float BadgeNudgeX    =   0f;
-            const float BadgeNudgeY    =   0f;
-            const float CategoryNudgeX =  75f;
-            const float CategoryNudgeY =  -2f;
-            const float DateNudgeX     =  25f;
-            const float DateNudgeY     =   0f;
+            const float NameNudgeX = 70f;
+            const float NameNudgeY = 0f;
+            const float BadgeNudgeX = 0f;
+            const float BadgeNudgeY = 0f;
+            const float CategoryNudgeX = 75f;
+            const float CategoryNudgeY = -2f;
+            const float DateNudgeX = 25f;
+            const float DateNudgeY = 0f;
 
             var panelColor = string.IsNullOrWhiteSpace(categoryColorHex) ? "#2E2B29" : categoryColorHex;
 
