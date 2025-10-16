@@ -193,7 +193,7 @@ export default function Badges() {
             ))}
           </ul>
 
-          <div className="bottom-actions">
+          {/*<div className="bottom-actions">
             <li
               onClick={() =>
                 logout({
@@ -208,7 +208,7 @@ export default function Badges() {
               <span>Logout</span>
             </li>
 
-            {/* Dark mode placeholder to match Dashboard layout */}
+             Dark mode placeholder to match Dashboard layout 
             {sidebarCollapsed ? (
               <div className="dark-mode-toggle collapsed-toggle-only">
                 <label className="switch">
@@ -225,7 +225,7 @@ export default function Badges() {
                 </label>
               </div>
             )}
-          </div>
+          </div>*/}
         </div>
 
         {/* ==== Content wrapper (identical class names to Dashboard) ==== */}

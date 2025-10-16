@@ -101,6 +101,20 @@ export default function Navbar() {
                   >
                     My account
                   </button>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      setShowDropdown(false);
+                      logout({
+                        logoutParams: {
+                          returnTo: import.meta.env.VITE_LOGOUT_URL,
+                          client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
+                        },
+                      });
+                    }}
+                  >
+                    Logout
+                  </button>
                 </div>
               )}
             </div>

@@ -194,7 +194,7 @@ function Dashboard() {
             ))}
           </ul>        
 
-          <div className="bottom-actions">
+          {/*<div className="bottom-actions">
             <li
               onClick={() =>
                 logout({
@@ -208,8 +208,9 @@ function Dashboard() {
               <i data-lucide="log-out"></i>
               <span>Logout</span>
             </li>
+
             {sidebarCollapsed ? (
-              // ✅ Collapsed view: just show the toggle switch
+              
               <div className="dark-mode-toggle collapsed-toggle-only">
                 <label className="switch">
                   <input type="checkbox" />
@@ -217,7 +218,7 @@ function Dashboard() {
                 </label>
               </div>
             ) : (
-              // ✅ Expanded view: full layout
+              
               <div className="dark-mode-toggle">
                 <div className="dark-mode-left">
                   <i data-lucide="moon"></i>
@@ -229,7 +230,7 @@ function Dashboard() {
                 </label>
               </div>
             )}
-          </div>
+          </div>*/}
         </div>
 
         <div className="content-wrapper">
