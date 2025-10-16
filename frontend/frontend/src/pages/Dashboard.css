@@ -683,7 +683,7 @@ input:checked + .slider:before {
   align-items:center; 
   height:120px;
 }
-.badge-img-wrap img{ height:86px; width:auto; }
+.badge-img-wrap img{ height:100px; width:auto; }
 
 .badge-title{
   margin-top:8px;
@@ -880,5 +880,42 @@ input:checked + .slider:before {
 
   .sidebar.collapsed .bottom-actions {
     padding: 20px 0px;
+  }
+}
+
+/* Desktop: pin sidebar and use fixed expanded width, use browser scrollbar for page */
+@media (min-width: 900px) {
+  .sidebar {
+    position: fixed;
+    top: 70px; 
+    left: max(1rem, calc((100% - 1350px) / 2 + 1rem)); /* align with centered container */
+    width: 280px;       /* fixed expanded width */
+    min-width: 280px;
+    height: calc(100vh - 70px);
+    overflow-y: auto;   /* allow sidebar to scroll if its content overflows */
+    z-index: 1000;
+  }
+
+  /* Reserve space for the fixed sidebar so content doesn't flow under it.
+     Content uses the browser scrollbar (no internal scrolling). */
+  .content-wrapper {
+    margin-left: 280px; /* must match .sidebar width when expanded */
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Collapsed sidebar: narrow fixed width and shift content accordingly.
+     This rule requires .content-wrapper to be a sibling that follows .sidebar. */
+  .sidebar.collapsed {
+    width: 70px;
+    min-width: 70px;
+  }
+
+  .sidebar.collapsed ~ .content-wrapper {
+    margin-left: 70px;
+  }
+
+  .toggle-container {
+    visibility: hidden;
   }
 }

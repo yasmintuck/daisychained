@@ -13,3 +13,6 @@ railway.json
 backend/obj/project.nuget.cache
 backend/obj/project.assets.json
 backend/obj/backend.csproj.nuget.g.targets
+backend/Dockerfile
+backend/obj/backend.csproj.nuget.dgspec.json
+backend/obj/backend.csproj.nuget.g.props

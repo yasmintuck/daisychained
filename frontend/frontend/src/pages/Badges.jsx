@@ -192,40 +192,6 @@ export default function Badges() {
               </li>
             ))}
           </ul>
-
-          {/*<div className="bottom-actions">
-            <li
-              onClick={() =>
-                logout({
-                  logoutParams: {
-                    returnTo: import.meta.env.VITE_LOGOUT_URL,
-                    client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
-                  },
-                })
-              }
-            >
-              <i data-lucide="log-out"></i>
-              <span>Logout</span>
-            </li>
-
-             Dark mode placeholder to match Dashboard layout 
-            {sidebarCollapsed ? (
-              <div className="dark-mode-toggle collapsed-toggle-only">
-                <label className="switch">
-                  <input type="checkbox" />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-            ) : (
-              <div className="dark-mode-toggle">
-                <span>Dark Mode</span>
-                <label className="switch">
-                  <input type="checkbox" />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-            )}
-          </div>*/}
         </div>
 
         {/* ==== Content wrapper (identical class names to Dashboard) ==== */}

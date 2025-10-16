@@ -303,7 +303,7 @@ namespace backend.Controllers
                             .Element(e => e.TranslateX(NameNudgeX).TranslateY(NameNudgeY))
                             .AlignCenter()
                             .Text(learnerName)
-                                .FontFamily("Bradley Hand ITC")   // comes from BRADHI.ttf
+                                .FontFamily("Bradley Hand ITC TT")   // comes from BRADHI.ttf
                                 .FontSize(NameSize)
                                 .Bold()
                                 .FontColor("#2C2C2C");
@@ -327,7 +327,7 @@ namespace backend.Controllers
                             .Element(e => e.TranslateX(CategoryNudgeX).TranslateY(CategoryNudgeY))
                             .AlignCenter()
                             .Text(categoryName)
-                                .FontFamily("Baloo Paaji 2")      // comes from BalooPaaji2-ExtraBold.ttf
+                                .FontFamily("Baloo Paaji 2 ExtraBold")
                                 .FontSize(CatSize)
                                 .Bold()
                                 .FontColor("#2C2C2C");
@@ -339,7 +339,7 @@ namespace backend.Controllers
                             .Element(e => e.TranslateX(DateNudgeX).TranslateY(DateNudgeY))
                             .AlignCenter()
                             .Text($"{completedAt:dd'/'MM'/'yy}")
-                                .FontFamily("Bradley Hand ITC")
+                                .FontFamily("Bradley Hand ITC TT")
                                 .FontSize(DateSize)
                                 .FontColor("#666666");
                      });
