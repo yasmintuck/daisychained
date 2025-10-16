@@ -100,7 +100,7 @@ const onDownload = async (b) => {
     link.remove();
   } catch (e) {
     console.error("Certificate download failed", e);
-    alert("Sorry — we couldn’t download your certificate. Please try again.");
+    alert("Sorry, we couldn’t download your certificate. Please try again.");
   } finally {
     // clear downloading state regardless of success/failure
     setDownloadingId(null);
@@ -182,13 +182,51 @@ const onDownload = async (b) => {
         </>
       )}
 
-      {/* Summary line */}
-      <div style={{ margin: "0 0 1rem 0", color: "#2c2829" }}>
-        <span>You've completed </span>
-        <strong>{badges.length}</strong>
-        <span> out of </span>
-        <strong>{totalAvailable}</strong>
-        <span> available badges.</span>
+      {/* Summary line — show a spinner while loading or until totalAvailable is known */}
+      <div style={{ margin: "0 0 1rem 0", color: "#2c2829", display: "flex", alignItems: "center", gap: 4 }}>
+        <style>{`
+          .small-spinner {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid #eee;
+            border-top-color: #ffb300;
+            animation: spin 0.9s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+          }
+          @keyframes spin { to { transform: rotate(360deg); } }
+          .sr-only {
+            position: absolute !important;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            border: 0;
+          }
+        `}</style>
+
+        {loading || totalAvailable == null ? (
+          <>
+            <span>You've completed</span>
+            <span aria-hidden="true" className="small-spinner" />
+            <span>out of</span>
+            <span aria-hidden="true" className="small-spinner" />
+            <span>available badges.</span>
+            <span className="sr-only" aria-live="polite">Loading badges…</span>
+          </>
+        ) : (
+          <>
+            <span>You've completed </span>
+            <strong>{badges.length}</strong>
+            <span> out of </span>
+            <strong>{totalAvailable}</strong>
+            <span> available badges.</span>
+          </>
+        )}
       </div>
 
       {loading ? (

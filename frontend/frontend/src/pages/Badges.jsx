@@ -31,7 +31,7 @@ export default function Badges() {
   const [activePackageId, setActivePackageId] = useState(null);
   const [activePackageName, setActivePackageName] = useState(null);
   const [hideAll, setHideAll] = useState(false);
-  const [totalAvailable, setTotalAvailable] = useState(0); // shown as “Y available badges”
+  const [totalAvailable, setTotalAvailable] = useState(null); // null while loading — shown as “Y available badges” when loaded
 
   // IMPORTANT: keep this in sync with viewport like Dashboard.jsx
   const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth <= 900);
