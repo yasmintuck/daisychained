@@ -182,18 +182,45 @@ const onDownload = async (b) => {
         </>
       )}
 
-      {/* Summary line — show a spinner while loading or until totalAvailable is known */}
-      <div style={{ margin: "0 0 1rem 0", color: "#2c2829", display: "flex", alignItems: "center", gap: 4 }}>
+      {/* Summary — fixed inline spacing; counts use same font size & weight as surrounding text */}
+      <div>
         <style>{`
+          .summary {
+            margin: 0 0 1rem 0;
+            color: #2c2829;
+            font-size: 16px;
+            font-weight: 400; /* same base weight */
+            line-height: 1.2;
+          }
+          .summary .count {
+            display: inline-block;
+            min-width: 20px; /* reserve space to avoid reflow */
+            text-align: center;
+            padding: 0 6px; /* consistent spacing to surrounding words */
+            font-size: inherit; /* keep same size */
+            font-weight: inherit; /* keep same weight */
+            vertical-align: baseline;
+            font-weight: 600;
+          }
+          .summary .placeholder {
+            display: inline-block;
+            min-width: 20px;
+            height: 1em;
+            border-radius: 4px;
+            background: #eee;
+            vertical-align: middle;
+            margin: 0 6px;
+          }
           .small-spinner {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            border: 3px solid #eee;
+            border: 2px solid #eee;
             border-top-color: #ffb300;
             animation: spin 0.9s linear infinite;
             display: inline-block;
             vertical-align: middle;
+            margin: 0 6px;
           }
           @keyframes spin { to { transform: rotate(360deg); } }
           .sr-only {
@@ -207,26 +234,32 @@ const onDownload = async (b) => {
             white-space: nowrap;
             border: 0;
           }
+          /* on very small screens slightly reduce reserved width */
+          @media (max-width: 360px) {
+            .summary .count, .summary .placeholder { min-width: 30px; padding: 0 4px; }
+          }
         `}</style>
 
-        {loading || totalAvailable == null ? (
-          <>
-            <span>You've completed</span>
-            <span aria-hidden="true" className="small-spinner" />
-            <span>out of</span>
-            <span aria-hidden="true" className="small-spinner" />
-            <span>available badges.</span>
-            <span className="sr-only" aria-live="polite">Loading badges…</span>
-          </>
-        ) : (
-          <>
-            <span>You've completed </span>
-            <strong>{badges.length}</strong>
-            <span> out of </span>
-            <strong>{totalAvailable}</strong>
-            <span> available badges.</span>
-          </>
-        )}
+        <div className="summary" aria-live={loading || totalAvailable == null ? "polite" : "off"}>
+          {loading || totalAvailable == null ? (
+            <>
+              <span>You've completed</span>
+              <span aria-hidden="true" className="small-spinner" />
+              <span>out of</span>
+              <span aria-hidden="true" className="small-spinner" />
+              <span>available badges.</span>
+              <span className="sr-only">Loading badges…</span>
+            </>
+          ) : (
+            <>
+              <span>You've completed</span>
+              <span className="count" aria-live="polite">{badges.length}</span>
+              <span>out of</span>
+              <span className="count" aria-live="polite">{totalAvailable}</span>
+              <span>available badges.</span>
+            </>
+          )}
+        </div>
       </div>
 
       {loading ? (
