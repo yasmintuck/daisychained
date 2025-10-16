@@ -738,6 +738,7 @@ input:checked + .slider:before {
   justify-content: center;
   gap: 10px;            
   line-height: 1;
+  color: #000000;
 }
 .badge-download svg{
   /* optional: inherit current color */
