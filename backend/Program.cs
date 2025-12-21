@@ -91,6 +91,10 @@ builder.Services.AddHttpClient();
 // In-memory cache for frequently-read data (per-organisation module/package lists)
 builder.Services.AddMemoryCache();
 
+// Startup warm-up service: performs a lightweight read to warm EF model & DB connection
+// Register warm-up as an IHostedService (avoid generic resolve issues with some analyzers)
+builder.Services.AddSingleton(typeof(Microsoft.Extensions.Hosting.IHostedService), typeof(backend.Infrastructure.StartupWarmupService));
+
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -5,9 +5,15 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace backend.Infrastructure;
 
+/// <summary>
+/// Tracks cache keys grouped by organisation so we can evict only affected org keys.
+/// Uses IMemoryCache as a backing store (in-process). For distributed caches you would
+/// implement a Redis-backed set instead.
+/// </summary>
 public class CacheKeyStore
 {
-    private const string StoreKey = "__daisy_cache_keys";
+    // Per-org set prefix stored in IMemoryCache
+    private const string OrgKeysPrefix = "__daisy_org_keys_";
     private readonly IMemoryCache _cache;
 
     public CacheKeyStore(IMemoryCache cache)
@@ -15,20 +21,23 @@ public class CacheKeyStore
         _cache = cache;
     }
 
-    public void AddKey(string key)
+    // Record a key for an organisation
+    public void AddKeyForOrg(string key, int organisationId)
     {
-        var set = _cache.GetOrCreate(StoreKey, entry => new HashSet<string>())!;
+        var storeKey = OrgKeysPrefix + organisationId;
+        var set = _cache.GetOrCreate(storeKey, entry => new HashSet<string>())!;
         lock (set)
         {
             set.Add(key);
         }
-        // persist the set
-        _cache.Set(StoreKey, set);
+        _cache.Set(storeKey, set);
     }
 
-    public IEnumerable<string> GetKeys()
+    // Retrieve keys for an organisation
+    public IEnumerable<string> GetKeysForOrg(int organisationId)
     {
-        if (_cache.TryGetValue(StoreKey, out HashSet<string>? set) && set != null)
+        var storeKey = OrgKeysPrefix + organisationId;
+        if (_cache.TryGetValue(storeKey, out HashSet<string>? set) && set != null)
         {
             lock (set)
             {
@@ -38,8 +47,17 @@ public class CacheKeyStore
         return Enumerable.Empty<string>();
     }
 
-    public void Clear()
+    // Clear keys for an organisation
+    public void ClearOrg(int organisationId)
     {
-        _cache.Remove(StoreKey);
+        var storeKey = OrgKeysPrefix + organisationId;
+        _cache.Remove(storeKey);
+    }
+
+    // For compatibility / admin: clear all recorded org key sets (expensive)
+    public void ClearAll()
+    {
+        // IMemoryCache doesn't provide enumeration; this is a noop for now.
+        // If needed, maintain a global registry of org ids separately.
     }
 }

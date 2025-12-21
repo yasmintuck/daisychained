@@ -4,6 +4,9 @@ using backend.Data;
 using backend.Models;
 using backend.Dtos;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace backend.Controllers;
 
@@ -14,12 +17,17 @@ public class UserAccessController : ControllerBase
     private readonly AppDbContext _context;
     private readonly IMemoryCache _cache;
     private readonly backend.Infrastructure.CacheKeyStore _keyStore;
+    private readonly ILogger<UserAccessController> _logger;
 
-    public UserAccessController(AppDbContext context, IMemoryCache cache, backend.Infrastructure.CacheKeyStore keyStore)
+    // per-cache-key semaphores to prevent stampede
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new ConcurrentDictionary<string, SemaphoreSlim>();
+
+    public UserAccessController(AppDbContext context, IMemoryCache cache, backend.Infrastructure.CacheKeyStore keyStore, ILogger<UserAccessController> logger)
     {
         _context = context;
         _cache = cache;
         _keyStore = keyStore;
+        _logger = logger;
     }
 
     // POST: api/UserAccess/packages
@@ -43,29 +51,53 @@ public class UserAccessController : ControllerBase
 
         // Cache packages per-organisation to avoid repeated joins
         var pkgCacheKey = $"org_packages_{org.OrganisationId}";
+        // stampede protection per-key
+        var pkgLock = _locks.GetOrAdd(pkgCacheKey, _ => new SemaphoreSlim(1, 1));
         if (!_cache.TryGetValue(pkgCacheKey, out List<object>? packages))
         {
-            packages = await _context.OrganisationPackages
-                .AsNoTracking()
-                .Where(op => op.OrganisationId == org.OrganisationId)
-                .Join(_context.Packages.AsNoTracking(),
-                      op => op.PackageId,
-                      p => p.PackageId,
-                      (op, p) => new { p.PackageId, p.PackageName, p.PackageDescription })
-                .OrderBy(p => p.PackageName)
-                .Select(p => new {
-                    packageId = p.PackageId,
-                    packageName = p.PackageName,
-                    packageDescription = p.PackageDescription
-                })
-                .ToListAsync<object>();
-
-            // Cache for 10 minutes by default; invalidate on package/module changes
-            _cache.Set(pkgCacheKey, packages, new MemoryCacheEntryOptions
+            _logger.LogInformation("Cache miss for {Key}, attempting to populate", pkgCacheKey);
+            await pkgLock.WaitAsync();
+            try
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            });
-            _keyStore.AddKey(pkgCacheKey);
+                // double-check after acquiring lock
+                if (!_cache.TryGetValue(pkgCacheKey, out packages))
+                {
+                    packages = await _context.OrganisationPackages
+                        .AsNoTracking()
+                        .Where(op => op.OrganisationId == org.OrganisationId)
+                        .Join(_context.Packages.AsNoTracking(),
+                              op => op.PackageId,
+                              p => p.PackageId,
+                              (op, p) => new { p.PackageId, p.PackageName, p.PackageDescription })
+                        .OrderBy(p => p.PackageName)
+                        .Select(p => new {
+                            packageId = p.PackageId,
+                            packageName = p.PackageName,
+                            packageDescription = p.PackageDescription
+                        })
+                        .ToListAsync<object>();
+
+                    // Cache for 10 minutes by default; invalidate on package/module changes
+                    _cache.Set(pkgCacheKey, packages, new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                    });
+                    _keyStore.AddKeyForOrg(pkgCacheKey, org.OrganisationId);
+                    _logger.LogInformation("Populated cache {Key} with {Count} items", pkgCacheKey, packages.Count);
+                }
+                else
+                {
+                    _logger.LogInformation("Cache filled by another thread for {Key}", pkgCacheKey);
+                }
+            }
+            finally
+            {
+                pkgLock.Release();
+            }
+        }
+        else
+        {
+            _logger.LogInformation("Cache hit for {Key}", pkgCacheKey);
         }
 
         return Ok(packages);
@@ -109,54 +141,73 @@ public class UserAccessController : ControllerBase
         }
 
         var cacheKey = $"org_modules_{organisation.OrganisationId}";
+        var modulesLock = _locks.GetOrAdd(cacheKey, _ => new SemaphoreSlim(1, 1));
         if (_cache.TryGetValue(cacheKey, out List<object>? cachedModules) && cachedModules != null)
         {
+            _logger.LogInformation("Cache hit for {Key}", cacheKey);
             return Ok(cachedModules);
         }
 
-        // Query module-package relationships and project fields server-side (no large Include graph)
-        var allowedPackageIds = await _context.OrganisationPackages
-            .Where(op => op.OrganisationId == organisation.OrganisationId)
-            .Select(op => op.PackageId)
-            .ToListAsync();
-
-        var modulePackageRows = await _context.ModulePackages
-            .Where(mp => allowedPackageIds.Contains(mp.PackageId))
-            .Select(mp => new {
-                moduleId = mp.Module.ModuleId,
-                moduleTitle = mp.Module.ModuleTitle,
-                moduleDescription = mp.Module.ModuleDescription,
-                slug = mp.Module.Slug,
-                coverImageUrl = mp.Module.CoverImageUrl,
-                duration = mp.Module.Duration,
-                lastUpdated = mp.Module.LastUpdated,
-                packageId = mp.PackageId
-            })
-            .AsNoTracking()
-            .ToListAsync();
-
-        var moduleWithPackages = modulePackageRows
-            .GroupBy(r => new { r.moduleId, r.moduleTitle, r.moduleDescription, r.slug, r.coverImageUrl, r.duration, r.lastUpdated })
-            .Select(g => new {
-                moduleId = g.Key.moduleId,
-                moduleTitle = g.Key.moduleTitle,
-                moduleDescription = g.Key.moduleDescription,
-                slug = g.Key.slug,
-                coverImageUrl = g.Key.coverImageUrl,
-                duration = g.Key.duration,
-                lastUpdated = g.Key.lastUpdated,
-                packageIds = g.Select(x => x.packageId).Distinct().ToList()
-            })
-            .OrderBy(m => m.moduleId)
-            .ToList<object>();
-
-        // Cache for 10 minutes. Invalidate this when modules/packages change.
-        _cache.Set(cacheKey, moduleWithPackages, new MemoryCacheEntryOptions
+        _logger.LogInformation("Cache miss for {Key}, attempting to populate", cacheKey);
+        await modulesLock.WaitAsync();
+        List<object> moduleWithPackages = null!;
+        try
         {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-        });
+            if (_cache.TryGetValue(cacheKey, out cachedModules) && cachedModules != null)
+            {
+                _logger.LogInformation("Cache filled by another thread for {Key}", cacheKey);
+                return Ok(cachedModules);
+            }
 
-        _keyStore.AddKey(cacheKey);
+            // Query module-package relationships and project fields server-side (no large Include graph)
+            var allowedPackageIds = await _context.OrganisationPackages
+                .Where(op => op.OrganisationId == organisation.OrganisationId)
+                .Select(op => op.PackageId)
+                .ToListAsync();
+
+            var modulePackageRows = await _context.ModulePackages
+                .Where(mp => allowedPackageIds.Contains(mp.PackageId))
+                .Select(mp => new {
+                    moduleId = mp.Module.ModuleId,
+                    moduleTitle = mp.Module.ModuleTitle,
+                    moduleDescription = mp.Module.ModuleDescription,
+                    slug = mp.Module.Slug,
+                    coverImageUrl = mp.Module.CoverImageUrl,
+                    duration = mp.Module.Duration,
+                    lastUpdated = mp.Module.LastUpdated,
+                    packageId = mp.PackageId
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            moduleWithPackages = modulePackageRows
+                .GroupBy(r => new { r.moduleId, r.moduleTitle, r.moduleDescription, r.slug, r.coverImageUrl, r.duration, r.lastUpdated })
+                .Select(g => new {
+                    moduleId = g.Key.moduleId,
+                    moduleTitle = g.Key.moduleTitle,
+                    moduleDescription = g.Key.moduleDescription,
+                    slug = g.Key.slug,
+                    coverImageUrl = g.Key.coverImageUrl,
+                    duration = g.Key.duration,
+                    lastUpdated = g.Key.lastUpdated,
+                    packageIds = g.Select(x => x.packageId).Distinct().ToList()
+                })
+                .OrderBy(m => m.moduleId)
+                .ToList<object>();
+
+            // Cache for 10 minutes. Invalidate this when modules/packages change.
+            _cache.Set(cacheKey, moduleWithPackages, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
+
+            _keyStore.AddKeyForOrg(cacheKey, organisation.OrganisationId);
+            _logger.LogInformation("Populated cache {Key} with {Count} modules", cacheKey, moduleWithPackages.Count);
+        }
+        finally
+        {
+            modulesLock.Release();
+        }
 
         return Ok(moduleWithPackages);
     }
