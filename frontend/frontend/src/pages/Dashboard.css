@@ -24,7 +24,8 @@
   padding: 0 1rem;
   display: flex;
   align-items: flex-start;
-  min-height: calc(100vh - var(--nav-h));
+  /* use runtime --vh (visual viewport) when available to avoid iOS address-bar layout shifts */
+  min-height: calc(var(--vh, 1vh) * 100 - var(--nav-h));
 }
 
 /* Prefer dynamic viewport units on supporting browsers (iOS fixes) */
@@ -53,7 +54,7 @@
   position: sticky;
   top: var(--nav-h);
   align-self: flex-start;      
-  max-height: calc(100vh - var(--nav-h)); 
+  max-height: calc(var(--vh, 1vh) * 100 - var(--nav-h)); 
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -69,7 +70,7 @@
 
 .sidebar-overlay {
   position: fixed;
-  top: 70px; /* Below navbar */
+  top: var(--nav-h); /* Below navbar */
   left: 0;
   right: 0;
   bottom: 0;
@@ -423,7 +424,7 @@ input:checked + .slider:before {
   margin-right: -20px;
   background-color: #fff;
   overflow: visible; /* changed this from auto to visible to test the sidebar sticky */
-  min-height: calc(100vh - 70px);
+  min-height: calc(var(--vh, 1vh) * 100 - var(--nav-h));
 }
 
 .course-area {
@@ -766,7 +767,7 @@ input:checked + .slider:before {
     top: var(--nav-h);
     left: 0;
     bottom: 0;
-    height: calc(100vh - var(--nav-h));
+    height: calc(var(--vh, 1vh) * 100 - var(--nav-h));
     width: 70px;
     min-width: 70px;
     background: white;
@@ -898,7 +899,7 @@ input:checked + .slider:before {
     left: max(1rem, calc((100% - 1350px) / 2 + 1rem)); /* align with centered container */
     width: 280px;       /* fixed expanded width */
     min-width: 280px;
-    height: calc(100vh - var(--nav-h));
+    height: calc(var(--vh, 1vh) * 100 - var(--nav-h));
     overflow-y: auto;   /* allow sidebar to scroll if its content overflows */
     z-index: 1000;
   }
