@@ -2,6 +2,7 @@ using System.IO;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
+using backend.Infrastructure;
 using QuestPDF.Fluent;          // for Document (we use it to find the assembly)
 using QuestPDF.Infrastructure;  // still fine to keep
 using System.Reflection;
@@ -74,10 +75,21 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSingleton<backend.Infrastructure.CacheKeyStore>();
+builder.Services.AddSingleton<backend.Infrastructure.CacheInvalidationInterceptor>();
+
+builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    // Register interceptor to evict cache on changes
+    var interceptor = serviceProvider.GetService<backend.Infrastructure.CacheInvalidationInterceptor>();
+    if (interceptor != null)
+        options.AddInterceptors(interceptor);
+});
 
 builder.Services.AddHttpClient();
+// In-memory cache for frequently-read data (per-organisation module/package lists)
+builder.Services.AddMemoryCache();
 
 
 builder.Services

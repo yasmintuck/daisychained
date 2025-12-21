@@ -17,9 +17,26 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Module>>> GetModules()
+        public async Task<ActionResult<IEnumerable<object>>> GetModules()
         {
-            return await _context.Modules.ToListAsync();
+            // Return a lightweight projection and avoid tracking for faster, safer JSON serialization
+            var modules = await _context.Modules
+                .AsNoTracking()
+                .Select(m => new {
+                    moduleId = m.ModuleId,
+                    moduleTitle = m.ModuleTitle,
+                    moduleDescription = m.ModuleDescription,
+                    slug = m.Slug,
+                    coverImageUrl = m.CoverImageUrl,
+                    duration = m.Duration,
+                    lastUpdated = m.LastUpdated,
+                    badgeImageUrl = m.BadgeImageUrl,
+                    certificateTemplateUrl = m.CertificateTemplateUrl
+                })
+                .OrderBy(m => m.moduleId)
+                .ToListAsync();
+
+            return Ok(modules);
         }
     }
 }
