@@ -49,3 +49,4 @@ appsettings.Local.json
 .DS_Store
 Thumbs.db
 railway.json
+backend/Dockerfile
