@@ -271,7 +271,14 @@ const onDownload = async (b) => {
           {badges.map((b) => (
             <div className="badge-card" key={b.moduleId}>
               <div className="badge-img-wrap">
-                <img src={b.badgePath} alt={`${b.moduleTitle} badge`} />
+                <img
+                  src={b.badgePath}
+                  alt={`${b.moduleTitle} badge`}
+                  loading="lazy"
+                  decoding="async"
+                  width="120"
+                  height="120"
+                />
               </div>
               <div className="badge-title" title={b.moduleTitle}>
                 {b.moduleTitle}

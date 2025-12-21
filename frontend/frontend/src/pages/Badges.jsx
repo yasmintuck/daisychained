@@ -75,8 +75,12 @@ export default function Badges() {
           externalId: user.sub,
         };
 
-        // Packages for left menu
-        const pkgRes = await axios.post(`${apiBase}/api/UserAccess/packages`, body);
+        // Fire packages and modules requests in parallel to avoid sequential waits
+        const pkgPromise = axios.post(`${apiBase}/api/UserAccess/packages`, body);
+        const modsPromise = axios.post(`${apiBase}/api/UserAccess/modules`, body);
+
+        const [pkgRes, modsRes] = await Promise.all([pkgPromise, modsPromise]);
+
         const pkgList = pkgRes.data ?? [];
         if (!alive) return;
 
@@ -93,7 +97,6 @@ export default function Badges() {
         }
 
         // We use modules count as the “Y available badges”
-        const modsRes = await axios.post(`${apiBase}/api/UserAccess/modules`, body);
         const mods = modsRes.data ?? [];
         if (!alive) return;
 
