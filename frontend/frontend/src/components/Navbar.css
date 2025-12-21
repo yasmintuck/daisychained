@@ -23,7 +23,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: var(--nav-h);
   background-color: var(--bg-dark);
   color: var(--light-text);
   z-index: 2000;
@@ -41,7 +41,7 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  min-height: 70px;
+  min-height: var(--nav-h);
   min-width: 0; /* ✅ Prevent shifting on child layout */
 }
 
