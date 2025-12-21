@@ -15,8 +15,8 @@ namespace backend.Controllers
     {
         private readonly AppDbContext _context;
 
-        // small, strongly-typed projection for packages to avoid anonymous/dynamic clashes
-        private record PackageLite(string PackageName, string? ColorHex);
+    // small, strongly-typed projection for packages to avoid anonymous/dynamic clashes
+    private record PackageLite(int PackageId, string PackageName, string? ColorHex);
 
         public BadgesController(AppDbContext context)
         {
@@ -64,7 +64,7 @@ namespace backend.Controllers
                                  select new
                                  {
                                      mp.ModuleId,
-                                     Package = new PackageLite(p.PackageName, p.ColorHex)
+                                     Package = new PackageLite(p.PackageId, p.PackageName, p.ColorHex)
                                  })
                                 .ToListAsync();
 
@@ -117,6 +117,8 @@ namespace backend.Controllers
 
                     // Frontend will append &origin=<window.location.origin> when calling this
                     CertificateDownloadUrl = $"/api/Certificates/download?moduleId={x.ModuleId}"
+                    ,
+                    PackageId = chosen?.PackageId
                 };
             }).ToList();
 
