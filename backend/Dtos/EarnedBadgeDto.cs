@@ -14,6 +14,9 @@ namespace backend.Dtos
 
         // API route (frontend will append ?origin=window.location.origin)
         public string CertificateDownloadUrl { get; set; } = string.Empty;
+
+        // The package id chosen for this badge (nullable if none)
+        public int? PackageId { get; set; }
     }
 }
 
