@@ -23,42 +23,42 @@ const ModuleLoader = ({ searchTerm, statusFilter, sortOption, activePackageId })
       setLoading(true);
 
       try {
-        const payload = {
+        // 1) Fetch allowed modules and render them immediately for faster perceived load
+        const modsRes = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/modules`, {
+          email: user.email,
+          firstName: user.given_name,
+          lastName: user.family_name,
           externalId: user.sub,
-          firstName: user.given_name || "",
-          lastName: user.family_name || "",
-          email: user.email
-        };
+        });
 
-        // const [modulesRes, progressRes] = await Promise.all([
-        //   axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/Modules`),
-        //   axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/UserProgress/user/${user.email}`)
-        // ]);
-        const [modsRes, progressRes] = await Promise.all([
-          axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/UserAccess/modules`, {
-            email: user.email,
-            firstName: user.given_name,
-            lastName: user.family_name,
-            externalId: user.sub,
-          }),
-          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/UserProgress/user/${user.email}`)
-        ]);
+        const fetchedModules = modsRes.data ?? [];
 
-//        const fetchedModules = modulesRes.data;
-        const fetchedModules = modsRes.data ?? []; // each item has packageIds: number[]
-        const userProgress = progressRes.data || [];
+        // Set a default 'not started' status while we fetch progress
+        const initiallyEnriched = fetchedModules
+          .map((mod) => ({ ...mod, progressStatus: "not started" }))
+          .sort((a, b) => a.moduleId - b.moduleId);
 
-        const enrichedModules = fetchedModules
-          .map((mod) => {
+        setModules(initiallyEnriched);
+
+        // 2) Fetch user progress and merge it in (doesn't block initial render)
+        try {
+          const progressRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/UserProgress/user/${user.email}`);
+          const userProgress = progressRes.data || [];
+
+          const merged = (fetchedModules || []).map((mod) => {
             const record = userProgress.find((p) => p.moduleId === mod.moduleId);
             let status = "not started";
             if (record?.progress === 1) status = "in progress";
             else if (record?.progress === 2) status = "completed";
             return { ...mod, progressStatus: status };
-          })
-          .sort((a, b) => a.moduleId - b.moduleId);
+          }).sort((a, b) => a.moduleId - b.moduleId);
 
-        setModules(enrichedModules);
+          setModules(merged);
+        } catch (innerErr) {
+          console.warn("⚠️ Failed to fetch user progress:", innerErr);
+          // keep modules shown with default statuses
+        }
+
       } catch (err) {
         console.error("❌ Error loading modules:", err);
       } finally {
