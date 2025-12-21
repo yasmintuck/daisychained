@@ -32,6 +32,7 @@ export default function Badges() {
   const [activePackageName, setActivePackageName] = useState(null);
   const [hideAll, setHideAll] = useState(false);
   const [totalAvailable, setTotalAvailable] = useState(null); // null while loading — shown as “Y available badges” when loaded
+  const [availableModules, setAvailableModules] = useState([]);
 
   // IMPORTANT: keep this in sync with viewport like Dashboard.jsx
   const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth <= 900);
@@ -96,11 +97,12 @@ export default function Badges() {
           setHideAll(false);
         }
 
-        // We use modules count as the “Y available badges”
-        const mods = modsRes.data ?? [];
-        if (!alive) return;
+  // We use modules count as the “Y available badges”
+  const mods = modsRes.data ?? [];
+  if (!alive) return;
 
-        setTotalAvailable(mods.length);
+  setAvailableModules(mods);
+  setTotalAvailable(mods.length);
       } catch (e) {
         console.error("Failed to fetch packages/modules for badges", e);
       }
@@ -292,7 +294,9 @@ export default function Badges() {
             searchTerm={searchTerm}
             sortOption={sortOption}
             activePackageId={activePackageId}
+            activePackageName={activePackageName}
             totalAvailable={totalAvailable}
+            availableModules={availableModules}
           />
         </div>
 

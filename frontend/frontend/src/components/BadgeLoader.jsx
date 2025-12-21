@@ -11,7 +11,7 @@ import { Download as DownloadIcon } from "lucide-react";
  *  - activePackageId: number | null  (reserved for later use)
  *  - totalAvailable: number  (for the summary line)
  */
-export default function BadgeLoader({ searchTerm, sortOption, activePackageId, totalAvailable }) {
+export default function BadgeLoader({ searchTerm, sortOption, activePackageId, activePackageName, totalAvailable, availableModules = [] }) {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,10 +32,48 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
         const res = await axios.get(`${apiBase}/api/Badges/user/${encodeURIComponent(user.email)}`);
         const raw = res.data ?? [];
 
-        // Search + sort
+        // Filter by active package/category if selected, then search + sort
         let filtered = raw.filter((b) =>
           (b.moduleTitle || "").toLowerCase().includes((searchTerm || "").toLowerCase())
         );
+
+        // Robust package filtering strategy (in order):
+        // 1) If availableModules is present, compute moduleIds belonging to the active package and filter badges by moduleId.
+        // 2) Otherwise, prefer packageId on the badge DTO.
+        // 3) Fallback to name-based matching.
+        if (activePackageId != null) {
+          // 1) Try availableModules -> look for modules that include this packageId
+          if (availableModules && availableModules.length > 0) {
+            const allowedModuleIds = new Set(
+              (availableModules || [])
+                .filter(m => (m.packageIds || []).some(pid => pid === activePackageId))
+                .map(m => m.moduleId)
+            );
+            // Filter badges by moduleId membership
+            filtered = filtered.filter(b => allowedModuleIds.has(b.moduleId));
+          } else {
+            // 2) packageId on DTO
+            const byId = filtered.filter((b) => {
+              const rawId = b.packageId ?? b.PackageId ?? b.packageID ?? b.PackageID ?? null;
+              if (rawId == null) return false;
+              const pid = typeof rawId === "string" ? parseInt(rawId, 10) : rawId;
+              return pid === activePackageId;
+            });
+
+            if (byId.length > 0) {
+              filtered = byId;
+            } else if (activePackageName) {
+              // 3) fallback to name-based if DTOs lack packageId
+              const target = activePackageName.trim().toLowerCase();
+              filtered = filtered.filter((b) => (b.categoryName || b.CategoryName || "").toLowerCase() === target);
+            } else {
+              filtered = byId; // probably empty
+            }
+          }
+        } else if (activePackageName) {
+          const target = activePackageName.trim().toLowerCase();
+          filtered = filtered.filter((b) => (b.categoryName || b.CategoryName || "").toLowerCase() === target);
+        }
 
         filtered = filtered.sort((a, b) => {
           const da = a.completedAt ? new Date(a.completedAt) : new Date(0);
@@ -57,7 +95,7 @@ export default function BadgeLoader({ searchTerm, sortOption, activePackageId, t
     return () => {
       ignore = true;
     };
-  }, [isAuthenticated, user, searchTerm, sortOption, activePackageId, apiBase]);
+  }, [isAuthenticated, user, searchTerm, sortOption, activePackageId, activePackageName, availableModules, apiBase]);
 
 const onDownload = async (b) => {
   try {
@@ -251,21 +289,31 @@ const onDownload = async (b) => {
               <span className="sr-only">Loading badges…</span>
             </>
           ) : (
-            <>
-              <span>You've completed</span>
-              <span className="count" aria-live="polite">{badges.length}</span>
-              <span>out of</span>
-              <span className="count" aria-live="polite">{totalAvailable}</span>
-              <span>available badges.</span>
-            </>
-          )}
+                <>
+                  <span>You've completed</span>
+                  <span className="count" aria-live="polite">{badges.length}</span>
+                  <span>out of</span>
+                  <span className="count" aria-live="polite">{
+                    activePackageId != null
+                      ? (availableModules || []).filter(m => (m.packageIds || []).some(pid => pid === activePackageId)).length
+                      : totalAvailable
+                  }</span>
+                  <span>available badges.</span>
+                </>
+              )}
         </div>
       </div>
 
       {loading ? (
         <p style={{ marginTop: "1rem" }}>Loading badges…</p>
       ) : badges.length === 0 ? (
-        <p style={{ marginTop: "1rem" }}>No badges yet.</p>
+        <p style={{ marginTop: "1rem", color: "#000" }}>
+          {activePackageName
+            ? `You haven't achieved any badges yet for ${activePackageName}.`
+            : activePackageId
+            ? `You haven't achieved any badges yet for this category.`
+            : "You haven't achieved any badges yet."}
+        </p>
       ) : (
         <div className="badge-grid">
           {badges.map((b) => (
