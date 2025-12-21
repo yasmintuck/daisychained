@@ -15,7 +15,8 @@
 }
 
 .dashboard-wrapper {
-  margin-top: 70px; /* height of fixed navbar */
+  /* Account for iOS safe-area (notch/status bar) so the fixed navbar doesn't overlap content */
+  margin-top: calc(70px + env(safe-area-inset-top)); /* height of fixed navbar + safe area */
 }
 
 .dashboard-container {
@@ -24,7 +25,8 @@
   padding: 0 1rem;
   display: flex;
   align-items: flex-start;
-  min-height: calc(100vh - 70px);
+  /* Account for iOS safe area (notch) when calculating viewport height */
+  min-height: calc(100vh - 70px - env(safe-area-inset-top));
 }
 
 
@@ -44,11 +46,14 @@
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: 70px; 
+  /* Make sticky start below the fixed navbar and iOS safe area */
+  top: calc(70px + env(safe-area-inset-top));
   align-self: flex-start;      
-  max-height: calc(100vh - 70px); 
+  /* Avoid the sidebar extending under the navbar on iOS; account for safe-area */
+  max-height: calc(100vh - 70px - env(safe-area-inset-top)); 
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* smoother scrolling on iOS */
 }
 
 /* newly added for mobile sidebar */
@@ -62,7 +67,8 @@
 
 .sidebar-overlay {
   position: fixed;
-  top: 70px; /* Below navbar */
+  /* Place overlay below the fixed navbar and iOS safe area */
+  top: calc(70px + env(safe-area-inset-top)); /* Below navbar */
   left: 0;
   right: 0;
   bottom: 0;
@@ -416,7 +422,7 @@ input:checked + .slider:before {
   margin-right: -20px;
   background-color: #fff;
   overflow: visible; /* changed this from auto to visible to test the sidebar sticky */
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 70px - env(safe-area-inset-top));
 }
 
 .course-area {
@@ -756,10 +762,11 @@ input:checked + .slider:before {
 @media (max-width: 900px) {
   .sidebar {
     position: fixed;
-    top: 70px;
+    /* below navbar + iOS safe-area */
+    top: calc(70px + env(safe-area-inset-top));
     left: 0;
     bottom: 0;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 70px - env(safe-area-inset-top));
     width: 70px;
     min-width: 70px;
     background: white;
@@ -768,6 +775,7 @@ input:checked + .slider:before {
     border-right: 1px solid #eee;
     box-shadow: none;
     flex-shrink: 0;
+    -webkit-overflow-scrolling: touch;
   }
 
   .sidebar.expanded {
@@ -828,7 +836,7 @@ input:checked + .slider:before {
   /* Overlay for dropdown */
   .mobile-overlay {
     position: fixed;
-    top: 70px;
+    top: calc(70px + env(safe-area-inset-top));
     left: 0;
     right: 0;
     bottom: 0;
@@ -887,11 +895,12 @@ input:checked + .slider:before {
 @media (min-width: 900px) {
   .sidebar {
     position: fixed;
-    top: 70px; 
+    /* place below navbar and iOS safe area */
+    top: calc(70px + env(safe-area-inset-top));
     left: max(1rem, calc((100% - 1350px) / 2 + 1rem)); /* align with centered container */
     width: 280px;       /* fixed expanded width */
     min-width: 280px;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 70px - env(safe-area-inset-top));
     overflow-y: auto;   /* allow sidebar to scroll if its content overflows */
     z-index: 1000;
   }
