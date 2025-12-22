@@ -682,11 +682,11 @@ input:checked + .slider:before {
 }
 .badge-card{
   position:relative;
-  background: 
+  /*background: 
     linear-gradient(white, white) padding-box,
-    linear-gradient(45deg, #000000, #ffb300) border-box;
+    linear-gradient(45deg, #000000, #ffb300) border-box;*/
   border-radius: 14px;
-  border: 3px solid transparent;
+  border: 1.5px solid #d3d2d2;
   padding:18px 18px 16px;
   min-height: 340px;  
   display: grid;                   /* turn card into a grid */
