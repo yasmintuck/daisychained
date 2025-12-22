@@ -118,7 +118,18 @@ const filteredModules = packageFiltered.filter((mod) => {
     // Stable tie-breaker so sort order doesn't jump around
     const tieBreak = (a?.moduleId ?? 0) - (b?.moduleId ?? 0);
 
-    if (sortOption === "newest") return (dateB - dateA) || tieBreak;
+    // New default behaviour: when sorting newest, show non-completed modules first
+    // (in-progress + not started), newest -> oldest, then completed newest -> oldest.
+    const aCompleted = a.progressStatus === "completed";
+    const bCompleted = b.progressStatus === "completed";
+
+    if (!sortOption || sortOption === "newest") {
+      // group by completion status first
+      if (aCompleted !== bCompleted) return aCompleted ? 1 : -1;
+      // within the same group sort newest -> oldest
+      return (dateB - dateA) || tieBreak;
+    }
+
     if (sortOption === "oldest") return (dateA - dateB) || tieBreak;
     if (sortOption === "shortest") return (durA - durB) || tieBreak;
     if (sortOption === "longest") return (durB - durA) || tieBreak;
@@ -138,7 +149,7 @@ const filteredModules = packageFiltered.filter((mod) => {
           <div className="course-area">
             {sortedModules.slice(0, visibleCount).map((mod) => (
               <div
-                className="course-card"
+                className={`course-card ${mod.progressStatus === "completed" ? "completed-overlay" : ""}`}
                 key={mod.moduleId}
                 onClick={() =>
                   navigate(`/module/${mod.slug}`, {
