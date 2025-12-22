@@ -40,13 +40,18 @@ namespace backend.Controllers
 
             if (existingProgress != null)
             {
-                existingProgress.Progress = dto.Progress;
-
-                if (dto.Progress == 2 && existingProgress.CompletedAt == null)
+                // Only allow progress to move forward. Do not downgrade a completed record.
+                if (dto.Progress > existingProgress.Progress)
                 {
-                    existingProgress.CompletedAt = DateTime.UtcNow;
+                    existingProgress.Progress = dto.Progress;
+
+                    if (dto.Progress == 2 && existingProgress.CompletedAt == null)
+                    {
+                        existingProgress.CompletedAt = DateTime.UtcNow;
+                    }
                 }
 
+                // Keep a last-accessed timestamp regardless of progress changes.
                 existingProgress.LastAccessed = DateTime.UtcNow;
             }
             else
