@@ -14,4 +14,7 @@ public class User
     public Organisation Organisation { get; set; }
 
     public ICollection<UserProgress> ProgressRecords { get; set; } = new List<UserProgress>();
+    
+    // Feedbacks left by this user on modules
+    public ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 }

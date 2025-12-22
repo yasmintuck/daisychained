@@ -15,4 +15,7 @@ public class Module
 
 
     public ICollection<UserProgress> UserProgressRecords { get; set; } = new List<UserProgress>();
+
+    // Feedbacks left on this module
+    public ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 }

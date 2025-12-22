@@ -10,6 +10,7 @@ namespace backend.Data
     public DbSet<User> Users { get; set; }
     public DbSet<Module> Modules { get; set; }
     public DbSet<UserProgress> UserProgressRecords { get; set; }
+    public DbSet<Feedback> Feedbacks { get; set; }
     public DbSet<Package> Packages { get; set; }
     public DbSet<ModulePackage> ModulePackages { get; set; }
     public DbSet<Organisation> Organisations { get; set; }
@@ -50,6 +51,31 @@ namespace backend.Data
             modelBuilder.Entity<BlogPost>()
                 .HasIndex(b => b.Slug)
                 .IsUnique();
+
+        // Feedback entity configuration
+        modelBuilder.Entity<Feedback>(entity =>
+        {
+            entity.HasKey(f => f.FeedbackId);
+
+            entity.HasIndex(f => new { f.UserId, f.ModuleId }).IsUnique();
+            entity.HasIndex(f => f.ModuleId);
+            entity.HasIndex(f => f.UserId);
+
+            entity.HasOne(f => f.User)
+                .WithMany(u => u.Feedbacks)
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(f => f.Module)
+                .WithMany(m => m.Feedbacks)
+                .HasForeignKey(f => f.ModuleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(f => f.Comment).HasMaxLength(2000);
+
+                // Configure table and add check constraint for rating
+                entity.ToTable("Feedback", t => t.HasCheckConstraint("CK_Feedback_Rating", "[Rating] >= 1 AND [Rating] <= 5"));
+        });
 
             modelBuilder.Entity<BlogPost>()
                 .Property(b => b.Title)
