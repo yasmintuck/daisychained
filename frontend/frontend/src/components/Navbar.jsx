@@ -97,12 +97,6 @@ export default function Navbar() {
                 <div className="dropdown-menu-nav">
                   <button
                     className="dropdown-item"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    My account
-                  </button>
-                  <button
-                    className="dropdown-item"
                     onClick={() => {
                       setShowDropdown(false);
                       logout({

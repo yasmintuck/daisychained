@@ -210,7 +210,7 @@ const onDownload = async (b) => {
 
           <div className="cert-overlay" role="dialog" aria-modal="true" aria-live="polite">
             <div className="cert-box" role="status" aria-busy="true">
-              <div className="cert-title">Building your certificate</div>
+              <div className="cert-title">Generating your certificate</div>
               <div className="progress-track" aria-hidden="true">
                 <div className="progress-bar" />
               </div>
