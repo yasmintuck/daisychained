@@ -65,6 +65,7 @@ function App() {
             </PrivateRoute>
           }
         />
+        {/* dev feedback page removed - feedback modal is integrated into the SCORM player */}
       </Routes>
     </>
     </div>
