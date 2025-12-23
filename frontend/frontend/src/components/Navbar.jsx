@@ -68,7 +68,7 @@ export default function Navbar() {
                 <Link to="/"      className={linkClass('/')}>home</Link>
                 <Link to="/about" className={linkClass('/about')}>meet the team</Link>
                 <Link to="/faq"   className={linkClass('/faq')}>faq</Link>
-                <Link to="/blog"  className={linkClass('/blog')}>blog</Link>
+                {/* blog removed from public MVP */}
               </>
             ) : (
               <>
@@ -123,7 +123,7 @@ export default function Navbar() {
               <Link to="/"      className={linkClass('/')}       onClick={() => setIsOpen(false)}>home</Link>
               <Link to="/about" className={linkClass('/about')}  onClick={() => setIsOpen(false)}>meet the team</Link>
               <Link to="/faq"   className={linkClass('/faq')}    onClick={() => setIsOpen(false)}>faq</Link>
-              <Link to="/blog"  className={linkClass('/blog')}   onClick={() => setIsOpen(false)}>blog</Link>
+              {/* blog removed from public MVP */}
             </>
           ) : (
             <>

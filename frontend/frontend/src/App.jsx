@@ -8,12 +8,11 @@ import './index.css';
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Faq from "./pages/Faq";
-import Blog from "./pages/Blog";
 import Dashboard from "./pages/Dashboard";
 import Modules from "./pages/Modules";
 import Badges from "./pages/Badges";
 import ScormPlayer from './components/ScormPlayer';
-import BlogPost from "./pages/BlogPost";
+// Blog pages removed from public MVP
 
 
 function App() {
@@ -27,9 +26,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/faq" element={<Faq />} />
-        <Route path="/blog" element={<Blog />} />
         <Route path="/callback" element={<CallbackHandler />} />
-        <Route path="/blog/:slug" element={<BlogPost />} />
+  {/* Blog routes removed from public MVP */}
 
 
         {/* Private Routes */}

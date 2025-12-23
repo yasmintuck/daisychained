@@ -66,7 +66,7 @@ export default function BlogPost() {
           </div>
 
           <div style={{ marginTop: "2rem" }}>
-            <Link to="/blog" className="blog-back-link">← back to all posts</Link>
+            <Link to="/" className="blog-back-link">← back to home</Link>
           </div>
         </div>
       </div>
