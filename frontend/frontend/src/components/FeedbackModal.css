@@ -28,6 +28,9 @@
   background: transparent;
   font-size: 1.1rem;
   cursor: pointer;
+  color: #111; /* explicit color so iOS doesn't apply its default link/button blue */
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .fd-modal h2{
@@ -67,11 +70,28 @@
 
 .fd-actions{ display:flex; gap:0.75rem; justify-content:flex-end; margin-top:1rem; }
 .fd-cancel{ background:transparent; border:1px solid #ddd; padding:0.5rem 0.85rem; border-radius:8px; cursor:pointer; }
-.fd-submit{ background:#0b6cff; color:#fff; border:none; padding:0.55rem 0.95rem; border-radius:8px; cursor:pointer; font-weight:600; }
+.fd-submit{
+  background: #F9C417; /* daisychained yellow */
+  color: #111; /* black text */
+  border: none;
+  padding: 0.55rem 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.fd-submit:hover{ filter: brightness(0.95); }
 
 .fd-thanks h2{ margin-top:0; }
 .fd-thanks-body{ color:#333; margin:0.5rem 0 1rem 0; }
-.fd-thanks-button{ background:#0b6cff; color:#fff; border:none; padding:0.6rem 1rem; border-radius:8px; cursor:pointer; font-weight:600; }
+.fd-thanks-button{
+  background: #F9C417; /* daisychained yellow */
+  color: #111; /* black text */
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
 
 @media (max-width: 480px){
   .fd-modal{ padding:1rem; }
