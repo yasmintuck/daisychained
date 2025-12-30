@@ -15,6 +15,7 @@
   --font-weight: 400; /* set default to regular */  
   --text-light: #ffffff;
   --bg-dark: #000000;
+  --yellow-accent: #f9c417;
   --heading-size: 1.5rem;
   --subheading-size: 1.25rem;
   --paragraph-size: 1rem;
@@ -43,3 +44,6 @@ a {
 html {
   overflow-y: scroll;
 }
+
+/* smooth scrolling for in-page anchors */
+html { scroll-behavior: smooth; }

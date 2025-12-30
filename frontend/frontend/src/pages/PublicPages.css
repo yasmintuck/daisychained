@@ -39,6 +39,427 @@
   width: 100%;
 }
 
+/* Homepage specific spacing and hero visuals */
+.homepage-hero {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  /* make hero rectangular; SVG below will create the curved edge */
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  overflow: visible; /* allow SVG to overlap */
+  padding: 60px var(--container-pad-x) 180px; /* more vertical breathing room */
+  position: relative;
+  z-index: 1;
+}
+
+.homepage-hero .public-hero-inner {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  display: grid;
+  /* make columns equal so the visual and copy align symmetrically */
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.hero-left { padding-right: 1rem; position: relative; }
+.hero-left > * { position: relative; overflow: hidden; }
+
+/* Per-element shutter: each child gets a covering pseudo-element that
+   translates out when `.visible` is applied to `.hero-left`. This lets
+   the heading, lead and CTA reveal independently like the reference. */
+.hero-left > *::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg-dark);
+  z-index: 2;
+  /* vertical shutter: move top -> bottom */
+  transform: translateY(0%);
+  transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+/* subtle content entrance after its shutter moves */
+.hero-left > * { transform: translateY(8px); opacity: 0; transition: transform 520ms cubic-bezier(.2,.9,.2,1), opacity 420ms ease; }
+
+/* per-element stagger timings */
+.hero-left .hero-title::before { transition-delay: 0ms; }
+.hero-left .lead::before { transition-delay: 120ms; }
+.hero-left .hero-cta::before { transition-delay: 240ms; }
+
+.hero-left.visible .hero-title::before { transform: translateY(100%); }
+.hero-left.visible .lead::before { transform: translateY(100%); }
+.hero-left.visible .hero-cta::before { transform: translateY(100%); }
+
+.hero-left.visible .hero-title { transform: translateY(0); opacity: 1; transition-delay: 180ms; }
+.hero-left.visible .lead { transform: translateY(0); opacity: 1; transition-delay: 260ms; }
+.hero-left.visible .hero-cta { transform: translateY(0); opacity: 1; transition-delay: 340ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-left > *::before { transition: none !important; transform: none !important; display: none; }
+  .hero-left > * { transition: none !important; transform: none !important; opacity: 1 !important; }
+}
+.hero-right { display:flex; justify-content:center; align-items:flex-start; }
+.hero-visual {
+  width: min(720px, 62vw); /* increased size so phone and overlays are larger */
+  max-width: 100%;
+  height: auto;               /* let the SVG define its height (portrait devices supported) */
+  background: transparent;    /* remove white background so SVG transparency shows */
+  border-radius: 10px;
+  box-shadow: 0 22px 56px rgba(0,0,0,0.16);
+  /* start further to the right for a more exaggerated slide-in */
+  transform: translateX(140px) translateY(12px) scale(0.995);
+  opacity: 0;
+  /* timing inspired by the reference: slightly longer with a smooth, snappy curve */
+    transition: opacity 1300ms cubic-bezier(0.22, 1, 0.36, 1) 120ms, transform 1300ms cubic-bezier(0.22, 1, 0.36, 1) 120ms;
+  will-change: transform, opacity;
+  display: flex;
+  align-items: flex-start; /* align the visual to the top so tall portraits sit nicely */
+  justify-content: center;
+  padding: 0; /* inner padding handled by .hero-visual-inner */
+}
+.hero-visual.visible { transform: translateX(0) translateY(0); opacity: 1; transition-delay: 0ms; }
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .hero-visual { transition: none !important; transform: none !important; opacity: 1 !important; }
+}
+
+/* small inner area inside the hero visual (moved from inline styles) */
+.hero-visual-inner { position: relative; padding: 0; color: #231F20; width: 100%; }
+
+/* image inside the hero visual: let the SVG dictate aspect ratio; allow tall images but cap to viewport */
+.hero-visual-img { display: block; width: 100%; height: auto; max-height: 82vh; object-fit: contain; }
+
+/* accent for popping the brand name in copy */
+.brand-accent { color: var(--yellow-accent); font-weight: 700; }
+
+/* hero logo above the title */
+.hero-logo {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .hero-left { text-align: center; padding:0px 10px; }
+}
+
+/* Improve hero scaling for medium screens (<1400px)
+   Reduce the visual column weight and cap the visual size so the text
+   column maintains readable width instead of getting squeezed. */
+@media (max-width: 1400px) and (min-width: 901px) {
+  .homepage-hero .public-hero-inner {
+    /* make the text column wider and the visual slightly smaller */
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 1.75rem;
+  }
+
+  .hero-visual {
+    /* reduce the visual width proportionally so it doesn't dominate */
+    width: min(560px, 46vw);
+    transform: translateX(80px) translateY(8px) scale(0.99);
+  }
+
+  .hero-visual-img { max-height: 68vh; }
+
+  .hero-left { padding-right: 0.5rem; }
+}
+
+/* more breathing room between page sections */
+.public-body { padding: 6.5rem 0; }
+.public-container { padding: 3.5rem var(--container-pad-x); }
+
+/* 3-column image grid for "What is" section */
+.three-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 90px; }
+.three-grid > div { background: transparent; height: 220px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+
+/* Place SVGs in the center, preserve aspect-ratio and avoid distortion.
+   Use height:100% and width:auto so vector artwork scales to the card height. */
+.three-grid > div img { display: block; width: auto; height: 100%; max-width: 100%; object-fit: contain; }
+
+/* Slightly taller cards on larger screens for better visual balance */
+@media (min-width: 900px) {
+  .three-grid { margin-top: 120px; }
+  .three-grid > div { height: 260px; }
+}
+
+@media (min-width: 1400px) {
+  .three-grid { margin-top: 60px; }
+  .three-grid > div { height: 320px; }
+}
+
+/* Decorative background doodle (fixed, full-bleed). Placed behind the content
+  and non-interactive. The element is added in JSX with an inline
+  background-image so the bundler resolves the file. */
+
+.public-body.section-pt-2 { position: relative; }
+.public-body.section-pt-2 .public-container { position: relative; }
+.sc-bg {
+  .hero-cta { margin-bottom: 28px; }
+
+  /* Mobile-specific scaling tweaks */
+  /* Make the primary CTA slightly smaller on phones so it doesn't dominate */
+  .primary-cta { font-size: 1rem; padding: 0.6rem 1.6rem; }
+
+  /* Reduce FAQ accordion typography on mobile for comfortable reading */
+  .accordion, .ac-item, .ac-trigger, .ac-panel { font-size: 16px; }
+  /* Shrink the +/– icon a touch on mobile */
+  .ac-icon { font-size: 1.4rem; width: calc(1.4rem + 0.2rem); }
+  /* tighten vertical padding for accordion rows on mobile */
+  .accordion { --ac-row-y: 0.35rem; }
+  left: 50%;
+  transform: translateX(-50%);
+  width: 102vw;           /* changed to match screenshot */
+  height: 790px;         /* changed to match screenshot */
+  top: 50px;            /* changed to match screenshot */
+  background-repeat: no-repeat;
+  background-position: left center; /* show the doodle curve to the left */
+  background-size: cover;
+  pointer-events: none;
+  z-index: 0; /* behind the content inside the section */
+  opacity: 0.98;
+}
+
+/* ------------------------------------------------------------------
+   Temporarily hide the decorative background doodle. Kept in the DOM
+   so it can be re-enabled easily later by removing this rule.
+------------------------------------------------------------------- */
+.sc-bg { display: none !important; }
+
+/* Reduce the vertical gap between the "Sparking conversations" section
+   (.public-body.section-pt-2) and the following features section. We
+   target the adjacent .public-body that follows the intro to decrease
+   the top padding only for that pairing, leaving other sections alone. */
+.public-body.section-pt-2 + .public-body {
+  padding-top: 0px; /* reduced by ~30px from previous 40px (2.5rem) */
+}
+
+@media (max-width: 700px) {
+  .sc-bg { top: 36px; height: 260px; background-position: center 10%; width: 140%; }
+}
+
+/* ensure the main content sits above the doodle */
+.public-body.section-pt-2 .section-header,
+.public-body.section-pt-2 .center-muted,
+.public-body.section-pt-2 .three-grid {
+  position: relative;
+  z-index: 2;
+}
+
+/* Feature cards: initial hidden state, animate into view */
+.features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 12px; margin-bottom: 40px; }
+.features-grid-top { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; margin-top: 40px; width: 66.666%; margin-left: auto; margin-right: auto; }
+
+/* Brick layout: single 3-column grid where first row has 2 items and the second row has 3.
+  Use explicit placement so each card occupies one column (equal width). */
+.features-grid-brick { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 12px; }
+.features-grid-brick .feature-card:nth-child(1) { grid-column: 1; grid-row: 1; }
+.features-grid-brick .feature-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+.features-grid-brick .feature-card:nth-child(3) { grid-column: 1; grid-row: 2; }
+.features-grid-brick .feature-card:nth-child(4) { grid-column: 2; grid-row: 2; }
+.features-grid-brick .feature-card:nth-child(5) { grid-column: 3; grid-row: 2; }
+.feature-card { 
+  opacity: 0; 
+  transform: translateY(12px); 
+  transition: opacity 480ms ease, transform 480ms ease; 
+  padding: 20px 18px; 
+  border-radius: 10px; 
+  background: transparent; 
+  /* make card outline more visible while keeping a soft look */
+  border: 1px solid rgba(35,31,32,0.06);
+  transition: opacity 480ms ease, transform 480ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  /* subtle lift */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  display: flex; 
+  flex-direction: column; 
+  gap: 10px; 
+  align-items: center; 
+  text-align: center; 
+}
+.feature-card:hover { 
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+  border-color: rgba(35,31,32,0.12);
+}
+.feature-card:focus-within {
+  /* visible focus ring for keyboard users */
+  box-shadow: 0 0 0 4px rgba(249,196,23,0.10), 0 8px 20px rgba(0,0,0,0.06);
+  border-color: rgba(35,31,32,0.14);
+}
+.feature-card.visible { opacity: 1; transform: none; }
+.features-grid .feature-card:nth-child(1) { transition-delay: 80ms; }
+.features-grid .feature-card:nth-child(2) { transition-delay: 160ms; }
+.features-grid .feature-card:nth-child(3) { transition-delay: 240ms; }
+.features-grid .feature-card:nth-child(4) { transition-delay: 320ms; }
+.features-grid .feature-card:nth-child(5) { transition-delay: 400ms; }
+
+/* Generic reveal (swipe-up) for elements that should animate on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: transform 720ms cubic-bezier(.2,.9,.2,1), opacity 520ms ease;
+  will-change: transform, opacity;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { transition: none !important; transform: none !important; opacity: 1 !important; }
+}
+
+/* Dramatic swipe-up specifically for the first intro section (Sparking conversations)
+   Uses a larger translateY and slower durations to create a weighty, cinematic
+   entrance. Scoped so other reveals keep their default timing. */
+.public-body.section-pt-2 .reveal {
+  transform: translateY(80px);
+  transition: transform 1200ms cubic-bezier(.18,.9,.22,1), opacity 1000ms ease;
+}
+.public-body.section-pt-2 .section-header.reveal { transition-delay: 140ms; }
+.public-body.section-pt-2 .center-muted.reveal { transition-delay: 420ms; }
+.public-body.section-pt-2 .three-grid > div { transition-delay: 680ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .public-body.section-pt-2 .reveal { transition: none !important; transform: none !important; opacity: 1 !important; }
+}
+
+/* ensure visible state for the dramatic intro overrides the generic .reveal.visible
+   since the more specific selector used above increases specificity; this rule
+   guarantees the transform becomes 0 when the visible class is present. */
+.public-body.section-pt-2 .reveal.visible { transform: translateY(0); opacity: 1; font-size: clamp(1rem, 1.6vw, 1.25rem); }
+
+/* Testimonial card spacing */
+.testimonial-card { background: #FEF4d7; padding: 24px; border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+
+/* slightly larger section headers */
+.section-header .heading { font-size: clamp(1.2rem, 2.2vw, 1.6rem); }
+
+/* Primary CTA (Book a demo) */
+.primary-cta {
+  display: inline-block;
+  background: var(--yellow-accent);
+  color: #231F20;
+  padding: 0.8rem 2.2rem;
+  border-radius: 50px;
+  font-weight: 900;
+  font-size: 1.2rem;
+  box-shadow: 0 8px 10px rgba(249,196,23,0.18);
+  transform: translateY(0);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  position: relative; /* enables pseudo-element positioning */
+  z-index: 2100; /* ensure CTA can appear above the fixed navbar when translated */
+}
+.primary-cta:hover,
+.primary-cta:focus {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 16px rgba(249,196,23,0.22);
+  z-index: 2100;
+}
+.primary-cta:active { transform: translateY(-1px); }
+
+/* add a subtle pulse to draw attention (reduced motion respects) */
+@media (prefers-reduced-motion: no-preference) {
+  .primary-cta::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+}
+
+/* SVG hero curve styling */
+.hero-curve {
+  display: block;
+  width: 100%;
+  height: 120px; /* larger curve height for a rounder bulge */
+  margin-top: -100px; /* overlap strongly so the curve is visible inside the hero */
+  transform: translateY(1px); /* avoids hairline gaps */
+  pointer-events: none;
+  position: relative;
+  z-index: 2; 
+}
+.hero-curve path { fill: #ffffff; }
+
+/* CTA wrapper spacing (hero) */
+.hero-cta { margin-top: 3rem; }
+/* allow the CTA to overflow its immediate parent so hover translateY isn't clipped
+   (we set overflow: hidden on .hero-left > * for the shutter reveal effect; that
+  clips translated children — opt-out for the CTA specifically). */
+.hero-left .hero-cta { overflow: visible; }
+/* Text helper used for hero paragraph (moved from inline styles) */
+.lead { margin-top: 1rem; max-width: 680px; font-size: clamp(1rem, 1.6vw, 1.25rem); line-height: 1.5; }
+
+/* Centered, muted paragraph variant used in the "What is" section */
+.center-muted { text-align: center; max-width: 920px; margin: 0 auto 3.25rem; color: #4b4b4b; }
+
+/* Feature card inner icon wrapper (moved from inline) */
+/* larger icon container; remove filled grey background so artwork sits directly on the card
+  keep circular shape for alignment but transparent background */
+.feature-icon { background: transparent; padding: 0; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; width: 120px; height: 120px; }
+.feature-icon svg, .feature-icon svg * { stroke: currentColor; }
+.feature-title { font-weight: 800; font-size: 14pt; margin-top: 10px; }
+.feature-desc { font-size: 1rem; color: #6D6E71; line-height: 1.6; }
+/* Ensure feature SVG artwork fits nicely inside the circular icon container */
+.feature-icon img { width: 100px; height: 100px; object-fit: contain; display: block; }
+
+/* Testimonial typography moved out of inline styles */
+.testimonial-card blockquote { margin: 0; }
+.testimonial-who { margin-top: 12px; font-weight: 600; }
+
+/* FAQ heading helper */
+.faq-heading {
+  font-weight: 700;
+  margin-bottom: 8px;
+  /* align with the left edge of the centered 70% accordion */
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  /* make heading 2px larger than accordion text; accordion answer uses calc(0.96rem + 2pt) */
+  font-size: calc(0.96rem + 2pt + 2px);
+}
+
+/* small utility for adding top padding to a section instead of inline style */
+.section-pt-2 { padding-top: 2rem; }
+
+/* small spacing helpers used across public pages */
+.section-gap { margin-top: 12px; }
+.section-gap-md { margin-bottom: 18px; }
+
+/* Responsive: stack hero into single column on smaller screens */
+@media (max-width: 900px) {
+  .homepage-hero { padding: 56px 16px 130px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  .homepage-hero .public-hero-inner { grid-template-columns: 1fr; gap: 1rem; padding: 6px 0; }
+  /* when stacked, ensure the left column centers its content cleanly */
+  .hero-left { text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .hero-left .lead { max-width: 720px; }
+  /* Increase description sizes on mobile for better legibility */
+  .lead { font-size: 18px; line-height: 1.45; }
+  /* make absolutely sure the sparking conversations paragraph is larger on mobile */
+  .public-body.section-pt-2 .center-muted { font-size: 18px !important; line-height: 1.45; padding: 0px 10px; }
+  /* Slightly shift the phone visual left-of-center when the layout stacks on mobile
+    so the composition matches the design where the device sits a touch left of the page center. */
+  .hero-visual { width: min(94%, 560px); height: auto; margin-top: 36px; transform: translateX(-6%); }
+  /* Ensure the visible state preserves the left offset while still applying the
+    vertical/opacity entrance used elsewhere. */
+  .hero-visual.visible { transform: translateX(-6%) translateY(0); opacity: 1; transition-delay: 0ms; }
+
+  /* Mobile-specific scaling tweaks (placed after the base rules so they override)
+     - Slightly reduce the primary CTA size so it doesn't dominate mobile view.
+     - Reduce FAQ accordion typography and icon size for better balance on small screens. */
+  .primary-cta { font-size: 1rem; padding: 0.6rem 1.6rem; }
+  .accordion, .ac-item, .ac-trigger, .ac-panel { font-size: 16px !important; }
+  .ac-item { font-size: 16px !important; }
+  .ac-trigger[aria-expanded="true"] span:first-child { font-size: 16px !important; }
+  .ac-icon { font-size: 1.4rem; width: calc(1.4rem + 0.2rem); }
+  .accordion { --ac-row-y: 0.35rem; }
+
+  /* Move the CTA up slightly on mobile so it sits closer to the heading */
+  .hero-cta { margin-top: 1.5rem; margin-bottom: 20px; }
+  .public-container { padding: 2rem 16px !important;}
+  .features-grid, .features-grid-top, .features-grid-brick { grid-template-columns: 1fr; }
+  .features-grid-top { width: 100%; margin-top: 20px; }
+  .three-grid { grid-template-columns: 1fr; }
+  .faq-heading { width: 100%; margin-left: 0; margin-right: 0; }
+}
+
 /* =============== Standard container + global hero =============== */
 
 .public-container {
@@ -71,13 +492,84 @@
 .public-hero h1,
 .hero-title {
   margin: 0;
-  line-height: 1.05;
+  line-height: 1;
   font-weight: 700;
-  font-size: clamp(2rem, 4.2vw, 3.25rem);
+  /* scale the hero title more aggressively so it matches other large headings
+     while still respecting small viewports */
+  font-size: clamp(2rem, 4.4vw, 3rem);
 }
 .h1-line { display: inline-block; }
 .h1-line1 { display: inline-block; }
 .h1-line2 { margin-left: 1.5em; }
+
+/* Continuous testimonial carousel (CSS-based smooth glide) */
+/* Full-bleed wrapper: break out of the centered container */
+.tc-wrapper {
+  overflow: hidden;
+  width: 100vw;
+  margin-left: calc(50% - 50vw); /* center full-bleed */
+  margin-right: calc(50% - 50vw);
+  padding: 18px 0; /* vertical breathing room */
+  box-sizing: border-box;
+}
+.tc-track { display: flex; gap: 18px; align-items: stretch; will-change: transform; transform: translate3d(0,0,0); }
+
+/* Fixed card size to match Scribe */
+.tc-item { flex: 0 0 auto; box-sizing: border-box; }
+.tc-item { width: 320px; max-width: calc(100% - 40px); }
+.tc-item .testimonial-card { text-align: left; background: #FEF4d7; box-shadow: none; padding: 18px; border-radius: 10px; height: 215px; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; }
+.tc-item .testimonial-who { font-weight: 700; margin-bottom: 8px; font-size: 14pt; }
+.tc-item blockquote { margin: 0; color: #333; }
+
+/* animation: translateX from 0 to -50% (one set) */
+.tc-track { animation-name: tc-scroll; animation-timing-function: linear; animation-iteration-count: infinite; }
+@keyframes tc-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Respect reduced motion: show static grid instead of animation */
+@media (prefers-reduced-motion: reduce) {
+  .tc-track { animation: none !important; }
+}
+
+/* Small screens: make cards shrink so they fit comfortably */
+@media (max-width: 420px) {
+  .tc-item { width: calc(100% - 40px); }
+  .tc-wrapper { padding-left: 20px; padding-right: 20px; }
+}
+
+/* Testimonial band: target the testimonials section so the background covers
+   the heading, subtext and carousel. We use a dedicated class on the section
+   (`testimonial-band`) so other .public-body sections remain unchanged. */
+.testimonial-band {
+  background: #fac612;
+  padding: 66px 0 86px 0;
+  position: relative; /* allow decorative curves to be absolutely positioned */
+  overflow: visible;  /* let the SVG curves overlap neighbouring sections */
+}
+
+.testimonial-band .public-container { position: relative; z-index: 2; }
+
+/* Keep the carousel wrapper behavior inside the band; preserve the existing
+   full-bleed track but ensure internal padding sits nicely within the band. */
+.testimonial-band .tc-wrapper {
+  /* the global .tc-wrapper still makes the track full-bleed; we keep that
+     but add a small top/bottom padding so content doesn't touch the edges */
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Decorative testimonial curves (top and bottom). The SVG paths are filled
+   to the same colour as the band so they create curved edges into adjacent
+   sections. We position them absolutely and allow them to overflow. */
+.testimonial-curve { display: block; width: 100%; height: 72px; pointer-events: none; }
+.testimonial-curve path { fill: #fac612; }
+.testimonial-curve.top { position: absolute; left: 0; top: -66px; z-index: 1; transform-origin: center; transform: scaleY(-1); }
+.testimonial-curve.bottom { position: absolute; left: 0; bottom: -36px; z-index: 1; transform-origin: center; transform: scaleY(-1); }
+
+@media (max-width: 900px) {
+  .testimonial-curve { height: 56px; }
+  .testimonial-curve.top { top: -53px; }
+  .testimonial-curve.bottom { bottom: -28px; }
+}
 
 /* =============== Search (shared) =============== */
 
@@ -149,44 +641,104 @@
 .section-header {
   position: relative;
   margin-bottom: 0.75rem;
+  text-align: center;
 }
 
 .section-header .heading {
   position: relative;
   z-index: 1;
-  color: var(--yellow-accent);
-  font-weight: 700;
-  font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+  color: #000000; /* black heading */
+  font-weight: 800;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem); /* larger responsive size */
+  display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* small decorative tile above certain section headings */
+.section-header .section-tile {
+  display: block;
+  width: 120px;
+  max-width: 22%;
+  height: auto;
+  margin: 0 auto 0.6rem;
+}
+
+@media (max-width: 900px) {
+  .section-header .section-tile { width: 84px; max-width: 40%; margin-bottom: 0.5rem; }
+}
+
+/* hero overlay graphics positioned over the phone
+   We export overlays at the same dimensions as the phone image so each
+   overlay can sit exactly on top of the app visual. Make overlays fill
+   the hero visual container (inset:0) and rely on the image content
+   inside the SVG to place decorative elements precisely. */
+.hero-overlay {
+  position: absolute;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: translateY(12px) scale(0.98) translateX(12px);
+  transition: opacity 760ms cubic-bezier(.2,.9,.2,1), transform 760ms cubic-bezier(.2,.9,.2,1);
+  z-index: 3;
+  pointer-events: none;
+  object-fit: contain; /* ensures the SVG scales to the container */
+}
+/* keep staggered reveals but remove manual coordinate offsets so each
+   overlay sits exactly over the phone visual when exported at the same size */
+.hero-overlay.overlay-1 { transition-delay: 620ms; }
+.hero-overlay.overlay-2 { transition-delay: 820ms; }
+.hero-overlay.overlay-3 { transition-delay: 1020ms; }
+
+.hero-visual.visible .hero-overlay { opacity: 1; transform: translateY(0) scale(1) translateX(0); }
+
+@media (max-width: 900px) {
+  /* overlays remain full-cover on mobile so their internal art scales
+     and positions correctly relative to the phone image */
+  .hero-overlay { width: 100%; height: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-overlay { transition: none !important; transform: none !important; opacity: 1 !important; }
+}
+
+/* larger description copy specifically under the large intro heading */
+.section-header.heading-large + .center-muted {
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  line-height: 1.65;
+  max-width: 980px; /* allow a bit more width for the lead paragraph */
+}
+
+/* larger variant for the first "What is" / intro heading */
+.section-header.heading-large .heading {
+  font-size: clamp(2rem, 4.4vw, 3rem);
 }
 
 /* yellow rule that runs in from the far left up to the container edge */
-.section-header::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 2px;
-  background: var(--yellow-accent);
-  z-index: 0;
-  right: calc(100% + var(--section-rule-gap, 12px));
-  width: 100vw;                    /* long enough to hit the viewport’s left edge */
-  pointer-events: none;
-}
+.section-header::before { display: none; }
 
 /* =============== Accordion =============== */
 
 .accordion {
-  border-top: 1px solid #e9e9e9;
+  border-top: 2px solid var(--yellow-accent);
   margin-bottom: 2.5rem;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
 
-  /* sizing tokens for compact variant */
-  --ac-q-font: 1rem;      /* question text */
-  --ac-a-font: 0.96rem;   /* answer text */
+  /* sizing tokens for compact variant (increase text by ~2pt)
+     we use calc to add 2pt to the base sizes so the change respects
+     existing layout tokens but applies the requested typographic bump. */
+  /* Make question and answer the same size (18px) */
+  --ac-q-font: 18px;      /* question text */
+  --ac-a-font: 18px;      /* answer text */
   --ac-row-y: 0.5rem;     /* vertical padding per row */
-  --ac-icon-size: 1.2rem;
+  --ac-icon-size: 1.6rem; /* larger +/– icon */
 }
 
-.ac-item { border-bottom: 1px solid #e9e9e9; background: #fff; }
+.ac-item { border-bottom: 2px solid var(--yellow-accent); background: #fff; font-size: 18px; }
 
 .ac-trigger {
   width: 100%;
@@ -196,7 +748,7 @@
   text-align: left;
   background: #fff;
   color: #231F20;
-  font-size: var(--ac-q-font);
+  font-size: 18px;
   padding: var(--ac-row-y) 0.25rem;
   border: none;
   cursor: pointer;
@@ -209,7 +761,7 @@
   width: calc(var(--ac-icon-size) + 0.2rem);
   display: inline-flex;
   justify-content: center;
-  opacity: 0.8;
+  opacity: 0.95;
 }
 
 .ac-panel {
@@ -219,7 +771,31 @@
 }
 
 /* Make the open question bold, without bolding the +/– icon */
-.ac-trigger[aria-expanded="true"] span:first-child { font-weight: 500; }
+.ac-trigger[aria-expanded="true"] span:first-child { font-weight: 500; font-size: 18px; }
+
+/* Responsive: keep accordion full-width on smaller screens for readability */
+@media (max-width: 900px) {
+  .accordion { width: 100%; margin-left: 0; margin-right: 0; }
+}
+
+/* Desktop-specific sizing overrides for consistent typography */
+@media (min-width: 900px) {
+  /* Main headings on desktop should all be 48px */
+  .hero-title,
+  .section-header.heading-large .heading {
+    font-size: 48px !important;
+    line-height: 1.05;
+  }
+
+  /* Subtext directly under main headings — use responsive clamp so
+     the copy scales between mobile and desktop rather than forcing
+     a fixed size with !important. This keeps the 'Sparking
+     conversations' paragraph consistent with the hero lead. */
+  .lead,
+  .section-header.heading-large + .center-muted {
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+  }
+}
 
 /* =============== Meet the Team (About) =============== */
 
@@ -446,7 +1022,7 @@
 .public-hero-inner {
   max-width: var(--max-container-width);
   margin: 0 auto;
-  padding: 64px var(--container-pad-x) 28px;
+  padding: 0px var(--container-pad-x) 10px;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;  /* title left, search right */
   gap: 2rem;
@@ -488,7 +1064,9 @@
   .public-search { justify-content: flex-start; margin-top: 2rem; }
 
   /* accordion: slightly smaller spacing */
-  .accordion { --ac-q-font: 0.98rem; --ac-row-y: 0.60rem; }
+  /* keep the typographic bump on mobile as well (add ~2pt)
+    but slightly reduce the baseline so it sits well on small viewports */
+  .accordion { --ac-q-font: calc(0.98rem + 2pt); --ac-a-font: calc(0.96rem + 2pt); --ac-row-y: 0.60rem; }
 
   /* stack team cards on mobile (you’ll refine hero later) */
   .team-grid { grid-template-columns: 1fr; margin: 0; gap: 2rem;}
@@ -580,3 +1158,11 @@
 @media (max-width: 700px) {
   .blog-grid { grid-template-columns: 1fr; margin-top: 6px; }
 }
+
+/* Footer styles moved from inline in Footer.jsx */
+.site-footer { background: #111; color: #fff; margin-top: 2rem; }
+.site-footer .site-footer-inner { max-width: var(--max-container-width); margin: 0 auto; padding: 2.5rem 2rem; display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+.site-footer .brand-title { font-weight: 700; margin-bottom: 6px; }
+.site-footer .brand-email { color: #bdbdbd; }
+.site-footer .socials { display: flex; gap: 12px; align-items: center; }
+.site-footer a { color: #fff; }

@@ -15,6 +15,7 @@ export default function Navbar() {
   // ✅ declare these FIRST so effects and helpers can use them
   const location = useLocation();
   const dropdownRef = useRef(null);
+  const [activeSection, setActiveSection] = useState('top');
 
   // helper to add the active class
   const linkClass = (path) => (location.pathname === path ? 'active-link' : '');
@@ -43,6 +44,61 @@ export default function Navbar() {
     setShowDropdown(false);
   }, [location.pathname]);
 
+  // observe page sections for active nav highlighting (only on the home page)
+  useEffect(() => {
+    const ids = ['top', 'features', 'faqs'];
+    if (location.pathname !== '/') {
+      // clear any section-based active state when not on the homepage
+      setActiveSection('');
+      return;
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) setActiveSection(e.target.id);
+      });
+    }, { rootMargin: '-40% 0px -40% 0px', threshold: 0.15 });
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, [location.pathname]);
+
+  // when the location.hash changes (e.g. user clicks a link to /#features)
+  // ensure the activeSection is synchronized immediately
+  useEffect(() => {
+    if (location.pathname === '/') {
+      if (location.hash) setActiveSection(location.hash.replace('#', ''));
+      else setActiveSection('top');
+    }
+  }, [location.hash, location.pathname]);
+
+  // Ensure the nav highlights 'home' when the user scrolls to the very top.
+  // IntersectionObserver may not always fire for the top sentinel depending on
+  // scrolling behavior and rootMargins, so watch scroll position and set
+  // activeSection to 'top' when close to the top of the page.
+  useEffect(() => {
+    if (location.pathname !== '/') return;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+        const nav = document.querySelector('.navbar');
+        const navH = nav ? nav.getBoundingClientRect().height : 0;
+        // if we're within navH + 24px of the top, mark 'top' active
+        if (y <= navH + 24) setActiveSection('top');
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // run once to set initial state
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [location.pathname]);
+
   const toggleMenu = () => setIsOpen((o) => !o);
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
@@ -65,10 +121,11 @@ export default function Navbar() {
           <nav className={`nav-links ${isMobile ? 'mobile-hidden' : ''}`}>
             {!isAuthenticated ? (
               <>
-                <Link to="/"      className={linkClass('/')}>home</Link>
-                <Link to="/about" className={linkClass('/about')}>meet the team</Link>
-                <Link to="/faq"   className={linkClass('/faq')}>faq</Link>
-                {/* blog removed from public MVP */}
+                <Link to="/#top" className={location.pathname === '/' && activeSection === 'top' ? 'active-link' : ''}>home</Link>
+                <Link to="/#features" className={location.pathname === '/' && activeSection === 'features' ? 'active-link' : ''}>features</Link>
+                <Link to="/#faqs" className={location.pathname === '/' && activeSection === 'faqs' ? 'active-link' : ''}>faqs</Link>
+                <Link to="/book-demo" className={linkClass('/book-demo')}>book a demo</Link>
+                <Link to="/custom-content" className={linkClass('/custom-content')}>custom content</Link>
               </>
             ) : (
               <>
@@ -120,10 +177,11 @@ export default function Navbar() {
         <nav className={`nav-links ${isOpen ? 'open' : 'collapsed'}`}>
           {!isAuthenticated ? (
             <>
-              <Link to="/"      className={linkClass('/')}       onClick={() => setIsOpen(false)}>home</Link>
-              <Link to="/about" className={linkClass('/about')}  onClick={() => setIsOpen(false)}>meet the team</Link>
-              <Link to="/faq"   className={linkClass('/faq')}    onClick={() => setIsOpen(false)}>faq</Link>
-              {/* blog removed from public MVP */}
+              <Link to="/#top" className={location.pathname === '/' && activeSection === 'top' ? 'active-link' : ''} onClick={() => setIsOpen(false)}>home</Link>
+              <Link to="/#features" className={location.pathname === '/' && activeSection === 'features' ? 'active-link' : ''} onClick={() => setIsOpen(false)}>features</Link>
+              <Link to="/#faqs" className={location.pathname === '/' && activeSection === 'faqs' ? 'active-link' : ''} onClick={() => setIsOpen(false)}>faqs</Link>
+              <Link to="/book-demo" className={linkClass('/book-demo')} onClick={() => setIsOpen(false)}>book a demo</Link>
+              <Link to="/custom-content" className={linkClass('/custom-content')} onClick={() => setIsOpen(false)}>custom content</Link>
             </>
           ) : (
             <>
