@@ -1,0 +1,84 @@
+/* BookDemo page styles - inspired by reference layout */
+
+.book-demo-hero {
+  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark) 100%);
+  color: var(--text-light);
+  padding: 40px 0px 48px;
+}
+.book-demo-container {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  padding: 0 var(--container-pad-x);
+  box-sizing: border-box;
+}
+.book-demo-inner {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+.book-demo-left .heading { color: #fff; font-size: clamp(2.2rem, 5.2vw, 3.6rem); margin: 0 0 0.6rem 0; }
+.book-demo-hero .section-header { text-align: left; }
+.book-demo-left .lead { color: rgba(255,255,255,0.92); font-size: 18px; line-height: 1.6; margin-top: 0.75rem; }
+
+.demo-form-card {
+  background: transparent;
+  color: #231F20;
+  padding: 8px 0 0 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.demo-form-card h3 { margin: 0 0 8px 0; font-size: 20px; line-height: 1.2; }
+.demo-form-card p { margin: 6px 0 18px 0; color: #555; font-size: 20px; line-height: 1.4; }
+.demo-form-row { display: flex; gap: 2rem; }
+.demo-form-row .field { flex: 1; }
+.demo-form-card input[type="text"], .demo-form-card input[type="email"], .demo-form-card textarea, .demo-form-card select {
+  width: 100%;
+  padding: 14px 0 8px 0;
+  border: none;
+  border-bottom: 1px solid #bfbfbf;
+  border-radius: 0;
+  font-size: 18px;
+  background: transparent;
+  color: #333;
+}
+.demo-form-card input[type="text"]:focus,
+.demo-form-card input[type="email"]:focus,
+.demo-form-card textarea:focus,
+.demo-form-card select:focus {
+  outline: none;
+  box-shadow: none;
+  /* keep the bottom border stable on focus */
+  border-bottom-color: #bfbfbf;
+}
+
+.demo-form-card input.invalid, .demo-form-card textarea.invalid, .demo-form-card select.invalid {
+  border-bottom-color: #e9552a;
+}
+
+.field-error {
+  color: #e9552a;
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.demo-form-card input::placeholder, .demo-form-card textarea::placeholder { color: #bfbfbf; font-size: 18px; }
+.demo-form-card textarea { min-height: 160px; resize: vertical; border-bottom: 1px solid #bfbfbf; }
+.demo-form-card select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: linear-gradient(45deg, transparent 50%, #999 50%), linear-gradient(135deg, #999 50%, transparent 50%); background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px); background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; padding-right: 36px; }
+.demo-submit { display: inline-block; background: var(--yellow-accent); color: #231F20; padding: 0.6rem 1.25rem; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; margin-top: 8px; }
+
+.demo-features { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px 18px; margin-top: 20px; }
+.demo-feature { background: rgba(255,255,255,0.04); padding: 10px 12px; border-radius: 8px; color: rgba(255,255,255,0.95); font-size: 14px; }
+
+@media (max-width: 900px) {
+  .book-demo-inner { grid-template-columns: 1fr; }
+  .demo-features { grid-template-columns: 1fr; }
+  .book-demo-hero { padding: 36px 0; }
+  .book-demo-container { padding: 0 16px; }
+}
+
+.book-demo-form-section { padding: 2.5rem 0; }
+@media (max-width: 900px) { .book-demo-inner { grid-template-columns: 1fr; } }
