@@ -1,0 +1,61 @@
+/* Footer-specific styles — keeps footer layout isolated and accessible */
+.site-footer {
+  /* match the navbar background for a cohesive footer */
+  background: var(--bg-dark);
+  color: var(--text-light);
+  padding: 0.25rem 0 3rem 0;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.site-footer-inner {
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  padding: 0 var(--container-pad-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand-title { font-weight: 700; letter-spacing: 0.06em; }
+.brand-email { font-size: 0.95rem; opacity: 0.9; margin-top: 6px; }
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.footer-links a {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  padding: 6px 4px;
+}
+
+/* visible separators between links (vertical rules) */
+.footer-links a:not(:last-child)::after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  background: rgba(255,255,255,0.12);
+  margin-left: 10px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.footer-links a:focus,
+.footer-links a:hover {
+  color: var(--yellow-accent);
+  outline: none;
+  text-decoration: underline;
+}
+
+.socials a { color: rgba(255,255,255,0.9); margin-left: 8px; }
+
+@media (max-width: 900px) {
+  .site-footer-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .footer-links { order: 2; }
+  .socials { order: 3; }
+}

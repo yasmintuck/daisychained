@@ -11,6 +11,9 @@ import About from "./pages/About";
 import Faq from "./pages/Faq";
 import BookDemo from "./pages/BookDemo";
 import CustomContent from "./pages/CustomContent";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import CookiePolicy from "./pages/CookiePolicy";
 import Dashboard from "./pages/Dashboard";
 import Modules from "./pages/Modules";
 import Badges from "./pages/Badges";
@@ -57,6 +60,9 @@ function App() {
   <Route path="/faq" element={<Faq />} />
   <Route path="/book-demo" element={<BookDemo />} />
   <Route path="/custom-content" element={<CustomContent />} />
+  <Route path="/privacy" element={<Privacy />} />
+  <Route path="/terms" element={<Terms />} />
+  <Route path="/cookie-policy" element={<CookiePolicy />} />
         <Route path="/callback" element={<CallbackHandler />} />
   {/* Blog routes removed from public MVP */}
 

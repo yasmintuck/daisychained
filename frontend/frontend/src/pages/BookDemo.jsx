@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Footer from '../components/Footer';
 import './BookDemo.css';
+import { Link } from 'react-router-dom';
 
 export default function BookDemo(){
   const [errors, setErrors] = useState({});
@@ -79,6 +80,7 @@ export default function BookDemo(){
                   {/* individual field errors are shown under inputs; this block can stay for summary if desired */}
                 </div>
               ) }
+              <p className="demo-legal">By filling in this form you agree to share your information with daisychained. We take privacy seriously, <Link to="/privacy">click here</Link> to read our privacy notice.</p>
 
               <div style={{ marginTop: '18px' }}>
                 <button className="demo-submit" type="submit">Request demo</button>
