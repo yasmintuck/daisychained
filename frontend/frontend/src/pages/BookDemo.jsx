@@ -65,10 +65,14 @@ export default function BookDemo(){
                   };
 
                   // Resolve API base for dev vs production.
-                  // Prefer Vercel env var `VITE_API_BASE_URL` (fallback to older `VITE_API_BASE`).
+                  // Use existing `VITE_BACKEND_URL` env var used elsewhere in the app.
+                  const devBase = 'http://localhost:5245';
+                  const envBase = import.meta.env.VITE_BACKEND_URL ?? import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_BASE ?? '';
+                  // Ensure an absolute URL: if env var is present but missing scheme, prefix with https://
+                  const normalizedEnvBase = envBase && !envBase.startsWith('http') ? `https://${envBase}` : envBase;
                   const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-                    ? 'http://localhost:5245'
-                    : (import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_BASE ?? '');
+                    ? devBase
+                    : (normalizedEnvBase ?? '');
 
                   const res = await fetch(`${apiBase}/api/DemoRequests`, {
                     method: 'POST',
