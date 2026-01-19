@@ -84,6 +84,17 @@
   text-decoration: underline;
 }
 
+/* Thank you panel after successful submit */
+.demo-thanks { display: flex; align-items: center; gap: 20px; margin-top: 40px; }
+.demo-thanks-logo { width: 180px; height: auto; display: block; margin: 0 auto; }
+.demo-thanks-heading { font-size: 28px; margin: 12px 0 10px; color: #221f1f; text-align: center; }
+.demo-thanks-text { margin: 0; color: #222; font-size: 18px; line-height: 1.6; text-align: center; max-width: 500px; }
+.demo-thanks-replace { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 18px; }
+.demo-thanks-replace .demo-thanks-logo { margin-bottom: 8px; }
+
+.demo-intro { font-size: 20px; margin-bottom: 10px; color: #444; }
+.server-error { color: #9b1c00; margin-top: 12px; font-weight: 700; }
+
 @media (max-width: 900px) {
   .book-demo-inner { grid-template-columns: 1fr; }
   .demo-features { grid-template-columns: 1fr; }

@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import Footer from '../components/Footer';
 import './BookDemo.css';
 import { Link } from 'react-router-dom';
+import DaisyLogo from '../assets/hero/thank-you.png';
 
 export default function BookDemo(){
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [serverError, setServerError] = useState(null);
   return (
     <div className="public-page">
       <section className="book-demo-hero">
@@ -18,9 +22,16 @@ export default function BookDemo(){
       <section className="book-demo-form-section">
         <div className="book-demo-container">
           <aside className="demo-form-card" aria-labelledby="demo-form-title">
-            <p>Request a free demo. We’ll get back to you.</p>
+            {!submitted && <p className="demo-intro">Request a free demo. We’ll get back to you.</p>}
 
-            <form className="demo-form" onSubmit={(e)=>{
+            { submitted ? (
+              <div className="demo-thanks demo-thanks-replace" aria-live="polite">
+                <img src={DaisyLogo} alt="daisychained" className="demo-thanks-logo" />
+                <h2 className="demo-thanks-heading">We'll be in touch soon</h2>
+                <p className="demo-thanks-text">We're over the moon about your interest in daisychained. One of our team will be in touch with you shortly to organise a chat and demo at a time that suits you.</p>
+              </div>
+            ) : (
+            <form className="demo-form" onSubmit={async (e)=>{
               e.preventDefault();
               const form = e.target;
               const fd = new FormData(form);
@@ -40,10 +51,42 @@ export default function BookDemo(){
               else if (!/^\S+@\S+\.\S+$/.test(values.email)) newErrors.email = 'Please enter a valid email address';
               if (!values.message) newErrors.message = 'Please enter a message';
               setErrors(newErrors);
+              setServerError(null);
               if (Object.keys(newErrors).length === 0) {
-                // submit (currently local)
-                alert('Thanks — demo request sent (local).');
-                form.reset();
+                // submit to backend
+                setLoading(true);
+                try {
+                  const body = {
+                    FullName: `${values.firstName} ${values.lastName}`.trim(),
+                    Email: values.email,
+                    Phone: values.phone,
+                    Company: values.company,
+                    Message: values.message
+                  };
+
+                  // Resolve API base for dev vs production.
+                  const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                    ? 'http://localhost:5245'
+                    : '';
+
+                  const res = await fetch(`${apiBase}/api/DemoRequests`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                  });
+
+                  if (res.ok) {
+                    setSubmitted(true);
+                    form.reset();
+                  } else {
+                    const text = await res.text();
+                    setServerError(text || 'Failed to send request');
+                  }
+                } catch (err) {
+                  setServerError(err?.message || 'Network error');
+                } finally {
+                  setLoading(false);
+                }
               }
             }}>
               <div className="demo-form-row">
@@ -83,9 +126,11 @@ export default function BookDemo(){
               <p className="demo-legal">By filling in this form you agree to share your information with daisychained. We take privacy seriously, <Link to="/privacy">click here</Link> to read our privacy notice.</p>
 
               <div style={{ marginTop: '18px' }}>
-                <button className="demo-submit" type="submit">Request demo</button>
+                <button className="demo-submit" type="submit" disabled={loading || submitted}>{loading? 'Sending…' : (submitted? 'Sent' : 'Request demo')}</button>
               </div>
             </form>
+            )}
+            { serverError && <div className="server-error" role="alert">{serverError}</div> }
           </aside>
         </div>
       </section>

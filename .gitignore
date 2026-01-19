@@ -50,3 +50,6 @@ appsettings.Local.json
 Thumbs.db
 railway.json
 backend/Dockerfile
+backend/appsettings.Development.json.example
+backend/appsettings.Development.json
+backend/PRODUCTION_SETUP.md
