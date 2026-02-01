@@ -1,61 +1,476 @@
+/* Content layout for the box above the curve */
+.footer-curve-content {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 2rem 3rem;
+}
+
+.footer-curve-heading {
+  flex: 0 1 220px;
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  margin-right: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.footer-curve-heading-white {
+  color: #fff;
+}
+.footer-curve-heading-yellow {
+  color: var(--yellow-accent);
+}
+.footer-curve-body {
+  flex: 7 1 420px;
+  color: #eaeaea;
+  font-size: 1.08rem;
+  line-height: 1.5;
+  margin-right: 1rem;
+}
+.footer-curve-action {
+  flex: 0 1 166px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.footer-curve-btn {
+  background: var(--yellow-accent);
+  color: #231F20 !important;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.6em 1.5em;
+  text-decoration: none;
+  transition: transform 160ms ease;
+  cursor: pointer;
+  outline: none;
+  display: inline-block;
+}
+.footer-curve-btn:hover,
+.footer-curve-btn:focus {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 16px rgba(249,196,23,0.22);
+  z-index: 2100;
+}
+.footer-curve-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Box over the curve, similar to inspiration screenshot */
+.footer-curve-box {
+  position: absolute;
+  left: 50%;
+  top: -150px;
+  /* start slightly lower and invisible; transition into place when revealed */
+  transform: translateX(-50%) translateY(12px) scale(0.995);
+  opacity: 0;
+  width: var(--max-container-width);
+  max-width: 90vw;
+  background: #1a1a1a;
+  border-radius: 20px;
+  min-height: 160px;
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 420ms cubic-bezier(.2,.9,.2,1), transform 420ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* Visible state applied by IntersectionObserver */
+.footer-curve-box.curve-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-curve-box {
+    transition: none;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+/* Animate inner parts similarly to the homepage feature cards: small
+   swipe-up + staggered delays so heading/body/button appear sequentially */
+.footer-curve-content > * {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 480ms ease, transform 480ms ease;
+}
+.footer-curve-box.curve-visible .footer-curve-content > * {
+  opacity: 1;
+  transform: none;
+}
+.footer-curve-box .footer-curve-content > *:nth-child(1) { transition-delay: 80ms; }
+.footer-curve-box .footer-curve-content > *:nth-child(2) { transition-delay: 160ms; }
+.footer-curve-box .footer-curve-content > *:nth-child(3) { transition-delay: 240ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-curve-content > * { transition: none !important; transform: none !important; opacity: 1 !important; }
+}
+
 /* Footer-specific styles — keeps footer layout isolated and accessible */
 .site-footer {
   /* match the navbar background for a cohesive footer */
   background: var(--bg-dark);
   color: var(--text-light);
-  padding: 0.25rem 0 3rem 0;
-  border-top: 1px solid rgba(255,255,255,0.04);
+  padding: 0 0 3rem 0;
+  overflow: visible; /* allow curve to extend above the footer */
+  position: relative;
+  margin-top: 9rem;
 }
 
-.site-footer-inner {
+/* SVG footer curve styling - similar to hero-curve but flipped */
+.footer-curve {
+  display: block;
+  width: 100%;
+  height: 120px; /* same curve height as hero for consistency */
+  margin-bottom: 0; /* no overlap, sits at the top edge */
+  transform: translateY(1px); /* avoids hairline gaps */
+  pointer-events: none;
+  position: relative;
+  z-index: 2;
+}
+.footer-curve {
+  display: block;
+  width: 100%;
+  height: 140px; /* slightly taller to give more visible dip */
+  margin: 0;
+  pointer-events: none;
+  position: absolute;
+  top: -120px; /* lift the SVG above the top of the footer so its upper area sits on the page background */
+  left: 0;
+  z-index: 3;
+}
+
+.footer-curve path {
+  fill: var(--bg-dark);
+}
+
+.footer-content-wrapper {
   max-width: var(--max-container-width);
   margin: 0 auto;
-  padding: 0 var(--container-pad-x);
+  padding: 3rem var(--container-pad-x) 0 var(--container-pad-x);
+  position: relative;
+  z-index: 1;
+}
+.footer-content-wrapper {
+  /* keep the visible footer area (content) inside the black footer — no extra background here */
+  background: transparent;
+  max-width: var(--max-container-width);
+  margin: 0 auto;
+  padding: 7.5rem var(--container-pad-x) 2.5rem var(--container-pad-x);
+  position: relative;
+  z-index: 1;
+}
+
+/* Footer sections grid */
+.site-footer-sections {
+  display: grid;
+  grid-template-columns: minmax(250px, 2fr) repeat(4, minmax(150px, 1fr));
+  gap: 2.5rem 3rem;
+  margin-bottom: 2rem;
+}
+
+.footer-section h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+  color: rgba(255,255,255,0.95);
+}
+
+.footer-section-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: rgba(255,255,255,0.95);
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-section li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.footer-section a:hover,
+.footer-section a:focus {
+  color: var(--yellow-accent);
+  outline: none;
+}
+
+/* Horizontal divider */
+.footer-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin: 2rem 0;
+}
+
+/* Brand and legal section */
+.site-footer-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 2rem;
+  padding: 0px !important;
 }
 
-.brand-title { font-weight: 700; letter-spacing: 0.06em; }
-.brand-email { font-size: 0.95rem; opacity: 0.9; margin-top: 6px; }
-
-.footer-links {
+.footer-brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
+  gap: 1rem;
+  min-width: 0;
 }
 
-.footer-links a {
-  color: rgba(255,255,255,0.8);
+.footer-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: 1.1rem;
+}
+
+.brand-email {
+  opacity: 0.75;
+  margin-top: 4px;
+}
+
+.footer-legal-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-legal-links a {
+  color: rgba(255,255,255,0.7);
   text-decoration: none;
-  padding: 6px 4px;
+  padding: 4px 0;
+  transition: color 0.2s ease;
 }
 
 /* visible separators between links (vertical rules) */
-.footer-links a:not(:last-child)::after {
+.footer-legal-links a:not(:last-child)::after {
   content: "";
   display: inline-block;
   width: 1px;
   height: 14px;
-  background: rgba(255,255,255,0.12);
-  margin-left: 10px;
-  margin-right: 10px;
+  background: rgba(255,255,255,0.2);
+  margin-left: 12px;
+  margin-right: 12px;
   vertical-align: middle;
 }
 
-.footer-links a:focus,
-.footer-links a:hover {
+.footer-legal-links a:focus,
+.footer-legal-links a:hover {
   color: var(--yellow-accent);
   outline: none;
-  text-decoration: underline;
 }
 
-.socials a { color: rgba(255,255,255,0.9); margin-left: 8px; }
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-shrink: 0;
+}
 
+.footer-socials a {
+  color: rgba(255,255,255,0.8);
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-socials a:hover,
+.footer-socials a:focus {
+  color: var(--yellow-accent);
+  outline: none;
+}
+
+/* Responsive design */
+/* At slightly smaller desktop widths use three columns */
+@media (max-width: 1050px) {
+  .site-footer-sections {
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 1.8rem 1.8rem;
+    margin-bottom: 1.8rem;
+  }
+  /* place bottom two sections under columns 2 and 3 respectively */
+  .site-footer-sections > .footer-section:nth-child(1) { grid-column: 1 / 2; grid-row: 1; }
+  .site-footer-sections > .footer-section:nth-child(2) { grid-column: 2 / 3; grid-row: 1; }
+  .site-footer-sections > .footer-section:nth-child(3) { grid-column: 3 / 4; grid-row: 1; }
+  .site-footer-sections > .footer-section:nth-child(4) { grid-column: 2 / 3; grid-row: 2; }
+  .site-footer-sections > .footer-section:nth-child(5) { grid-column: 3 / 4; grid-row: 2; }
+}
+
+/* At tablet widths collapse to 2 columns */
 @media (max-width: 900px) {
-  .site-footer-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .footer-links { order: 2; }
-  .socials { order: 3; }
+  .site-footer-sections {
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-auto-flow: row;
+    gap: 1.8rem 1.8rem;
+    margin-bottom: 1.8rem;
+  }
+  /* Make the first footer section span the full width on smaller screens
+     so the logo column sits on its own row; the remaining items form
+     two equal columns beneath it. */
+  .site-footer-sections > .footer-section:nth-child(1) {
+    grid-column: 1 / -1 !important;
+    grid-row: 1;
+    padding-bottom: 20px;
+  }
+
+  /* Reset any explicit placement from larger-breakpoint rules so
+     other sections flow naturally into the two-column layout. */
+  .site-footer-sections > .footer-section:nth-child(2),
+  .site-footer-sections > .footer-section:nth-child(3),
+  .site-footer-sections > .footer-section:nth-child(4),
+  .site-footer-sections > .footer-section:nth-child(5) {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .site-footer-inner {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  /* keep legal links as a full-width bottom row */
+  .footer-legal-links {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .footer-curve-content {
+    /* Stack the inner content vertically but keep the box sizing/padding */
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 2rem 3rem; /* preserve desktop padding as requested */
+  }
+  .footer-curve-action {
+    justify-content: flex-start;
+  }
+
+  .footer-curve-heading {
+    flex: 0 1;
+    /* keep heading spans on one line at small widths */
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0.45rem;
+    align-items: baseline;
+  }
+
+  .footer-curve-body {
+    flex: 0 1;
+  }
+
+  .footer-curve-action {
+    flex: 0 1;
+  }
+
+  .footer-curve-box {
+    top: -200px;
+  }
+
+  .site-footer, .brand-title {
+    margin-bottom: 0 !important;
+  }
+
+  .brand-email {
+    margin-top: 0;
+  }
+}
+
+/* On narrower screens collapse to a single column */
+@media (max-width: 768px) {
+  .site-footer-sections {
+    grid-template-columns: 1fr;
+    gap: 1.2rem 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .site-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .footer-brand {
+    order: 1;
+    width: 100%;
+  }
+
+  .footer-legal-links {
+    order: 2;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .footer-legal-links a {
+    display: block;
+    padding: 0.5rem 0;
+  }
+
+  .footer-legal-links a:not(:last-child)::after {
+    display: none;
+  }
+
+  .footer-socials {
+    order: 3;
+    width: 100%;
+  }
+
+  .footer-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .footer-curve-btn {
+    padding: 0.4em 1.3em;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-curve-box {
+    border-radius: 10px;
+    top: -250px;
+  }
+  .footer-curve-content { padding: 2rem 2rem;}
+  .footer-curve-heading { font-size: 1.35rem;}
+}
+
+@media (max-width: 400px) {
+  .footer-curve-heading { font-size: 1.1rem;}
 }
