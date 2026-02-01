@@ -1,5 +1,5 @@
 import React from 'react';
-import Footer from '../components/Footer';
+import FooterAlt from '../components/FooterAlt';
 
 export default function CustomContent(){
   return (
@@ -8,7 +8,7 @@ export default function CustomContent(){
         <div className="section-header"><div className="heading">Custom content</div></div>
         <p>Placeholder page for custom content and commissioning details.</p>
       </div>
-      <Footer />
+      <FooterAlt />
     </div>
   );
 }

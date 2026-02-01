@@ -103,5 +103,5 @@
   .demo-legal { font-size: 16px; }
 }
 
-.book-demo-form-section { padding: 2.5rem 0; }
+.book-demo-form-section { padding: 4.5rem 0; }
 @media (max-width: 900px) { .book-demo-inner { grid-template-columns: 1fr; } }

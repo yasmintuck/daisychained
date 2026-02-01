@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Footer from '../components/Footer';
+import FooterAlt from '../components/FooterAlt';
 import './BookDemo.css';
 import { Link } from 'react-router-dom';
 import DaisyLogo from '../assets/hero/thank-you.png';
@@ -140,7 +140,7 @@ export default function BookDemo(){
         </div>
       </section>
 
-      <Footer />
+      <FooterAlt />
     </div>
   );
 }
