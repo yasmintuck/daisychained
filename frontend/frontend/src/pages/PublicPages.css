@@ -482,9 +482,10 @@
 
 /* Stack at 900px but keep left column visible and place it above the text */
 @media (max-width: 900px) {
-  .founder-columns { flex-direction: column; gap: 2rem; padding-top: 8rem; }
-  /* increase overall band padding on narrower screens for more breathing room */
-  .founder-band { padding: 8rem 0; }
+  /* stacked layout: reduce top space above headshot, increase inter-column gap */
+  .founder-columns { flex-direction: column; gap: 4rem; padding-top: 3.5rem; }
+  /* reduce band padding-top so headshot sits closer to the curve on mobile */
+  .founder-band { padding: 6rem 0; }
   /* modest bottom padding so stacked left column breathes */
   .founder-left { display: flex; width: 100%; flex: 0 0 auto; align-items: center; justify-content: center; padding-bottom: 1.5rem !important; }
   /* headshot target ~250px when stacked */
