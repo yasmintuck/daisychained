@@ -115,6 +115,8 @@ export default function Home() {
     return () => obs.disconnect();
   }, []);
 
+  
+
   // sample testimonials for testing the carousel
   const testimonials = [
     { quote: "Daisychained helped our students engage with sensitive topics in a safe way.", who: "Head of Pastoral, Example School" },
@@ -222,6 +224,44 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Founder / experience section (full-bleed black) - constrained content only */}
+      <section className="public-body founder-band" aria-labelledby="founder-heading">
+        {/* subtle top wave to give the band slightly wonky edges */}
+        <svg className="founder-curve top" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,40 C240,28 600,30 900,32 C1180,34 1320,36 1440,40 L1440,0 L0,0 Z" />
+        </svg>
+        <div className="public-container">
+          <div className="founder-columns">
+            <div className="founder-left reveal" aria-hidden>
+              <img src="/images/deb-millar-headshot.png" alt="Deborah Millar OBE" className="founder-headshot" />
+              <h3 className="founder-left-name reveal">Deborah Millar OBE</h3>
+              <div className="founder-left-nickname reveal">keynote speaker | educator | co-Founder</div>
+            </div>
+            <div className="founder-right reveal">
+              <h2 id="founder-heading" className="founder-title">We’re new here, but this isn’t new to us...</h2>
+              <div className="founder-body">
+                <p><b>daisychained</b> is a new platform, shaped by decades of experience at the sharp end of education and digital change. We’ve built and led large-scale programmes, worked with national funding bodies, and delivered tools that hold up in real classrooms, not just on pa per.</p>
+
+                <p>It’s co-founded by <span className="brand-accent">Deborah Millar OBE</span>, a nationally recognised digital leader whose work has been acknowledged through numerous major personal awards, including the Global EdTech Lifetime Achievement Award (2024), Pearson Digital Innovator of the Year (2024), and multiple Association of Colleges (AOC) Beacon Awards for Effective Use of Digital Technology.</p>
+
+                <p>Deb is known for leading inclusive, ethical digital change - removing barriers, widening access, and helping educators use technology in ways that genuinely improve learning and confidence. Her work has influenced practice across 100+ education and training organisations nationwide.</p>
+
+                <p><b>daisychained</b> grew out of that experience. From seeing the same gaps appear again and again - the conversations that matter, the skills learners are expected to just "pick up", and the moments education doesn’t always make space for.</p>
+
+                <p>This platform exists to make those moments easier to open, easier to trust, and easier to deliver well.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* subtle bottom wave overlapping into the following white section */}
+        <svg className="founder-curve bottom" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,0 C240,8 600,16 900,18 C1180,20 1320,14 1440,0 L1440,40 L0,40 Z" />
+        </svg>
+      </section>
+
+
+
 
       {/* Key features */}
       <section className="public-body">

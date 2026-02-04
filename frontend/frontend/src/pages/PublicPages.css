@@ -192,7 +192,7 @@
   and non-interactive. The element is added in JSX with an inline
   background-image so the bundler resolves the file. */
 
-.public-body.section-pt-2 { position: relative; }
+.public-body.section-pt-2 { position: relative; padding-bottom: 2.5rem; }
 .public-body.section-pt-2 .public-container { position: relative; }
 .sc-bg {
   .hero-cta { margin-bottom: 28px; }
@@ -389,15 +389,142 @@
 /* Centered, muted paragraph variant used in the "What is" section */
 .center-muted { text-align: center; max-width: 920px; margin: 0 auto 3.25rem; color: #4b4b4b; }
 
+/* Ensure the intro paragraph in the 'Sparking conversations' section is black */
+.public-body.section-pt-2 .center-muted { color: #000 !important; }
+
 /* Feature card inner icon wrapper (moved from inline) */
 /* larger icon container; remove filled grey background so artwork sits directly on the card
   keep circular shape for alignment but transparent background */
-.feature-icon { background: transparent; padding: 0; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; width: 120px; height: 120px; }
+.feature-icon { background: transparent; padding: 0; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; width: 140px; height: 140px; }
 .feature-icon svg, .feature-icon svg * { stroke: currentColor; }
-.feature-title { font-weight: 800; font-size: 14pt; margin-top: 10px; }
-.feature-desc { font-size: 1rem; color: #6D6E71; line-height: 1.6; }
+.feature-title { font-weight: 800; font-size: 16pt; margin-top: 12px; }
+.feature-desc { font-size: 1.075rem; color: #000; line-height: 1.6; }
 /* Ensure feature SVG artwork fits nicely inside the circular icon container */
-.feature-icon img { width: 100px; height: 100px; object-fit: contain; display: block; }
+.feature-icon img { width: 120px; height: 120px; object-fit: contain; display: block; }
+/* Ensure SVG icons inside the feature icon scale up too */
+.feature-icon svg { width: 120px; height: 120px; }
+
+/* Founder / experience band (full-bleed black background, content constrained
+   to the standard container). White text, two-column layout with left column
+   reserved (empty) and right column for copy. Kept scoped and minimal so it
+   doesn't affect other sections. */
+.founder-band { background: #000; color: #fff; padding: 6.5rem 0; position: relative; }
+.founder-band .public-container { position: relative; z-index: 2; }
+.founder-columns { display: flex; gap: 2rem; align-items: flex-start; padding: 8rem 0 0 0;}
+.founder-left { flex: 0 0 30%; min-height: 1px; }
+.founder-right { flex: 1 1 70%; }
+.founder-title { color: #fff; margin: 0 0 1rem; font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1.15; }
+.founder-body p { color: rgba(255,255,255,0.95); margin: 0 0 1rem 0; font-size: clamp(1.05rem, 1.9vw, 1.12rem); line-height: 1.7; }
+
+/* Two-column layout for founder right column copy. Scoped to avoid
+   affecting other sections. Paragraphs are prevented from breaking
+   across columns. Collapses to a single column on small screens. */
+.founder-right .founder-body {
+  column-count: 2;
+  column-gap: 2.25rem;
+}
+.founder-right .founder-body p {
+  -webkit-column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  column-break-inside: avoid;
+  break-inside: avoid;
+  margin-top: 0;
+}
+
+@media (max-width: 700px) {
+  .founder-columns { flex-direction: column; }
+  .founder-left { display: flex; }
+  .founder-band { padding: 3rem 0; }
+  .founder-right .founder-body { column-count: 1; }
+}
+
+/* founder band curve decorations */
+.founder-curve { display: block; width: 100%; height: 40px; pointer-events: none; z-index: 1; }
+.founder-curve path { fill: #ffffff; }
+.founder-curve.top { position: absolute; top: -30; left: 0; right: 0; }
+.founder-curve.bottom { position: absolute; left: 0; right: 0; bottom: -20px; transform: scaleX(-1); transform-origin: center; }
+
+@media (max-width: 700px) {
+  .founder-curve { height: 28px; }
+}
+
+/* Make decorative curves subtler on narrow screens to avoid large bulges */
+@media (max-width: 700px) {
+  /* reduce hero curve so it becomes a gentle arc on phones */
+  .hero-curve { height: 48px; margin-top: -40px; }
+  .hero-curve path { /* leave fill, but shorter curve */ }
+
+  /* founder band curves: make them much flatter and reduce overlap */
+  .founder-curve { height: 18px; }
+  .founder-curve.top { top: -12px; }
+  .founder-curve.bottom { bottom: -6px; }
+
+  /* testimonial/footer curves: flatten and reduce overlap */
+  .testimonial-curve { height: 40px; }
+  .testimonial-curve.top { top: -30px; }
+  .testimonial-curve.bottom { bottom: -18px; }
+}
+
+/* Responsive founder-band tweaks to match homepage scaling conventions */
+@media (max-width: 1400px) {
+  .founder-band { padding: 5.5rem 0; }
+  .founder-columns { gap: 1.75rem; padding: 6rem 0 0 0; }
+  .founder-left { flex: 0 0 32%; }
+  .founder-right { flex: 1 1 68%; }
+  .founder-right .founder-body { column-gap: 1.5rem; }
+}
+
+@media (max-width: 1200px) {
+  .founder-columns { padding: 5rem 0 0 0; }
+  .founder-left { flex: 0 0 34%; }
+  .founder-right .founder-body { column-gap: 1.25rem; }
+}
+
+/* Stack at 900px but keep left column visible and place it above the text */
+@media (max-width: 900px) {
+  .founder-columns { flex-direction: column; gap: 2rem; padding-top: 8rem; }
+  /* increase overall band padding on narrower screens for more breathing room */
+  .founder-band { padding: 8rem 0; }
+  /* modest bottom padding so stacked left column breathes */
+  .founder-left { display: flex; width: 100%; flex: 0 0 auto; align-items: center; justify-content: center; padding-bottom: 1.5rem !important; }
+  /* headshot target ~250px when stacked */
+  .founder-headshot { width: clamp(220px, 30vw, 250px) !important; height: clamp(220px, 30vw, 250px) !important; }
+  .founder-left-name, .founder-left-nickname { white-space: normal; display: block; width: auto; text-align: center; }
+  /* name sizing tuned to match headshot scale (~250px) */
+  .founder-left-name { font-size: clamp(1.6rem, 4.2vw, 2rem) !important; }
+  .founder-left-nickname { font-size: clamp(1.05rem, 3.2vw, 1.2rem) !important; }
+  .founder-right { flex: 1 1 100%; }
+  .founder-right .founder-body { column-count: 1; column-gap: 0; }
+  /* make the section title match the stacked name size for visual balance */
+  .founder-title { font-size: clamp(1.6rem, 4.2vw, 2rem) !important; }
+}
+
+@media (max-width: 700px) {
+  .founder-band { padding: 6rem 0; }
+  .founder-columns { flex-direction: column; gap: 1.25rem; }
+  .founder-left { display: flex; }
+  .founder-right { flex: 1 1 100%; }
+  .founder-right .founder-body { column-count: 1; column-gap: 0; }
+}
+
+@media (max-width: 700px) {
+  .founder-curve.bottom { bottom: -8px; }
+}
+
+/* Founder left column: keep a fixed column width so right column keeps space */
+.founder-left { flex: 0 0 30%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 0; text-align: center; }
+/* headshot scales down on smaller screens but caps at 260px */
+.founder-headshot { width: clamp(140px, 18vw, 260px); height: clamp(140px, 18vw, 260px); object-fit: cover; border-radius: 50%; display: block; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+/* name and subtitle share a responsive width (wider than the headshot) so their
+  left and right edges align. Use nowrap and responsive font-size to avoid wrapping. */
+.founder-left-name,
+.founder-left-nickname { display: inline-block; white-space: nowrap; }
+.founder-left-name { margin-top: 0.6rem; margin-bottom: 0; color: #fff; font-size: clamp(1.4rem, 2.6vw, 2rem); line-height: 1.1; }
+.founder-left-nickname { margin-top: 0rem; color: rgba(255,255,255,0.95); font-size: clamp(0.98rem, 1.8vw, 1rem); }
+
+@media (max-width: 700px) {
+  .founder-left { display: flex; }
+}
 
 /* Testimonial typography moved out of inline styles */
 .testimonial-card blockquote { margin: 0; }
@@ -570,6 +697,9 @@
   .testimonial-curve.top { top: -53px; }
   .testimonial-curve.bottom { bottom: -28px; }
 }
+
+/* Ensure the testimonial intro/subtext is black for readability on the yellow band */
+.testimonial-band .center-muted { color: #000 !important; }
 
 /* =============== Search (shared) =============== */
 

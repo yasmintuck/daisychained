@@ -13,11 +13,13 @@
 .site-footer.alt-footer .footer-curve {
   display: block;
   width: 100%;
-  height: 140px;
+  /* reduce curve height for a subtler appearance */
+  height: 90px;
   margin: 0;
   pointer-events: none;
   position: absolute;
-  top: -120px;
+  /* lift the curve closer to the footer to decrease overlap */
+  top: -60px;
   left: 0;
   z-index: 3;
 }
@@ -29,7 +31,8 @@
 .site-footer.alt-footer .footer-content-wrapper {
   max-width: var(--max-container-width);
   margin: 0 auto;
-  padding: 2.5rem var(--container-pad-x) 2.5rem var(--container-pad-x);
+  /* increase top padding so content sits lower beneath the decorative curve */
+  padding: 4rem var(--container-pad-x) 2.5rem var(--container-pad-x);
   position: relative;
   z-index: 1;
   background: transparent;
@@ -244,5 +247,13 @@
 
   .site-footer.alt-footer .footer-curve-action {
     flex: 0 1;
+  }
+}
+
+/* Make the alt footer curve subtler on small screens as well */
+@media (max-width: 700px) {
+  .site-footer.alt-footer .footer-curve {
+    height: 60px;
+    top: -40px;
   }
 }
