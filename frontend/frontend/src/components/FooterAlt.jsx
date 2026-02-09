@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Linkedin, Instagram } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "./FooterAlt.css";
 
 export default function FooterAlt(){
+  const navigate = useNavigate();
 
+  const handleFounderClick = useCallback((e) => {
+    if (e.button && e.button !== 0) return;
+    e.preventDefault();
+    navigate('/', { state: { scrollTo: 'founder-section' } });
+  }, [navigate]);
   return (
     <footer className="site-footer alt-footer">
       <svg className="footer-curve" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
@@ -25,19 +31,18 @@ export default function FooterAlt(){
           </div>
           </div>
           <div className="footer-section">
-            <div className="footer-section-title">Product</div>
+            <div className="footer-section-title">Platform</div>
             <ul>
-              <li><Link to="/#">Features</Link></li>
-              <li><Link to="/#">Custom content</Link></li>
-              <li><Link to="/#">FAQs</Link></li>
+              <li><Link to="/#features">Features</Link></li>
+              <li><Link to="/custom-content">Custom content</Link></li>
+              <li><Link to="/#faqs">FAQs</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
             <div className="footer-section-title">Company</div>
             <ul>
-              <li><Link to="/#">Our story</Link></li>
-              <li><Link to="/#">Meet the team</Link></li>
+              <li><a href="/#founder-section" onClick={handleFounderClick}>Why daisychained?</a></li>
               <li><Link to="/#">Blog</Link></li>
             </ul>
           </div>
@@ -45,8 +50,8 @@ export default function FooterAlt(){
           <div className="footer-section">
             <div className="footer-section-title">Get in touch</div>
             <ul>
-              <li><Link to="/#">Book a demo</Link></li>
-              <li><Link to="/#">Contact us</Link></li>
+              <li><Link to="/book-demo">Book a demo</Link></li>
+              <li><Link to="/book-demo">Talk to us</Link></li>
             </ul>
           </div>
 

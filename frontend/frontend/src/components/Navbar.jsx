@@ -123,7 +123,7 @@ export default function Navbar() {
               <>
                 <Link to="/#top" className={location.pathname === '/' && activeSection === 'top' ? 'active-link' : ''}>home</Link>
                 <Link to="/#features" className={location.pathname === '/' && activeSection === 'features' ? 'active-link' : ''}>features</Link>
-                <Link to="/#faqs" className={location.pathname === '/' && activeSection === 'faqs' ? 'active-link' : ''}>faqs</Link>
+                <Link to="/#faqs" className={location.pathname === '/' && activeSection === 'faqs' ? 'active-link' : ''}>FAQs</Link>
                 <Link to="/book-demo" className={linkClass('/book-demo')}>book a demo</Link>
                 <Link to="/custom-content" className={linkClass('/custom-content')}>custom content</Link>
               </>
@@ -179,7 +179,7 @@ export default function Navbar() {
             <>
               <Link to="/#top" className={location.pathname === '/' && activeSection === 'top' ? 'active-link' : ''} onClick={() => setIsOpen(false)}>home</Link>
               <Link to="/#features" className={location.pathname === '/' && activeSection === 'features' ? 'active-link' : ''} onClick={() => setIsOpen(false)}>features</Link>
-              <Link to="/#faqs" className={location.pathname === '/' && activeSection === 'faqs' ? 'active-link' : ''} onClick={() => setIsOpen(false)}>faqs</Link>
+              <Link to="/#faqs" className={location.pathname === '/' && activeSection === 'faqs' ? 'active-link' : ''} onClick={() => setIsOpen(false)}>FAQs</Link>
               <Link to="/book-demo" className={linkClass('/book-demo')} onClick={() => setIsOpen(false)}>book a demo</Link>
               <Link to="/custom-content" className={linkClass('/custom-content')} onClick={() => setIsOpen(false)}>custom content</Link>
             </>

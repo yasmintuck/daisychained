@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo, useState } from 'react';
 
-export default function TestimonialCarousel({ testimonials = [], speed = 60 }) {
+export default function TestimonialCarousel({ testimonials = [], speed = 60, ariaLabel = "What our customers say" }) {
   const trackRef = useRef(null);
   const wrapperRef = useRef(null);
   const [paused, setPaused] = useState(false);
@@ -136,7 +136,7 @@ export default function TestimonialCarousel({ testimonials = [], speed = 60 }) {
   }, [paused, speed, inView]);
 
   return (
-    <div className="tc-wrapper reveal" ref={wrapperRef} role="region" aria-label="What our customers say">
+    <div className="tc-wrapper reveal" ref={wrapperRef} role="region" aria-label={ariaLabel}>
       <div
         className={`tc-track`}
         ref={trackRef}
@@ -145,7 +145,7 @@ export default function TestimonialCarousel({ testimonials = [], speed = 60 }) {
           <div className="tc-item" key={i} tabIndex={i < testimonials.length ? 0 : -1} aria-hidden={i >= testimonials.length}>
             <div className="testimonial-card">
               <div className="testimonial-who">{t.who || t.a}</div>
-              <blockquote>“{t.quote || t.q}”</blockquote>
+              <blockquote>{t.quote || t.q}</blockquote>
             </div>
           </div>
         ))}

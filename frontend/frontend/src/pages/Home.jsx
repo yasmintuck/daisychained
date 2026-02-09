@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from 'react-router-dom';
 import "./PublicPages.css";
-import { Plug, Smartphone, Accessibility, Users, BarChart3, Bell } from 'lucide-react';
+import { Plug, Smartphone, Accessibility, Users, BarChart3, Bell, CheckCircle } from 'lucide-react';
 import Feature1 from "../assets/hero/features1.svg";
 import Feature2 from "../assets/hero/features2.svg";
 import Feature3 from "../assets/hero/features3.svg";
@@ -60,15 +61,20 @@ const studentQs = [
   { q: "What devices can I use to access daisychained?", a: "Any modern browser on laptop, Chromebook, tablet, or mobile works. For the best experience, keep your browser up to date and enable cookies." },
   { q: "How do I view my daisychained digital badges?", a: "Once you finish a module, your certificate will appear in your dashboard under Badges & Certificates. You can open it to view, download, or share whenever you like." },
   { q: "How do I access my daisychained certificates?", a: "Certificates live in your dashboard under Badges & Certificates. You can download them as PDF to upload or share." },
-  { q: "Who do I contact if I have a problem logging in?", a: "Start with your organisation’s IT/service desk. If needed, contact our support team and include your name, organisation, and a short description of the issue." },
+  { q: "Do I have to complete modules in one go?", a: "No. You can complete modules in stages, and your progress will be saved." },
+  { q: "How long does a daisychained module take to complete?", a: "Modules are designed to be completed in a short sitting. Exact timings vary, but most can be finished in under 15 minutes." },
 ];
 
 const orgQs = [
-  { q: "How does licensing and pricing work?", a: "We license to organisations. Pricing scales with the number of learners and the module bundle you select. Get in touch for a quick quote and options." },
-  { q: "How do we get started as an organisation/college/school?", a: "We’ll onboard your organisation, enable SSO (Microsoft or Google), and activate your chosen module packages. You’ll receive an admin view to track uptake and progress." },
+  { q: "How does licensing and pricing work?", a: "We license to organisations. Pricing scales with the number of learners and the module bundle you select. Fill out the book a demo form or email humans@daisychained.co.uk for a quick quote and options." },
+  { q: "How do we get started as an organisation/college/school?", a: "We’ll onboard your organisation, working alongside your IT team to activate your users' accounts. You’ll receive an organisational dashboard to track uptake and progress." },
+  { q: "Is daisychained an LMS?", a: "No. daisychained complements existing systems by focusing on short, human learning and clear oversight, without replacing your core platforms." },
+  { q: "What data and reporting do we get?", a: "Organisations have access to clear reporting on engagement, progress, and completion at individual, team, or cohort level." },
 ];
 
 export default function Home() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [loaded, setLoaded] = useState(false);
   const featureRefs = useRef([]);
 
@@ -115,20 +121,63 @@ export default function Home() {
     return () => obs.disconnect();
   }, []);
 
+  // Scroll when navigated with either a fragment hash or a location.state request.
+  // Using navigation state allows the footer to request a scroll-with-offset
+  // while avoiding the browser's native fragment jump which can override JS scrolling.
+  useEffect(() => {
+    const targetFromState = location && location.state && location.state.scrollTo ? `#${location.state.scrollTo}` : null;
+    const anchor = targetFromState || (location && location.hash ? location.hash : null);
+    if (!anchor) return;
+
+    let cancelled = false;
+
+    const performScroll = () => {
+        // wait for paint/layout to stabilise
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (cancelled) return;
+        const el = document.querySelector(anchor);
+        if (!el) return;
+        // compute header height dynamically to avoid hard-coded offsets
+        const header = document.querySelector('.navbar') || document.querySelector('header') || null;
+        const headerH = header ? header.getBoundingClientRect().height : 0;
+        const extra = 8; // small breathing room
+        const offset = Math.max(0, headerH + extra);
+        const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+        // a follow-up retry after layout changes (e.g. sticky headers, curves)
+        setTimeout(() => {
+          if (cancelled) return;
+          const el2 = document.querySelector(anchor);
+          if (!el2) return;
+          const header2 = document.querySelector('.navbar') || document.querySelector('header') || null;
+          const headerH2 = header2 ? header2.getBoundingClientRect().height : 0;
+          const offset2 = Math.max(0, headerH2 + 8);
+          const top2 = el2.getBoundingClientRect().top + window.pageYOffset - offset2;
+          window.scrollTo({ top: top2, behavior: 'smooth' });
+        }, 300);
+        // clear the navigation state so subsequent navigations don't re-trigger
+        if (targetFromState) {
+          navigate(location.pathname, { replace: true, state: {} });
+        }
+      }));
+    };
+
+    // attempt initial scroll after a tiny timeout too (covers route transition)
+    const t = setTimeout(performScroll, 60);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [location, navigate]);
+
   
 
-  // sample testimonials for testing the carousel
-  const testimonials = [
-    { quote: "Daisychained helped our students engage with sensitive topics in a safe way.", who: "Head of Pastoral, Example School" },
-    { quote: "Great UX and clear analytics for our cohort leads.", who: "Head of Digital Learning" },
-    { quote: "Modules are concise, modern and co-created with educators.", who: "Deputy Principal" },
-    { quote: "A brilliant resource for guided conversations — quick to assign and easy to track.", who: "Pastoral Lead" },
-    { quote: "Learners actually complete the modules and reflect on the topics — meaningful outcomes.", who: "Assistant Head" },
-    { quote: "Saved our team hours on classroom prep while improving participation.", who: "Head of Year" },
-    { quote: "Clear structure and lovely design; students found it approachable.", who: "PE Teacher" },
-    { quote: "Integrates well with our LMS and gives great insights into student progress.", who: "Digital Learning Manager" },
-    { quote: "Supports sensitive conversations with care and practical guidance.", who: "School Counsellor" },
-    { quote: "Quick to deploy and adaptable to our whole-school approach.", who: "Deputy Principal (Operations)" },
+  // curated module highlights (keeps `quote`/`who` keys so carousel remains compatible)
+  const moduleHighlights = [
+    { quote: "Human skills that make people effective at work, not just qualified.", who: "Employability" },
+    { quote: "Behaviour, boundaries, and judgement in digital spaces.", who: "Life online" },
+    { quote: "Skills for handling pressure, change, and real-world demands.", who: "Wellbeing & resilience" },
+    { quote: "Clear, respectful communication in work and everyday life.", who: "Relationships & communication" },
+    { quote: "Understanding who we are and how we show up with others.", who: "Identity & belonging" },
+    { quote: "Thinking clearly when situations are complex or uncomfortable.", who: "Judgement & decision-making" },
+    { quote: "Skills for navigating transitions, uncertainty, and new expectations.", who: "Change & adaptation" },
   ];
 
   const features = [
@@ -136,31 +185,31 @@ export default function Home() {
       Icon: Smartphone,
       img: Feature1,
       title: 'mobile first',
-      text: 'Designed for how learners actually learn. No waiting for computer rooms or specialist devices - accessible anytime, anywhere.'
+      text: 'Built for how people actually live and learn. Accessible anytime, anywhere, without specialist kit or fixed spaces.'
     },
     {
       Icon: Accessibility,
       img: Feature2,
       title: 'flexible by design',
-      text: 'Because access isn’t optional. Built with accessibility, usability, and inclusive language at the core, from the start.'
+      text: 'Accessibility, usability, and inclusive language aren’t add-ons. They’re built in from the start, so learning works for more people, more often.'
     },
     {
       Icon: Users,
       img: Feature3,
-      title: 'your personal development team',
-      text: 'Tell us the problem - we design the learning. Bespoke content built around your context, ready for you to deliver with confidence.'
+      title: 'designed for you, not off the shelf',
+      text: 'We work with you to curate and structure material around your context, your people, and your priorities.'
     },
     {
       Icon: BarChart3,
       img: Feature4,
-      title: 'smart reporting',
-      text: 'If there’s no evidence, did it even happen? Track engagement, completions, and progress clearly, without spreadsheets or guesswork.'
+      title: 'simple reporting that works',
+      text: 'Clear visibility of engagement and progress, without extra admin or complexity.'
     },
     {
       Icon: Bell,
       img: Feature5,
-      title: 'nudge n pokes',
-      text: 'Structure without pressure. Set deadlines, send reminders, and gently nudge learners to stay on track.'
+      title: 'nudges and pokes',
+      text: 'A structured reminder approach that balances encouragement with urgency when timing matters.'
     },
   ];
 
@@ -171,8 +220,8 @@ export default function Home() {
   <section className="public-hero homepage-hero">
         <div className="public-hero-inner">
           <div className={`hero-left ${loaded ? 'visible' : ''}`}>
-            <h1 className="hero-title reveal">Tackling taboo topics</h1>
-            <p className="lead reveal">At <span className="brand-accent">daisychained</span>, we believe that the best learning happens in the gaps... in the spaces traditional education often overlooks. We’re educators first, and we’re building a future where everyone can access bite-sized, brilliant learning that’s human, hopeful, and full of joy.</p>
+            <h1 className="hero-title reveal">Sparking conversations</h1>
+            <p className="lead reveal">The most powerful learning rarely comes from textbooks. It comes from lived experience, honest conversations, and topics traditional education often overlooks. <span className="brand-accent">daisychained</span> delivers bite-sized learning that builds employable, resilient human skills for real life.</p>
             <div className="hero-cta reveal">
               <a href="/book-demo" className="primary-cta">Book a demo</a>
             </div>
@@ -206,10 +255,10 @@ export default function Home() {
         <div className="sc-bg" aria-hidden="true" style={{ backgroundImage: `url(${BgDoodle})` }} />
         <div className="public-container">
           <div className="section-header heading-large reveal">
-            <img src={SparkingTile} alt="Sparking conversations" className="section-tile" />
-            <div className="heading">Sparking conversations</div>
+            {/*<img src={SparkingTile} alt="Sparking conversations" className="section-tile" />*/}
+            <div className="heading">Tackling taboo topics</div>
           </div>
-          <p className="center-muted reveal">Some topics don’t fit neatly into lessons, but they shape how young people think, behave, and relate to the world around them. These short modules are designed to open up honest, informed conversations around the real issues influencing life online and offline.</p>
+          <p className="center-muted reveal">Some topics don’t fit neatly into traditional education or training, but they shape how people think, behave, and connect with the world around them. These short modules tackle and confront real issues head-on, creating space for honest, informed conversations about life on and offline.</p>
 
           <div className="three-grid">
             <div aria-hidden="true" className="reveal">
@@ -226,7 +275,7 @@ export default function Home() {
       </section>
 
       {/* Founder / experience section (full-bleed black) - constrained content only */}
-      <section className="public-body founder-band" aria-labelledby="founder-heading">
+      <section id="founder-section" className="public-body founder-band" aria-labelledby="founder-heading">
         {/* subtle top wave to give the band slightly wonky edges */}
         <svg className="founder-curve top" viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">
           <path d="M0,40 C240,28 600,30 900,32 C1180,34 1320,36 1440,40 L1440,0 L0,0 Z" />
@@ -234,23 +283,25 @@ export default function Home() {
         <div className="public-container">
           <div className="founder-columns">
             <div className="founder-left reveal" aria-hidden>
-              <img src="/images/deb-millar-headshot.png" alt="Deborah Millar OBE" className="founder-headshot" />
-              <h3 className="founder-left-name reveal">Deborah Millar OBE</h3>
+              <img src="/images/deb-millar-headshot.png" alt="Debo Millar OBE" className="founder-headshot" />
+              <h3 className="founder-left-name reveal">Deb Millar OBE</h3>
               <div className="founder-left-nickname reveal">keynote speaker | educator | co-Founder</div>
             </div>
             <div className="founder-right reveal">
-              <h2 id="founder-heading" className="founder-title">We’re new here, but this isn’t new to us...</h2>
+              <h2 id="founder-heading" className="founder-title">We’re new here, but this isn’t new to us</h2>
               <div className="founder-body">
-                <p><b>daisychained</b> is a new platform, shaped by decades of experience at the sharp end of education and digital change. We’ve built and led large-scale programmes, worked with national funding bodies, and delivered tools that hold up in real classrooms, not just on pa per.</p>
+                  <p><span className="brand-accent">daisychained</span> is shaped by decades of work at the sharp end of education and digital change. We’ve designed and delivered large-scale programmes, worked with national partners, and built tools that stand up in real-world learning, not just on paper.</p>
 
-                <p>It’s co-founded by <span className="brand-accent">Deborah Millar OBE</span>, a nationally recognised digital leader whose work has been acknowledged through numerous major personal awards, including the Global EdTech Lifetime Achievement Award (2024), Pearson Digital Innovator of the Year (2024), and multiple Association of Colleges (AOC) Beacon Awards for Effective Use of Digital Technology.</p>
+                  <p>Co-founded by Deb Millar, the platform is grounded in ethical, inclusive practice, focused on removing barriers and helping people build confidence and capability through learning that’s handled with care.</p>
+                </div>
 
-                <p>Deb is known for leading inclusive, ethical digital change - removing barriers, widening access, and helping educators use technology in ways that genuinely improve learning and confidence. Her work has influenced practice across 100+ education and training organisations nationwide.</p>
-
-                <p><b>daisychained</b> grew out of that experience. From seeing the same gaps appear again and again - the conversations that matter, the skills learners are expected to just "pick up", and the moments education doesn’t always make space for.</p>
-
-                <p>This platform exists to make those moments easier to open, easier to trust, and easier to deliver well.</p>
-              </div>
+                <h3 className="trust-heading reveal">Why organisations choose to work with us</h3>
+                <ul className="trust-bullets reveal">
+                  <li><CheckCircle className="trust-icon" /> Built by educators with decades of experience at the sharp end of digital change</li>
+                  <li><CheckCircle className="trust-icon" /> Proven delivery across large-scale programmes and national partnerships</li>
+                  <li><CheckCircle className="trust-icon" /> Designed for real-world learning, not theory or tick-box training</li>
+                  <li><CheckCircle className="trust-icon" /> Grounded in ethical, inclusive practice that removes barriers and builds confidence</li>
+                </ul>
             </div>
           </div>
         </div>
@@ -321,10 +372,10 @@ export default function Home() {
           <path d="M0,80 C160,20 360,0 720,18 C1060,36 1180,70 1440,30 L1440,0 L0,0 Z" />
         </svg>
         <div className="public-container">
-          <div className="section-header heading-large reveal"><div className="heading">What our customers say...</div></div>
-          <p className="center-muted reveal">Check out some of our favourite comments and mentions from the daisy community.</p>
+          <div className="section-header heading-large reveal"><div className="heading">Learning that bites</div></div>
+          <p className="center-muted reveal">Short, focused learning built for real life. Designed to fit, not overwhelm.</p>
           <div className="section-gap">
-            <TestimonialCarousel testimonials={testimonials} speed={60} />
+            <TestimonialCarousel testimonials={moduleHighlights} speed={60} ariaLabel="Module themes and learning types" />
           </div>
         </div>
         {/* decorative bottom curve that overlaps into the next section; using a different, asymmetric path */}
@@ -336,7 +387,7 @@ export default function Home() {
       {/* FAQs */}
       <section className="public-body" id="faqs">
         <div className="public-container">
-          <div className="section-header heading-large reveal"><div className="heading">faqs</div></div>
+          <div className="section-header heading-large reveal"><div className="heading">FAQs</div></div>
           <div className="section-gap">
             <div className="section-gap-md">
               <div className="faq-heading reveal">For daisychained students</div>
