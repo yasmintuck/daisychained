@@ -130,6 +130,7 @@
   padding: 0.65rem 1.8rem;
   min-height: 44px;
   font-size: 1.2rem; /* match .primary-cta text size */
+  font-weight: 900;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -156,6 +157,17 @@
 }
 .custom-content-page .custom-hero .cta-row .primary-cta { border-radius: 999px; padding: 0.7rem 1.4rem; }
 
+/* Ensure primary CTA uses same heavy weight and hover/focus preserve it */
+.custom-content-page .custom-hero .cta-row .primary-cta {
+  font-weight: 900;
+}
+.custom-content-page .custom-hero .cta-row .primary-cta:hover,
+.custom-content-page .custom-hero .cta-row .primary-cta:focus,
+.custom-content-page .custom-hero .cta-row .outline-btn:hover,
+.custom-content-page .custom-hero .cta-row .outline-btn:focus {
+  font-weight: 900;
+}
+
 /* Ensure visuals/images within the hero are visible and responsive */
 .custom-content-page .custom-hero .page-visual img,
 .custom-content-page .custom-hero .page-visual picture,
@@ -176,7 +188,47 @@
 @media (max-width: 900px) {
   .custom-content-page .custom-hero { padding: 80px 0 6rem; }
   .custom-content-page .custom-hero .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
-  .custom-content-page .custom-hero .page-visual { width: clamp(220px, 30vw, 250px); height: auto; }
+  /* Make the hero visual noticeably larger when stacked on small screens */
+  .custom-content-page .custom-hero .page-visual {
+    width: clamp(300px, 86vw, 420px);
+    height: auto;
+    margin-top: 16px;
+    transform: none;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+  }
+
+  /* Reduce CTA sizes to match homepage mobile scaling (no text/content changes) */
+  .custom-content-page .custom-hero .cta-row .primary-cta {
+    font-size: 1rem;
+    padding: 0.6rem 1.6rem;
+    min-height: 40px;
+  }
+  .custom-content-page .custom-hero .cta-row .outline-btn {
+    font-size: 0.95rem;
+    padding: 0.55rem 1.2rem;
+    min-height: 40px;
+  }
+}
+
+/* Extra-small screens: make image almost full-bleed but keep some horizontal padding */
+@media (max-width: 480px) {
+  .custom-content-page .custom-hero .page-visual {
+    width: 92vw;
+    max-width: none;
+    margin-top: 12px;
+    border-radius: 8px;
+    transform: none;
+  }
+
+  /* Slightly tighter on very small screens */
+  .custom-content-page .custom-hero .cta-row .primary-cta {
+    font-size: 0.95rem;
+    padding: 0.5rem 1.2rem;
+  }
+  .custom-content-page .custom-hero .cta-row .outline-btn {
+    font-size: 0.9rem;
+    padding: 0.45rem 1rem;
+  }
 }
 
 /* Page-specific utilities */
@@ -286,11 +338,35 @@
   .custom-content-page .card { aspect-ratio: auto; }
   .custom-content-page .feature-cards { padding: 24px 0; }
   .custom-content-page .contact-form-section { padding-top: 48px; }
+
+  /* Center hero content when stacked on small screens */
+  .custom-content-page .custom-hero .left,
+  .custom-content-page .custom-hero .hero-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .custom-content-page .custom-hero .page-title,
+  .custom-content-page .custom-hero .lead {
+    text-align: center;
+  }
+
+  .custom-content-page .custom-hero .cta-row {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .custom-content-page .custom-hero .cta-row .primary-cta,
+  .custom-content-page .custom-hero .cta-row .outline-btn {
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 700px) {
   .custom-content-page .public-container { padding: 1.5rem var(--container-pad-x); }
-  .custom-content-page .card { padding: 1rem; }
+  .custom-content-page .card { padding: 3rem; }
 }
 
 /* Contact form styles (copied from BookDemo.css, namespaced to this page) */
@@ -348,4 +424,13 @@
 /* Ensure anchor targeting the contact form leaves space for the fixed navbar */
 .custom-content-page #contact-form {
   scroll-margin-top: calc(var(--nav-h, 70px) + 12px);
+}
+
+/* sentinel above contact heading so anchors land with breathing room */
+.custom-content-page #contact-top {
+  scroll-margin-top: calc(var(--nav-h, 70px) + 12px);
+  /* ensure the sentinel doesn't affect layout */
+  height: 0;
+  width: 0;
+  display: block;
 }

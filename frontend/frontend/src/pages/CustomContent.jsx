@@ -20,7 +20,7 @@ export default function CustomContent() {
               <h1 className="page-title">Custom content, built from what you already have</h1>
               <p className="lead">We transform your existing documents, slides, and guidance into interactive online learning modules with built-in assessments, packaged in a SCORM format for your VLE.</p>
               <div className="cta-row">
-                <a href="#contact-form" className="primary-cta">Enquire</a>
+                <a href="#contact-top" className="primary-cta">Enquire</a>
                 <a href="#how-it-works" className="outline-btn">How it works</a>
               </div>
               
@@ -74,9 +74,10 @@ export default function CustomContent() {
           </div>
           {/* Contact form copied from BookDemo page; placed under How it works */}
           <div className="contact-form-section">
-            <div className="contact-form-container">
-              <h2 className="page-title">Get in touch</h2>
-              <aside id="contact-form" className="contact-form-card" aria-labelledby="contact-form-title">
+              <div className="contact-form-container">
+                <div id="contact-top" aria-hidden="true" />
+                <h2 className="page-title">Get in touch</h2>
+                <aside id="contact-form" className="contact-form-card" aria-labelledby="contact-form-title">
                 {!submitted && <p className="contact-intro">Complete the form and we’ll be in touch to talk through your requirements and suggest the best approach, with no obligation.</p>}
 
                 { submitted ? (
