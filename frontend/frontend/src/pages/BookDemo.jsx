@@ -28,7 +28,7 @@ export default function BookDemo(){
               <div className="demo-thanks demo-thanks-replace" aria-live="polite">
                 <img src={DaisyLogo} alt="daisychained" className="demo-thanks-logo" />
                 <h2 className="demo-thanks-heading">We'll be in touch soon</h2>
-                <p className="demo-thanks-text">We're over the moon about your interest in daisychained. One of our team will be in touch with you shortly to organise a chat and demo at a time that suits you.</p>
+                <p className="demo-thanks-text">We're over the moon about your interest in daisychained. One of our team will be in touch with you shortly.</p>
               </div>
             ) : (
             <form className="demo-form" onSubmit={async (e)=>{

@@ -16,5 +16,7 @@ namespace backend.Dtos
         public string Company { get; set; } = string.Empty;
 
         public string Message { get; set; } = string.Empty;
+        // Optional request type used by the backend to adjust email subject (e.g. "Custom content request")
+        public string RequestType { get; set; } = string.Empty;
     }
 }

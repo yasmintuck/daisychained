@@ -44,7 +44,8 @@ namespace backend.Controllers
             var message = new MimeMessage();
             message.From.Add(MailboxAddress.Parse(from));
             message.To.Add(MailboxAddress.Parse(to));
-            message.Subject = $"[Demo request] {dto.FullName} - {dto.Company}";
+            var prefix = string.IsNullOrWhiteSpace(dto.RequestType) ? "Demo request" : dto.RequestType.Trim();
+            message.Subject = $"[{prefix}] {dto.FullName} - {dto.Company}";
 
             var bodyText = $@"Name: {dto.FullName}
 Email: {dto.Email}

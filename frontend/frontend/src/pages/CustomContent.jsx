@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FooterAlt from '../components/FooterAlt';
 import './CustomContent.css';
 import './BookDemo.css';
+import DaisyLogo from '../assets/hero/thank-you.png';
 import { Link } from 'react-router-dom';
 
 export default function CustomContent() {
@@ -111,8 +112,9 @@ export default function CustomContent() {
 
                 { submitted ? (
                   <div className="contact-thanks contact-thanks-replace" aria-live="polite">
+                    <img src={DaisyLogo} alt="daisychained" className="demo-thanks-logo" />
                     <h2 className="contact-thanks-heading">We'll be in touch soon</h2>
-                    <p className="contact-thanks-text">We're over the moon about your interest in daisychained. One of our team will be in touch with you shortly to organise a chat and demo at a time that suits you.</p>
+                    <p className="contact-thanks-text">We're over the moon about your interest in daisychained. One of our team will be in touch with you shortly.</p>
                   </div>
                 ) : (
                 <form className="contact-form" onSubmit={async (e)=>{
@@ -144,7 +146,8 @@ export default function CustomContent() {
                         Email: values.email,
                         Phone: values.phone,
                         Company: values.company,
-                        Message: values.message
+                        Message: values.message,
+                        RequestType: 'Custom content request'
                       };
 
                       const devBase = 'http://localhost:5245';
