@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FooterAlt from '../components/FooterAlt';
 import './CustomContent.css';
 import './BookDemo.css';
@@ -9,6 +9,35 @@ export default function CustomContent() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    // mirror homepage: set loaded so hero elements receive the "visible" class
+    // using requestAnimationFrame double-rAF gives the browser a paint before
+    // the visible class is applied, ensuring the CSS transitions animate.
+    requestAnimationFrame(() => requestAnimationFrame(() => setLoaded(true)));
+  }, []);
+
+  // Reveal observer for elements with .reveal on this page (matches homepage behavior)
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return;
+    const container = document.querySelector('.custom-content-page');
+    if (!container) return;
+    const els = Array.from(container.querySelectorAll('.reveal'));
+    if (!els.length) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            entry.target.classList.add('visible');
+          }));
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
 
   return (
     <div className="public-page custom-content-page">
@@ -16,7 +45,7 @@ export default function CustomContent() {
       <section className="public-body custom-hero">
         <div className="public-container">
           <div className="two-col hero-grid">
-            <div className="col left">
+            <div className={`col left hero-left ${loaded ? 'visible' : ''}`}>
               <h1 className="page-title">Custom content, built from what you already have</h1>
               <p className="lead">We transform your existing documents, slides, and guidance into interactive online learning modules with built-in assessments, packaged in a SCORM format for your VLE.</p>
               <div className="cta-row">
@@ -26,7 +55,7 @@ export default function CustomContent() {
               
             </div>
 
-            <div className="col right hero-right visible">
+            <div className={`col right hero-right ${loaded? 'visible' : ''}`}>
               <img src="/images/mockup1.png" alt="Custom content mockup" className="page-visual" />
             </div>
           </div>
@@ -42,9 +71,9 @@ export default function CustomContent() {
       {/* Section 2: How it works (cards + form) */}
       <section id="how-it-works" className="public-body feature-cards">
         <div className="public-container">
-          <h2 className="page-title">How it works</h2>
+          <h2 className="page-title reveal">How it works</h2>
           <div className="cards-grid">
-            <div className="card" tabIndex="0">
+            <div className="card reveal" tabIndex="0">
               <div className="card-header">
                 <div className="card-icon" aria-hidden>
                   <img src="/images/card-icon1.png" alt="" className="card-icon-img" />
@@ -53,7 +82,7 @@ export default function CustomContent() {
               </div>
               <p className="card-desc">Send us your exsisting content: PowerPoint, Word doc, PDF, or written notes.</p>
             </div>
-            <div className="card" tabIndex="0">
+            <div className="card reveal" tabIndex="0">
               <div className="card-header">
                 <div className="card-icon" aria-hidden>
                   <img src="/images/card-icon2.png" alt="" className="card-icon-img" />
@@ -62,7 +91,7 @@ export default function CustomContent() {
               </div>
               <p className="card-desc">Our expert team will create bespoke online courses or microlearning modules with built-in interaction and knowledge checks.</p>
             </div>
-            <div className="card" tabIndex="0">
+            <div className="card reveal" tabIndex="0">
               <div className="card-header">
                 <div className="card-icon" aria-hidden>
                   <img src="/images/card-icon3.png" alt="" className="card-icon-img" />

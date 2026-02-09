@@ -66,12 +66,14 @@
   background: transparent;
   border-radius: 10px;
   box-shadow: 0 22px 56px rgba(0,0,0,0.16);
-  transform: translateX(-6%);
-  margin-top: 36px;
-  opacity: 1;
-  transition: opacity 600ms ease, transform 600ms ease;
+  /* start off-screen (right) and slightly down/scaled, then animate in like homepage */
+  transform: translateX(140px) translateY(12px) scale(0.995);
+  opacity: 0;
+  transition: opacity 1300ms cubic-bezier(0.22, 1, 0.36, 1) 120ms, transform 1300ms cubic-bezier(0.22, 1, 0.36, 1) 120ms;
+  will-change: transform, opacity;
   display: block;
   padding: 0;
+  margin-top: 36px;
 }
 
 /* subtle white-to-transparent radial gradient behind the visual */
@@ -180,6 +182,10 @@
 .custom-content-page .custom-hero .hero-right.visible .page-visual { transform: translateX(0) translateY(0) scale(1); opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
+  .custom-content-page .custom-hero .page-visual { transition: none !important; transform: none !important; opacity: 1 !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
   .custom-content-page .custom-hero .hero-left > *::before { transition: none !important; transform: none !important; display: none; }
   .custom-content-page .custom-hero .hero-left > * { transition: none !important; transform: none !important; opacity: 1 !important; }
   .custom-content-page .custom-hero .page-visual { transition: none !important; transform: none !important; opacity: 1 !important; }
@@ -246,6 +252,13 @@
 
 /* CTA row uses existing .primary-cta and .outline-btn styles for consistency */
 .custom-content-page .cta-row { display: flex; gap: 1rem; margin: 1rem 0; }
+
+/* Ensure CTAs can translate above their container (don't get clipped by the
+  shutter pseudo-element on the hero). Match homepage behavior: allow overflow
+  and bring buttons to the front when hovered/focused. */
+.custom-content-page .custom-hero .hero-left .cta-row { overflow: visible; }
+.custom-content-page .custom-hero .cta-row .primary-cta,
+.custom-content-page .custom-hero .cta-row .outline-btn { position: relative; z-index: 2200; }
 
 /* Cards grid */
 .custom-content-page .cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.6rem; align-items: stretch; padding-top: 2rem; }
@@ -333,11 +346,37 @@
   .custom-content-page .two-col, .custom-content-page .cards-grid, .custom-content-page .process-steps { grid-template-columns: 1fr; }
   .custom-content-page .cards-grid { gap: 1rem; }
   .custom-content-page .page-title { text-align: left; }
+  /* Reduce spacing for the contact section heading on small screens */
+  .custom-content-page .contact-form-section .page-title { margin-bottom: 0; }
   .custom-content-page .public-container { padding: 2rem var(--container-pad-x); }
   .custom-content-page .hero-grid { gap: 1.5rem; }
-  .custom-content-page .card { aspect-ratio: auto; }
+  /* Ensure cards stack and keep comfortable vertical padding on small screens */
+  .custom-content-page .card { aspect-ratio: auto; padding: 1.6rem 1.1rem; }
+  /* Fluidly scale icons from their stacked size at 900px down to a comfortable minimum at small widths */
+  .custom-content-page .card-icon {
+    width: clamp(80px, calc(80px + (40 * ((100vw - 320px) / 580))), 120px);
+    height: clamp(80px, calc(80px + (40 * ((100vw - 320px) / 580))), 120px);
+    flex: 0 0 auto;
+  }
+  .custom-content-page .card-icon-img { width: 100%; height: 100%; object-fit: contain; }
+  /* Reduce vertical spacing for section headings on mobile */
+  .custom-content-page .feature-cards .page-title { margin-bottom: 1rem; }
+  .custom-content-page .contact-form-section .page-title { margin-bottom: 0.6rem; }
+
+  /* Match contact intro text size to hero body text on small screens */
+  .custom-content-page .contact-intro { font-size: clamp(1.05rem, 2.4vw, 1.25rem); }
   .custom-content-page .feature-cards { padding: 24px 0; }
   .custom-content-page .contact-form-section { padding-top: 48px; }
+
+  /* Mobile (<=900px) tweaks: reduce heading bottoms and add breathing room above sections */
+  .custom-content-page .feature-cards { padding-top: 48px; }
+  .custom-content-page .feature-cards .page-title { margin-bottom: 1rem; }
+
+  .custom-content-page .contact-form-section { padding-top: 84px; }
+  .custom-content-page .contact-form-section .page-title { margin-bottom: 0.75rem; }
+
+  /* Make the contact intro text match hero body size on mobile */
+  .custom-content-page .contact-intro { font-size: 1.05rem; }
 
   /* Center hero content when stacked on small screens */
   .custom-content-page .custom-hero .left,
@@ -364,9 +403,38 @@
   }
 }
 
+/* Keep three columns for viewports wider than 900px, but make cards scale on mid-width
+   screens so they don't become excessively tall. We override the square aspect-ratio
+   between 901px and 1200px and reduce paddings/icon sizes to fit better.
+*/
+@media (min-width: 901px) {
+  .custom-content-page .cards-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; }
+
+  @media (max-width: 1200px) {
+  .custom-content-page .cards-grid { gap: 1rem; }
+  .custom-content-page .card { aspect-ratio: auto; padding: 0.9rem; height: 100%; }
+  .custom-content-page .card-header { gap: 1.6rem; }
+  .custom-content-page .card-icon { width: clamp(72px, 10vw, 120px); height: clamp(72px, 10vw, 120px); flex: 0 0 auto; }
+  .custom-content-page .card-icon-img { width: 100%; height: 100%; object-fit: contain; }
+  .custom-content-page .card-title { font-size: clamp(1rem, 1.6vw, 1.25rem); }
+  .custom-content-page .card-desc { font-size: clamp(0.92rem, 1.4vw, 1rem); max-width: 36ch; }
+  }
+}
+
+/* Stagger the reveal timing for How it works heading and cards to match homepage features */
+.custom-content-page .feature-cards .page-title.reveal { transition-delay: 140ms; }
+.custom-content-page .cards-grid .card.reveal { transition-delay: 80ms; }
+.custom-content-page .cards-grid .card.reveal:nth-child(1) { transition-delay: 80ms; }
+.custom-content-page .cards-grid .card.reveal:nth-child(2) { transition-delay: 160ms; }
+.custom-content-page .cards-grid .card.reveal:nth-child(3) { transition-delay: 240ms; }
+
 @media (max-width: 700px) {
   .custom-content-page .public-container { padding: 1.5rem var(--container-pad-x); }
-  .custom-content-page .card { padding: 3rem; }
+  /* Slightly reduce vertical padding on very small screens; icon scaling is handled by the fluid rule above */
+  .custom-content-page .card { padding: 2.2rem 1.1rem; }
+  .custom-content-page .card-header { gap: 1.2rem; }
+  .custom-content-page .card-title { font-size: clamp(1rem, 2.6vw, 1.15rem); }
+  .custom-content-page .card-desc { font-size: 0.95rem; max-width: 40ch; }
 }
 
 /* Contact form styles (copied from BookDemo.css, namespaced to this page) */
@@ -419,6 +487,8 @@
 @media (max-width: 900px) {
   .custom-content-page .contact-form-row { flex-direction: column; }
   .custom-content-page .contact-legal { font-size: 16px; }
+  /* Match contact intro size to hero body text on mobile */
+  .custom-content-page .contact-intro { font-size: clamp(1.05rem, 2.4vw, 1.25rem); margin-bottom: 0.75rem; }
 }
 
 /* Ensure anchor targeting the contact form leaves space for the fixed navbar */
@@ -433,4 +503,14 @@
   height: 0;
   width: 0;
   display: block;
+}
+
+/* Make the privacy link in the contact legal line visibly underlined and keyboard-focusable */
+.custom-content-page .contact-legal a {
+  text-decoration: underline;
+  color: inherit;
+}
+.custom-content-page .contact-legal a:focus {
+  outline: 3px solid rgba(255,200,0,0.18);
+  outline-offset: 4px;
 }

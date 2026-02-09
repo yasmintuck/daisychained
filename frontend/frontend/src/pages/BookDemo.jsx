@@ -22,7 +22,7 @@ export default function BookDemo(){
       <section className="book-demo-form-section">
         <div className="book-demo-container">
           <aside className="demo-form-card" aria-labelledby="demo-form-title">
-            {!submitted && <p className="demo-intro">Request a free demo. We’ll get back to you.</p>}
+            {!submitted && <p className="demo-intro">Tell us what you need and we’ll point you to the right next step: free demo, pricing, custom content, or general support.</p>}
 
             { submitted ? (
               <div className="demo-thanks demo-thanks-replace" aria-live="polite">
