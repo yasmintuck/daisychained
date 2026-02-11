@@ -223,7 +223,7 @@ export default function Home() {
             <h1 className="hero-title reveal">Sparking conversations</h1>
             <p className="lead reveal">The most powerful learning rarely comes from textbooks. It comes from lived experience, honest conversations, and topics traditional education often overlooks. <span className="brand-accent">daisychained</span> delivers bite-sized learning that builds employable, resilient human skills for real life.</p>
             <div className="hero-cta reveal">
-              <a href="/enquiries" className="primary-cta">Enquiries</a>
+              <a href="/enquiries" className="primary-cta">Book a demo</a>
             </div>
           </div>
 

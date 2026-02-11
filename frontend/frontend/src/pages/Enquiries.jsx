@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import FooterAlt from '../components/FooterAlt';
 import './Enquiries.css';
+import CustomSelect from '../components/CustomSelect';
 import { Link } from 'react-router-dom';
 import DaisyLogo from '../assets/hero/thank-you.png';
 
@@ -14,7 +15,7 @@ export default function Enquiries(){
       <section className="book-demo-hero">
         <div className="book-demo-container">
           <div className="book-demo-left">
-            <div className="section-header"><div className="heading">let's chat</div></div>
+            <div className="section-header"><div className="heading">let's talk</div></div>
           </div>
         </div>
       </section>
@@ -42,6 +43,8 @@ export default function Enquiries(){
                 jobTitle: (fd.get('jobTitle') || '').toString().trim(),
                 company: (fd.get('company') || '').toString().trim(),
                 phone: (fd.get('phone') || '').toString().trim(),
+                preferredContactMethod: (fd.get('preferredContactMethod') || '').toString().trim(),
+                helpTopic: (fd.get('helpTopic') || '').toString().trim(),
                 message: (fd.get('message') || '').toString().trim(),
               };
               const newErrors = {};
@@ -49,6 +52,8 @@ export default function Enquiries(){
               if (!values.lastName) newErrors.lastName = 'Please enter your last name';
               if (!values.email) newErrors.email = 'Please enter your email address';
               else if (!/^\S+@\S+\.\S+$/.test(values.email)) newErrors.email = 'Please enter a valid email address';
+              if (!values.preferredContactMethod) newErrors.preferredContactMethod = 'Please select a preferred contact method';
+              if (!values.helpTopic) newErrors.helpTopic = 'Please select what we can help with';
               if (!values.message) newErrors.message = 'Please enter a message';
               setErrors(newErrors);
               setServerError(null);
@@ -61,7 +66,9 @@ export default function Enquiries(){
                     Email: values.email,
                     Phone: values.phone,
                     Company: values.company,
-                    Message: values.message
+                    Message: values.message,
+                    PreferredContactMethod: values.preferredContactMethod,
+                    HelpTopic: values.helpTopic
                   };
 
                   const devBase = 'http://localhost:5245';
@@ -113,6 +120,28 @@ export default function Enquiries(){
               <div className="demo-form-row">
                 <div className="field"><input type="text" name="company" placeholder="Company Name" /></div>
                 <div className="field"><input type="text" name="phone" placeholder="Phone Number" /></div>
+              </div>
+
+              <div className="demo-form-row">
+                <div className="field">
+                  <CustomSelect name="preferredContactMethod" placeholder="Preferred way to contact*" required options={[
+                    { value: 'Email me to schedule a virtual meeting', label: 'Email me to schedule a virtual meeting' },
+                    { value: 'Call me to schedule a virtual meeting', label: 'Call me to schedule a virtual meeting' },
+                    { value: 'Email me a response', label: 'Email me a response' },
+                  ]} />
+                  {errors.preferredContactMethod && <div className="field-error">{errors.preferredContactMethod}</div>}
+                </div>
+                <div className="field">
+                  <CustomSelect name="helpTopic" placeholder="What can we help with?*" required options={[
+                    { value: 'Request a demo', label: 'Request a demo' },
+                    { value: 'Pricing and packages', label: 'Pricing and packages' },
+                    { value: 'Custom content / bespoke modules', label: 'Custom content / bespoke modules' },
+                    { value: 'Technical / platform questions', label: 'Technical / platform questions' },
+                    { value: 'Partnership / collaboration', label: 'Partnership / collaboration' },
+                    { value: 'Something else', label: 'Something else' },
+                  ]} />
+                  {errors.helpTopic && <div className="field-error">{errors.helpTopic}</div>}
+                </div>
               </div>
 
               <div style={{ marginTop: '18px' }}>

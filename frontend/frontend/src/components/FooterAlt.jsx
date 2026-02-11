@@ -51,7 +51,6 @@ export default function FooterAlt(){
             <div className="footer-section-title">Get in touch</div>
             <ul>
               <li><Link to="/enquiries">Enquiries</Link></li>
-              <li><Link to="/enquiries">Talk to us</Link></li>
             </ul>
           </div>
 

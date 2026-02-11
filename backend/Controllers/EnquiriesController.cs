@@ -56,6 +56,12 @@ Message:
 {dto.Message}
 ";
 
+            // Include new fields in email body where present
+            bodyText += $@"
+Preferred contact method: {dto.PreferredContactMethod}
+What they need help with: {dto.HelpTopic}
+";
+
             message.Body = new TextPart("plain") { Text = bodyText };
 
             // Add Reply-To so replies go to the requesting user's email
