@@ -454,7 +454,7 @@
   line-height: 1.5;
   display: flex; gap: 0.8rem; align-items: flex-start;
 }
-.trust-icon { color: #fff; flex: 0 0 20px; margin-top: 2px; }
+.trust-icon { color: var(--yellow-accent); flex: 0 0 20px; margin-top: 2px; }
 .trust-icon svg { display: block; width: 20px; height: 20px; }
 
 @media (max-width: 700px) {
