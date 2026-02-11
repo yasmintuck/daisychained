@@ -146,6 +146,7 @@ export default function CustomContent() {
                         Email: values.email,
                         Phone: values.phone,
                         Company: values.company,
+                        JobTitle: values.jobTitle,
                         Message: values.message,
                         RequestType: 'Custom content request'
                       };

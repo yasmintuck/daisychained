@@ -518,7 +518,7 @@
 .custom-content-page .server-error { color: #9b1c00; margin-top: 12px; font-weight: 700; }
 
 @media (max-width: 900px) {
-  .custom-content-page .contact-form-row { flex-direction: column; }
+    /* Contact form keeps default desktop flex behaviour on mobile (no forced column). */
   .custom-content-page .contact-legal { font-size: 16px; }
   /* Match contact intro size to hero body text on mobile */
   .custom-content-page .contact-intro { font-size: clamp(1.05rem, 2.4vw, 1.25rem); margin-bottom: 0.75rem; }
