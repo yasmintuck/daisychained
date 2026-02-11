@@ -15,6 +15,8 @@ namespace backend.Dtos
 
         public string Company { get; set; } = string.Empty;
 
+        public string JobTitle { get; set; } = string.Empty;
+
         public string Message { get; set; } = string.Empty;
         [Required]
         public string PreferredContactMethod { get; set; } = string.Empty;

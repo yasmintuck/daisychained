@@ -66,6 +66,7 @@ export default function Enquiries(){
                     Email: values.email,
                     Phone: values.phone,
                     Company: values.company,
+                    JobTitle: values.jobTitle,
                     Message: values.message,
                     PreferredContactMethod: values.preferredContactMethod,
                     HelpTopic: values.helpTopic

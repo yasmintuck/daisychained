@@ -62,6 +62,12 @@ Preferred contact method: {dto.PreferredContactMethod}
 What they need help with: {dto.HelpTopic}
 ";
 
+                        // Include job title if present
+                        if (!string.IsNullOrWhiteSpace(dto.JobTitle))
+                        {
+                            bodyText = bodyText.Replace($"Company: {dto.Company}", $"Company: {dto.Company}\nJob title: {dto.JobTitle}");
+                        }
+
             message.Body = new TextPart("plain") { Text = bodyText };
 
             // Add Reply-To so replies go to the requesting user's email
