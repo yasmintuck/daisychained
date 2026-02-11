@@ -18,10 +18,10 @@ namespace backend.Dtos
         public string JobTitle { get; set; } = string.Empty;
 
         public string Message { get; set; } = string.Empty;
-        [Required]
+
+        // Make these optional so different forms (e.g. custom content) can omit them.
         public string PreferredContactMethod { get; set; } = string.Empty;
 
-        [Required]
         public string HelpTopic { get; set; } = string.Empty;
         // Optional request type used by the backend to adjust email subject (e.g. "Custom content request")
         public string RequestType { get; set; } = string.Empty;
