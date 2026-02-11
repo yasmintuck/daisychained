@@ -9,33 +9,33 @@ namespace backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DemoRequestsController : ControllerBase
+    public class EnquiriesController : ControllerBase
     {
         private readonly IConfiguration _config;
 
-        public DemoRequestsController(IConfiguration config)
+        public EnquiriesController(IConfiguration config)
         {
             _config = config;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] DemoRequestDto dto)
+        public async Task<IActionResult> Post([FromBody] EnquiryRequestDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Read SMTP config from environment or appsettings
-            var host = _config["DEMO_SMTP_HOST"] ?? _config["DemoSmtp:Host"];
-            var portStr = _config["DEMO_SMTP_PORT"] ?? _config["DemoSmtp:Port"];
-            var user = _config["DEMO_SMTP_USER"] ?? _config["DemoSmtp:User"];
-            var pass = _config["DEMO_SMTP_PASS"] ?? _config["DemoSmtp:Pass"];
-            var useStartTls = (_config["DEMO_SMTP_USESTARTTLS"] ?? _config["DemoSmtp:UseStartTls"] ?? "true").ToLower() == "true";
-            var from = _config["DEMO_FROM"] ?? _config["DemoSmtp:From"] ?? user;
-            var to = _config["DEMO_TO"] ?? _config["DemoSmtp:To"] ?? user;
+            // Read SMTP config from environment or appsettings. Prefer ENQUIRIES_* but fall back to existing DEMO_* keys.
+            var host = _config["ENQUIRIES_SMTP_HOST"] ?? _config["DEMO_SMTP_HOST"] ?? _config["DemoSmtp:Host"];
+            var portStr = _config["ENQUIRIES_SMTP_PORT"] ?? _config["DEMO_SMTP_PORT"] ?? _config["DemoSmtp:Port"];
+            var user = _config["ENQUIRIES_SMTP_USER"] ?? _config["DEMO_SMTP_USER"] ?? _config["DemoSmtp:User"];
+            var pass = _config["ENQUIRIES_SMTP_PASS"] ?? _config["DEMO_SMTP_PASS"] ?? _config["DemoSmtp:Pass"];
+            var useStartTls = (_config["ENQUIRIES_SMTP_USESTARTTLS"] ?? _config["DEMO_SMTP_USESTARTTLS"] ?? _config["DemoSmtp:UseStartTls"] ?? "true").ToLower() == "true";
+            var from = _config["ENQUIRIES_FROM"] ?? _config["DEMO_FROM"] ?? _config["DemoSmtp:From"] ?? user;
+            var to = _config["ENQUIRIES_TO"] ?? _config["DEMO_TO"] ?? _config["DemoSmtp:To"] ?? user;
 
             if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(to))
             {
-                return StatusCode(500, "SMTP not configured. Set DEMO_SMTP_HOST and DEMO_TO environment variables.");
+                return StatusCode(500, "SMTP not configured. Set ENQUIRIES_SMTP_HOST (or DEMO_SMTP_HOST) and ENQUIRIES_TO (or DEMO_TO) environment variables.");
             }
 
             int port = 587;
@@ -44,7 +44,7 @@ namespace backend.Controllers
             var message = new MimeMessage();
             message.From.Add(MailboxAddress.Parse(from));
             message.To.Add(MailboxAddress.Parse(to));
-            var prefix = string.IsNullOrWhiteSpace(dto.RequestType) ? "Demo request" : dto.RequestType.Trim();
+            var prefix = string.IsNullOrWhiteSpace(dto.RequestType) ? "Enquiry request" : dto.RequestType.Trim();
             message.Subject = $"[{prefix}] {dto.FullName} - {dto.Company}";
 
             var bodyText = $@"Name: {dto.FullName}
@@ -76,30 +76,31 @@ Message:
             if (!sent)
                 return StatusCode(500, $"Failed to send email: {error}");
 
-            return Ok(new { message = "Demo request sent" });
+            return Ok(new { message = "Enquiry sent" });
         }
 
-        // POST /api/demo/test
-        // Protected by a simple header key `X-DEMO-TEST-KEY` which must match `DEMO_TEST_API_KEY` env var.
+        // POST /api/enquiries/test
         [HttpPost("test")]
         public async Task<IActionResult> Test()
         {
-            var key = Request.Headers.ContainsKey("X-DEMO-TEST-KEY") ? Request.Headers["X-DEMO-TEST-KEY"].ToString() : null;
-            var expected = _config["DEMO_TEST_API_KEY"];
+            // Accept either the new or previous header keys for backwards compatibility
+            var keyHeader = Request.Headers.ContainsKey("X-ENQUIRIES-TEST-KEY") ? "X-ENQUIRIES-TEST-KEY" : "X-DEMO-TEST-KEY";
+            var key = Request.Headers.ContainsKey(keyHeader) ? Request.Headers[keyHeader].ToString() : null;
+            var expected = _config["ENQUIRIES_TEST_API_KEY"] ?? _config["DEMO_TEST_API_KEY"];
             if (string.IsNullOrWhiteSpace(expected) || key != expected)
             {
                 return Forbid();
             }
 
-            var to = _config["DEMO_TO"] ?? _config["DemoSmtp:To"] ?? _config["DEMO_SMTP_USER"];
+            var to = _config["ENQUIRIES_TO"] ?? _config["DEMO_TO"] ?? _config["DemoSmtp:To"] ?? _config["DEMO_SMTP_USER"];
             if (string.IsNullOrWhiteSpace(to))
-                return StatusCode(500, "SMTP recipient not configured (DEMO_TO)");
+                return StatusCode(500, "SMTP recipient not configured (ENQUIRIES_TO or DEMO_TO)");
 
             var message = new MimeMessage();
-            var from = _config["DEMO_FROM"] ?? _config["DemoSmtp:From"] ?? _config["DEMO_SMTP_USER"];
+            var from = _config["ENQUIRIES_FROM"] ?? _config["DEMO_FROM"] ?? _config["DemoSmtp:From"] ?? _config["DEMO_SMTP_USER"];
             message.From.Add(MailboxAddress.Parse(from ?? to));
             message.To.Add(MailboxAddress.Parse(to));
-            message.Subject = "[Demo request test] Test email from DaisyChained";
+            message.Subject = "[Enquiry request test] Test email from DaisyChained";
             message.Body = new TextPart("plain") { Text = "This is a test email from the DaisyChained production health check." };
 
             var (sent, error) = await SendEmailAsync(message);
@@ -111,16 +112,16 @@ Message:
 
         private async Task<(bool sent, string error)> SendEmailAsync(MimeMessage message)
         {
-            // Read SMTP config from environment or appsettings
-            var host = _config["DEMO_SMTP_HOST"] ?? _config["DemoSmtp:Host"];
-            var portStr = _config["DEMO_SMTP_PORT"] ?? _config["DemoSmtp:Port"];
-            var user = _config["DEMO_SMTP_USER"] ?? _config["DemoSmtp:User"];
-            var pass = _config["DEMO_SMTP_PASS"] ?? _config["DemoSmtp:Pass"];
-            var useStartTls = (_config["DEMO_SMTP_USESTARTTLS"] ?? _config["DemoSmtp:UseStartTls"] ?? "true").ToLower() == "true";
+            // Read SMTP config from environment or appsettings. Prefer ENQUIRIES_* but fall back to existing DEMO_* keys.
+            var host = _config["ENQUIRIES_SMTP_HOST"] ?? _config["DEMO_SMTP_HOST"] ?? _config["DemoSmtp:Host"];
+            var portStr = _config["ENQUIRIES_SMTP_PORT"] ?? _config["DEMO_SMTP_PORT"] ?? _config["DemoSmtp:Port"];
+            var user = _config["ENQUIRIES_SMTP_USER"] ?? _config["DEMO_SMTP_USER"] ?? _config["DemoSmtp:User"];
+            var pass = _config["ENQUIRIES_SMTP_PASS"] ?? _config["DEMO_SMTP_PASS"] ?? _config["DemoSmtp:Pass"];
+            var useStartTls = (_config["ENQUIRIES_SMTP_USESTARTTLS"] ?? _config["DEMO_SMTP_USESTARTTLS"] ?? _config["DemoSmtp:UseStartTls"] ?? "true").ToLower() == "true";
 
             if (string.IsNullOrWhiteSpace(host) || message.To.Count == 0)
             {
-                return (false, "SMTP not configured. Set DEMO_SMTP_HOST and DEMO_TO environment variables.");
+                return (false, "SMTP not configured. Set ENQUIRIES_SMTP_HOST (or DEMO_SMTP_HOST) and ENQUIRIES_TO (or DEMO_TO) environment variables.");
             }
 
             int port = 587;

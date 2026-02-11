@@ -9,7 +9,7 @@ import './index.css';
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Faq from "./pages/Faq";
-import BookDemo from "./pages/BookDemo";
+import Enquiries from "./pages/Enquiries";
 import CustomContent from "./pages/CustomContent";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -62,7 +62,7 @@ function App() {
         <Route path="/" element={<Home />} />
   <Route path="/about" element={<About />} />
   <Route path="/faq" element={<Faq />} />
-  <Route path="/book-demo" element={<BookDemo />} />
+  <Route path="/enquiries" element={<Enquiries />} />
   <Route path="/custom-content" element={<CustomContent />} />
   <Route path="/privacy" element={<Privacy />} />
   <Route path="/terms" element={<Terms />} />

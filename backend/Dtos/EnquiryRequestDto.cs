@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.Dtos
 {
-    public class DemoRequestDto
+    public class EnquiryRequestDto
     {
         [Required]
         public string FullName { get; set; } = string.Empty;

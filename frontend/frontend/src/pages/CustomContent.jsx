@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FooterAlt from '../components/FooterAlt';
 import './CustomContent.css';
-import './BookDemo.css';
+import './Enquiries.css';
 import DaisyLogo from '../assets/hero/thank-you.png';
 import { Link } from 'react-router-dom';
 
@@ -79,7 +79,7 @@ export default function CustomContent() {
                 <div className="card-icon" aria-hidden>
                   <img src="/images/card-icon1.png" alt="" className="card-icon-img" />
                 </div>
-                <h3 className="card-title">Share your materials</h3>
+                <h3 className="card-title">share your materials</h3>
               </div>
               <p className="card-desc">Send us your exsisting content: PowerPoint, Word doc, PDF, or written notes.</p>
             </div>
@@ -88,7 +88,7 @@ export default function CustomContent() {
                 <div className="card-icon" aria-hidden>
                   <img src="/images/card-icon2.png" alt="" className="card-icon-img" />
                 </div>
-                <h3 className="card-title">We design and build</h3>
+                <h3 className="card-title">we design and build</h3>
               </div>
               <p className="card-desc">Our expert team will create bespoke online courses or microlearning modules with built-in interaction and knowledge checks.</p>
             </div>
@@ -102,7 +102,7 @@ export default function CustomContent() {
               <p className="card-desc">We send you SCORM files to upload to your VLE, ready to track engagement and completion.</p>
             </div>
           </div>
-          {/* Contact form copied from BookDemo page; placed under How it works */}
+          {/* Contact form copied from Enquiries page; placed under How it works */}
           <div className="contact-form-section">
               <div className="contact-form-container">
                 <div id="contact-top" aria-hidden="true" />
@@ -157,7 +157,7 @@ export default function CustomContent() {
                         ? devBase
                         : (normalizedEnvBase ?? '');
 
-                      const res = await fetch(`${apiBase}/api/DemoRequests`, {
+                      const res = await fetch(`${apiBase}/api/Enquiries`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(body)

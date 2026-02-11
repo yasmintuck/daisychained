@@ -66,7 +66,7 @@ const studentQs = [
 ];
 
 const orgQs = [
-  { q: "How does licensing and pricing work?", a: "We license to organisations. Pricing scales with the number of learners and the module bundle you select. Fill out the book a demo form or email humans@daisychained.co.uk for a quick quote and options." },
+  { q: "How does licensing and pricing work?", a: "We license to organisations. Pricing scales with the number of learners and the module bundle you select. Fill out the enquiries form or email humans@daisychained.co.uk for a quick quote and options." },
   { q: "How do we get started as an organisation/college/school?", a: "We’ll onboard your organisation, working alongside your IT team to activate your users' accounts. You’ll receive an organisational dashboard to track uptake and progress." },
   { q: "Is daisychained an LMS?", a: "No. daisychained complements existing systems by focusing on short, human learning and clear oversight, without replacing your core platforms." },
   { q: "What data and reporting do we get?", a: "Organisations have access to clear reporting on engagement, progress, and completion at individual, team, or cohort level." },
@@ -223,7 +223,7 @@ export default function Home() {
             <h1 className="hero-title reveal">Sparking conversations</h1>
             <p className="lead reveal">The most powerful learning rarely comes from textbooks. It comes from lived experience, honest conversations, and topics traditional education often overlooks. <span className="brand-accent">daisychained</span> delivers bite-sized learning that builds employable, resilient human skills for real life.</p>
             <div className="hero-cta reveal">
-              <a href="/book-demo" className="primary-cta">Book a demo</a>
+              <a href="/enquiries" className="primary-cta">Enquiries</a>
             </div>
           </div>
 

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import FooterAlt from '../components/FooterAlt';
-import './BookDemo.css';
+import './Enquiries.css';
 import { Link } from 'react-router-dom';
 import DaisyLogo from '../assets/hero/thank-you.png';
 
-export default function BookDemo(){
+export default function Enquiries(){
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -64,17 +64,14 @@ export default function BookDemo(){
                     Message: values.message
                   };
 
-                  // Resolve API base for dev vs production.
-                  // Use existing `VITE_BACKEND_URL` env var used elsewhere in the app.
                   const devBase = 'http://localhost:5245';
                   const envBase = import.meta.env.VITE_BACKEND_URL ?? import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_BASE ?? '';
-                  // Ensure an absolute URL: if env var is present but missing scheme, prefix with https://
                   const normalizedEnvBase = envBase && !envBase.startsWith('http') ? `https://${envBase}` : envBase;
                   const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
                     ? devBase
                     : (normalizedEnvBase ?? '');
 
-                  const res = await fetch(`${apiBase}/api/DemoRequests`, {
+                  const res = await fetch(`${apiBase}/api/Enquiries`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
@@ -131,7 +128,7 @@ export default function BookDemo(){
               <p className="demo-legal">By filling in this form you agree to share your information with daisychained. We take privacy seriously, <Link to="/privacy">click here</Link> to read our privacy notice.</p>
 
               <div style={{ marginTop: '18px' }}>
-                <button className="demo-submit" type="submit" disabled={loading || submitted}>{loading? 'Sending…' : (submitted? 'Sent' : 'Request demo')}</button>
+                <button className="demo-submit" type="submit" disabled={loading || submitted}>{loading? 'Sending…' : (submitted? 'Sent' : 'Enquire')}</button>
               </div>
             </form>
             )}
